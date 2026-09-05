@@ -46,6 +46,38 @@ create table if not exists public.am_entries (
 );
 create index if not exists am_entries_ym_idx on public.am_entries (year, month);
 
+-- ───────────── ล้างของเก่า (เวอร์ชันที่ใช้บัญชีอีเมล) ─────────────
+-- ถ้าเคยรันสคีมารุ่นก่อนไว้ ส่วนนี้จะเก็บกวาดให้เอง · ไม่เคยรันก็ข้ามไปเฉย ๆ
+drop trigger if exists am_on_auth_user_created on auth.users;
+drop function if exists public.am_handle_new_user() cascade;
+
+do $$
+declare t text; p record;
+begin
+  foreach t in array array['am_config','am_branches','am_entries','am_profiles'] loop
+    if to_regclass('public.' || t) is not null then
+      for p in select policyname from pg_policies where schemaname='public' and tablename=t loop
+        execute format('drop policy if exists %I on public.%I', p.policyname, t);
+      end loop;
+    end if;
+  end loop;
+end $$;
+
+drop function if exists public.am_branch_allowed(text) cascade;
+drop function if exists public.am_role() cascade;
+drop function if exists public.am_zone() cascade;
+drop table    if exists public.am_profiles cascade;
+
+-- คอลัมน์ updated_by ของรุ่นก่อนไม่ได้ใช้แล้ว (ผูกกับบัญชีผู้ใช้ที่เลิกใช้ไป)
+alter table public.am_config  drop column if exists updated_by;
+alter table public.am_entries drop column if exists updated_by;
+
+-- ถอนออกจาก Realtime — ตารางปิดตายแล้ว ส่งอัปเดตสดไม่ได้อยู่ดี
+do $$ begin alter publication supabase_realtime drop table public.am_entries;
+exception when others then null; end $$;
+do $$ begin alter publication supabase_realtime drop table public.am_config;
+exception when others then null; end $$;
+
 -- ───────────── ปิดตายทุกตาราง ─────────────
 -- เปิด RLS โดยไม่สร้าง policy ใด ๆ = ไม่มีใครอ่าน/เขียนตรง ๆ ได้เลย
 -- ทางเข้าเดียวคือฟังก์ชัน security definer ข้างล่าง ซึ่งตรวจรหัสก่อนทุกครั้ง
