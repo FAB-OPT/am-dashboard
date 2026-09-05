@@ -217,11 +217,7 @@ html{-webkit-text-size-adjust:100%}
   <form class="login-box" id="loginForm">
     <h1>Area Manager Performance</h1>
     <p>ส้มตำเจ๊แดง · ใส่รหัสเข้าใช้งาน</p>
-    <div class="auth" id="loginAuth" style="display:none">
-      <input id="loginEmail" type="email" placeholder="อีเมล" autocomplete="username">
-      <input id="loginPass" type="password" placeholder="รหัสผ่าน" autocomplete="current-password">
-    </div>
-    <input id="loginCode" type="password" placeholder="รหัส" autocomplete="off">
+    <input id="loginCode" type="password" placeholder="รหัสเข้าใช้งาน" autocomplete="off" autofocus>
     <button class="btn primary" type="submit" id="loginBtn">เข้าใช้งาน</button>
     <p class="err" id="loginErr"></p>
     <p class="hint" id="loginHint">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · ถ้าลืมรหัส Admin เปลี่ยนได้ในแท็บจัดการโซน</p>
@@ -397,9 +393,10 @@ let store={data:{}};            // data[m][branchId] = {field:number|string}
 let sel={branch:null,am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy'};
 let storageOK=true;
 /* ---- ที่จัดเก็บข้อมูล: Supabase (ข้อมูลกลาง) + localStorage (สำเนาออฟไลน์) ---- */
-let SB=null, CLOUD=false, syncState='local', me=null;   // me = {id,email,role,zone_id}
+let SB=null, CLOUD=false, syncState='local';
+let CODE=null;                                           // รหัสเข้าใช้งาน ส่งไปกับทุกคำสั่งให้ฐานตรวจ
 const dirty=new Set();                                   // "เดือน|รหัสสาขา" ที่ยังไม่ได้ส่งขึ้นฐาน
-let cfgDirty=false, flushT=null, pendingRender=false, chan=null;
+let cfgDirty=false, flushT=null, pendingRender=false, pollT=null, lastTouch=null;
 function load(){ try{const s=localStorage.getItem(KEY); if(s) store=JSON.parse(s); const c=localStorage.getItem(KEY_CFG); cfg=c?JSON.parse(c):JSON.parse(JSON.stringify(DEFAULT_CFG));}catch(e){storageOK=false; cfg=cfg||JSON.parse(JSON.stringify(DEFAULT_CFG));}
   if(!cfg||!cfg.zones) cfg=JSON.parse(JSON.stringify(DEFAULT_CFG)); rebuild(); migrate(); }
 // old data keyed like 'gus-0' → stable ids b1..
@@ -418,41 +415,34 @@ async function flush(){
   const keys=[...dirty]; dirty.clear();
   const doCfg=cfgDirty; cfgDirty=false;
   try{
-    if(doCfg) await pushCfg();
+    if(doCfg){ const {error}=await SB.rpc('am_set_config',{p_code:CODE,p_value:cfg}); if(error) throw error; }
     if(keys.length){
       const rows=keys.map(k=>{ const p=k.split('|'), m=+p[0], id=p[1];
-        return {year:YEAR,month:m,branch_id:id,fields:(store.data[m]||{})[id]||{},updated_at:new Date().toISOString(),updated_by:me?me.id:null}; });
-      for(let i=0;i<rows.length;i+=200){
-        const {error}=await SB.from('am_entries').upsert(rows.slice(i,i+200),{onConflict:'year,month,branch_id'});
+        return {month:m,branch_id:id,fields:(store.data[m]||{})[id]||{}}; });
+      for(let i=0;i<rows.length;i+=150){
+        const {error}=await SB.rpc('am_upsert',{p_code:CODE,p_year:YEAR,p_rows:rows.slice(i,i+150)});
         if(error) throw error;
       }
     }
+    await touch();
     setSync('cloud');
   }catch(e){
     keys.forEach(k=>dirty.add(k)); if(doCfg)cfgDirty=true;
     sbErr(e); setTimeout(()=>{ if(dirty.size||cfgDirty) flush(); }, 5000);
   }
 }
-async function pushCfg(){
-  const {error}=await SB.from('am_config').upsert({key:'main',value:cfg,updated_at:new Date().toISOString(),updated_by:me?me.id:null},{onConflict:'key'});
-  if(error) throw error;
-  // สำเนาแบน สาขา -> โซน ไว้ให้ RLS ใช้บังคับสิทธิ์ระดับแถว
-  const rows=BRANCHES.map(b=>({branch_id:b.id,zone_id:b.am,name:b.name,updated_at:new Date().toISOString()}));
-  if(rows.length){ const {error:e2}=await SB.from('am_branches').upsert(rows,{onConflict:'branch_id'}); if(e2) throw e2; }
-  const ids=BRANCHES.map(b=>b.id);
-  if(ids.length){ await SB.from('am_branches').delete().not('branch_id','in','('+ids.join(',')+')'); }
-}
 function sbErr(e){
   const msg=(e&&(e.message||e.error_description))||'';
-  if(/JWT|session|not authenticated/i.test(msg)){ setSync('error','หมดเวลาเข้าใช้งาน'); return; }
+  if(/รหัสไม่ถูกต้อง|28000/.test(msg)){ setSync('error','รหัสถูกเปลี่ยน ให้เข้าใช้งานใหม่'); return; }
+  if(/ไม่มีสิทธิ์|42501/.test(msg)){ setSync('error','ไม่มีสิทธิ์แก้สาขานอกโซน'); return; }
   setSync('error', msg.slice(0,80));
   console.warn('[AM] supabase:', e);
 }
 function storageText(){
-  if(CLOUD) return 'เก็บที่ Supabase — ทุกคนที่ล็อกอินเห็นและแก้ข้อมูลชุดเดียวกัน อัปเดตให้อัตโนมัติแบบเรียลไทม์ (เก็บสำเนาสำรองไว้ในเบราว์เซอร์เครื่องนี้ด้วย)';
+  if(CLOUD) return 'เก็บที่ Supabase — ทุกคนที่ใส่รหัสเข้ามาเห็นข้อมูลชุดเดียวกัน หน้าเว็บดึงของใหม่ให้เองทุก 20 วินาที (เก็บสำเนาสำรองในเบราว์เซอร์เครื่องนี้ด้วย)';
   if(!SB_ON) return 'ยังไม่ได้ตั้งค่า Supabase (แก้ที่ไฟล์ config.js) — ตอนนี้ข้อมูลเก็บอยู่ในเบราว์เซอร์เครื่องนี้เท่านั้น';
   if(!storageOK) return 'เบราว์เซอร์นี้ไม่อนุญาตให้บันทึกข้อมูล — ข้อมูลจะหายเมื่อปิดหน้า ให้กดสำรองเป็นไฟล์ JSON ไว้';
-  return 'ข้อมูลเก็บอยู่ในเบราว์เซอร์เครื่องนี้ (localStorage) — ถ้าเปลี่ยนเครื่องหรือล้างประวัติเบราว์เซอร์ให้ใช้ปุ่มสำรอง/นำเข้า JSON';
+  return 'ต่อฐานข้อมูลไม่ได้ — ตอนนี้บันทึกลงเบราว์เซอร์เครื่องนี้ก่อน';
 }
 const SYNC_UI={local:['off','เก็บในเครื่องนี้'],connecting:['','กำลังเชื่อมต่อ…'],cloud:['on','Supabase · ซิงก์แล้ว'],saving:['saving','กำลังบันทึก…'],error:['err','ซิงก์ไม่สำเร็จ']};
 function setSync(st,detail){
@@ -462,7 +452,7 @@ function setSync(st,detail){
   b.title=detail?ui[1]+' ('+detail+')':ui[1];
   const note=document.getElementById('storageNote'); if(note)note.textContent=storageText();
   const push=document.getElementById('btnPushCloud'); if(push)push.style.display=(CLOUD&&role&&role.type==='admin')?'':'none';
-  const hint=document.getElementById('cloudHint'); if(hint)hint.textContent=CLOUD?'':(SB_ON?'ยังไม่ได้เชื่อม Supabase — ข้อมูลอยู่เฉพาะเครื่องนี้':'โหมดออฟไลน์');
+  const hint=document.getElementById('cloudHint'); if(hint)hint.textContent=CLOUD?'':(SB_ON?'ยังไม่ได้เชื่อมฐานข้อมูล — ข้อมูลอยู่เฉพาะเครื่องนี้':'โหมดออฟไลน์');
 }
 function softRender(){
   const ae=document.activeElement;
@@ -472,77 +462,68 @@ function softRender(){
 document.addEventListener('focusout',e=>{ if(!pendingRender)return; if(!(e.target.closest&&e.target.closest('#inputGrid')))return;
   setTimeout(()=>{ const ae=document.activeElement; if(ae&&ae.closest&&ae.closest('#inputGrid'))return; if(pendingRender){pendingRender=false; if(role)render();} },120); });
 
-/* ---------------- Supabase ---------------- */
+/* ---------------- Supabase ----------------
+   หน้าเว็บแตะตารางตรง ๆ ไม่ได้ ทุกอย่างวิ่งผ่านฟังก์ชันฝั่งฐาน
+   ที่เอา "รหัสเข้าใช้งาน" ไปตรวจก่อนเสมอ (ดู supabase/schema.sql) */
 const SB_CFG=(window.AM_CONFIG||{});
 const SB_ON=!!(SB_CFG.url&&SB_CFG.key&&window.supabase&&window.supabase.createClient);
-function sbInitClient(){
-  if(!SB_ON) return null;
-  try{ return window.supabase.createClient(SB_CFG.url,SB_CFG.key,{auth:{persistSession:true,autoRefreshToken:true}}); }
-  catch(e){ console.warn('[AM] createClient ไม่สำเร็จ',e); return null; }
-}
-async function pullCfg(){
-  const {data,error}=await SB.from('am_config').select('value').eq('key','main').maybeSingle();
+if(SB_ON){ try{ SB=window.supabase.createClient(SB_CFG.url,SB_CFG.key,{auth:{persistSession:false}}); }
+  catch(e){ SB=null; console.warn('[AM] ต่อ Supabase ไม่ได้',e); } }
+
+async function sbAuth(code){
+  const {data,error}=await SB.rpc('am_auth',{p_code:code});
   if(error) throw error;
-  if(data&&data.value&&data.value.zones){ cfg=data.value; localSaveCfg(); rebuild(); return true; }
-  return false;
+  const r=(data&&data[0])||null;
+  return r?{type:r.role, zone:r.zone_id}:null;
 }
-async function pullEntries(){
-  const {data,error}=await SB.from('am_entries').select('month,branch_id,fields').eq('year',YEAR);
-  if(error) throw error;
-  const d={};
-  (data||[]).forEach(r=>{ (d[r.month]=d[r.month]||{})[r.branch_id]=r.fields||{}; });
+async function touch(){ try{ const {data}=await SB.rpc('am_touched',{p_code:CODE,p_year:YEAR}); lastTouch=data||lastTouch; }catch(e){} }
+// ดึงผังและข้อมูลทั้งปี · คืนค่า true ถ้าฐานมีผังโซนอยู่แล้ว
+async function pullAll(){
+  const [c,f]=await Promise.all([
+    SB.rpc('am_get_config',{p_code:CODE}),
+    SB.rpc('am_fetch',{p_code:CODE,p_year:YEAR})
+  ]);
+  if(c.error) throw c.error;
+  if(f.error) throw f.error;
+  let hasCfg=false;
+  const v=c.data;
+  if(v&&v.zones&&v.zones.length){
+    hasCfg=true;
+    // คนที่ไม่ใช่แอดมินจะไม่ได้รหัสกลับมา — เก็บรหัสเดิมในเครื่องไว้ กันรหัสหาย
+    if(role&&role.type!=='admin'){ v.adminCode=cfg.adminCode; v.vpCode=cfg.vpCode;
+      (v.zones||[]).forEach(z=>{ const o=(cfg.zones||[]).find(x=>x.id===z.id); if(o&&z.code==null)z.code=o.code; }); }
+    cfg=v; localSaveCfg(); rebuild();
+  }
+  const d={}; (f.data||[]).forEach(r=>{ (d[r.month]=d[r.month]||{})[r.branch_id]=r.fields||{}; });
   store={data:d}; localSave();
+  return hasCfg;
 }
-function subscribeLive(){
-  if(chan) { try{SB.removeChannel(chan);}catch(e){} chan=null; }
-  chan=SB.channel('am-dashboard')
-    .on('postgres_changes',{event:'*',schema:'public',table:'am_entries'},p=>{
-      const r=p.new||p.old; if(!r||r.year!==YEAR) return;
-      if(r.updated_by&&me&&r.updated_by===me.id) return;         // เสียงสะท้อนของเราเอง
-      if(dirty.has(String(r.month)+'|'+r.branch_id)) return;      // เรากำลังแก้อยู่ อย่าทับ
-      store.data[r.month]=store.data[r.month]||{};
-      if(p.eventType==='DELETE') delete store.data[r.month][r.branch_id];
-      else store.data[r.month][r.branch_id]=(p.new&&p.new.fields)||{};
-      localSave(); softRender();
-    })
-    .on('postgres_changes',{event:'*',schema:'public',table:'am_config'},p=>{
-      if(cfgDirty) return;
-      const v=p.new&&p.new.value; if(!v||!v.zones) return;
-      cfg=v; localSaveCfg(); rebuild(); softRender();
-    })
-    .subscribe();
+/* ไม่มี Realtime เพราะตารางถูกปิดตายไว้ — ใช้วิธีถามฐานทุก 20 วิว่ามีใครแก้ไหม
+   ถามด้วย am_touched ซึ่งคืนแค่เวลาแก้ล่าสุด ถึงจะดึงข้อมูลจริงเมื่อมีอะไรเปลี่ยน */
+function startPoll(){
+  stopPoll();
+  pollT=setInterval(async ()=>{
+    if(!CLOUD||!SB||document.hidden) return;
+    if(dirty.size||cfgDirty||syncState==='saving') return;
+    try{
+      const {data,error}=await SB.rpc('am_touched',{p_code:CODE,p_year:YEAR});
+      if(error) throw error;
+      if(data&&data!==lastTouch){ lastTouch=data; await pullAll(); softRender(); }
+      if(syncState==='error') setSync('cloud');
+    }catch(e){ sbErr(e); }
+  },20000);
 }
-async function loadMe(){
-  const {data:{user}}=await SB.auth.getUser();
-  if(!user) return null;
-  const {data,error}=await SB.from('am_profiles').select('role,zone_id,display_name').eq('id',user.id).maybeSingle();
-  if(error) sbErr(error);
-  me={id:user.id,email:user.email,role:(data&&data.role)||'am',zone:(data&&data.zone_id)||null,name:(data&&data.display_name)||user.email};
-  return me;
-}
+function stopPoll(){ if(pollT)clearInterval(pollT); pollT=null; }
 async function enterApp(){
   setSync('connecting');
   try{
-    const seeded=await pullCfg();
-    await pullEntries();
-    role={type:me.role,zone:me.zone};
+    const hasCfg=await pullAll();
     CLOUD=true;
-    // ครั้งแรกสุด: แอดมินอัปโหลดผังโซน/สาขาจากเครื่องขึ้นฐานให้
-    if(!seeded&&me.role==='admin'){ cfgDirty=true; await flush(); }
-    applyRole(); render(); subscribeLive(); setSync('cloud');
-  }catch(e){ CLOUD=false; sbErr(e); role={type:me.role,zone:me.zone}; applyRole(); render(); }
-}
-async function initSb(){
-  if(!SB_ON){ setSync('local'); return; }
-  SB=sbInitClient();
-  if(!SB){ setSync('local'); return; }
-  setSync('connecting');
-  SB.auth.onAuthStateChange((ev)=>{ if(ev==='SIGNED_OUT'){ CLOUD=false; role=null; me=null; applyRole(); setSync('local'); } });
-  try{
-    const {data:{session}}=await SB.auth.getSession();
-    if(session){ await loadMe(); if(me) await enterApp(); else setSync('local'); }
-    else setSync('local');
-  }catch(e){ sbErr(e); }
+    // ครั้งแรกสุด: แอดมินอัปโหลดผัง 5 โซนจากเครื่องขึ้นฐานให้
+    if(!hasCfg&&role.type==='admin'){ cfgDirty=true; await flush(); }
+    await touch();
+    applyRole(); render(); startPoll(); setSync('cloud');
+  }catch(e){ CLOUD=false; sbErr(e); applyRole(); render(); }
 }
 async function pushAll(){
   if(!CLOUD)return;
@@ -834,34 +815,35 @@ function applyRole(){
   const lg=document.getElementById('login'); if(!role){lg.style.display='flex';return;} lg.style.display='none';
   const who=document.getElementById('who'), ctl=document.getElementById('ctlAM');
   if(role.type==='am'){ const z=AMS.find(a=>a.id===role.zone);
-    if(!z){ if(SB_ON&&SB){ document.getElementById('loginErr').textContent='บัญชีนี้ยังไม่ได้ผูกกับโซนใด ติดต่อแอดมิน'; lg.style.display='flex'; return; }
-      role=null; try{sessionStorage.removeItem(KEY_SESS);}catch(e){} applyRole(); return; }
+    if(!z){ role=null; CODE=null; try{sessionStorage.removeItem(KEY_SESS);}catch(e){} applyRole(); return; }
     sel.am=z.id; ctl.style.display='none'; who.textContent=z.name; }
   else { ctl.style.display=''; who.textContent=role.type==='vp'?'VP — เห็นทุกโซน':'Admin'; }
   document.getElementById('tabZones').style.display=role.type==='admin'?'':'none';
   if(sel.tab==='zones'&&role.type!=='admin')sel.tab='dash';
 }
 document.getElementById('loginForm').onsubmit=async e=>{e.preventDefault();
-  const err=document.getElementById('loginErr');
+  const err=document.getElementById('loginErr'), box=document.getElementById('loginCode');
+  const v=box.value.trim();
+  if(!v){ err.textContent='ใส่รหัสเข้าใช้งาน'; return; }
   if(SB_ON&&SB){
-    const email=document.getElementById('loginEmail').value.trim(), pass=document.getElementById('loginPass').value;
-    if(!email||!pass){err.textContent='กรอกอีเมลและรหัสผ่าน';return;}
     const btn=document.getElementById('loginBtn'); btn.disabled=true; btn.textContent='กำลังเข้าใช้งาน…'; err.textContent='';
-    const {error}=await SB.auth.signInWithPassword({email,password:pass});
+    let r=null, failed=false;
+    try{ r=await sbAuth(v); }
+    catch(ex){ failed=true; err.textContent='ต่อฐานข้อมูลไม่ได้ — '+((ex&&ex.message)||'ลองใหม่อีกครั้ง'); }
     btn.disabled=false; btn.textContent='เข้าใช้งาน';
-    if(error){ err.textContent=/Invalid login/i.test(error.message||'')?'อีเมลหรือรหัสผ่านไม่ถูกต้อง':(error.message||'เข้าใช้งานไม่สำเร็จ'); return; }
-    document.getElementById('loginPass').value='';
-    await loadMe();
-    if(!me){ err.textContent='ยังไม่ได้กำหนดสิทธิ์ให้บัญชีนี้ ติดต่อแอดมิน'; await SB.auth.signOut(); return; }
+    if(failed) return;
+    if(!r){ err.textContent='รหัสไม่ถูกต้อง'; box.select(); return; }
+    CODE=v; role=r; box.value='';
+    try{sessionStorage.setItem(KEY_SESS,JSON.stringify({code:v}));}catch(e){}
     await enterApp(); return;
   }
-  const v=document.getElementById('loginCode').value.trim().toLowerCase(); const eq=(a)=>(a||'').trim().toLowerCase()===v;
+  const eq=(a)=>(a||'').trim().toLowerCase()===v.toLowerCase();
   let r=null; if(eq(cfg.adminCode))r={type:'admin'}; else if(eq(cfg.vpCode))r={type:'vp'}; else {const z=cfg.zones.find(z=>eq(z.code)); if(z)r={type:'am',zone:z.id};}
-  if(!r){err.textContent='รหัสไม่ถูกต้อง';document.getElementById('loginCode').select();return;}
-  role=r; err.textContent=''; document.getElementById('loginCode').value=''; try{sessionStorage.setItem(KEY_SESS,JSON.stringify(r));}catch(e){} applyRole(); render(); };
-document.getElementById('btnLogout').onclick=async ()=>{ sel.am='all'; sel.tab='dash';
-  if(SB_ON&&SB){ if(chan){try{SB.removeChannel(chan);}catch(e){} chan=null;} CLOUD=false; me=null; role=null; await SB.auth.signOut(); applyRole(); setSync('local'); document.getElementById('loginEmail').focus(); return; }
-  role=null; try{sessionStorage.removeItem(KEY_SESS);}catch(e){} applyRole(); document.getElementById('loginCode').focus(); };
+  if(!r){err.textContent='รหัสไม่ถูกต้อง';box.select();return;}
+  role=r; err.textContent=''; box.value=''; try{sessionStorage.setItem(KEY_SESS,JSON.stringify(r));}catch(e){} applyRole(); render(); };
+document.getElementById('btnLogout').onclick=()=>{ stopPoll(); CLOUD=false; CODE=null; role=null; sel.am='all'; sel.tab='dash';
+  try{sessionStorage.removeItem(KEY_SESS);}catch(e){}
+  applyRole(); setSync('local'); document.getElementById('loginCode').focus(); };
 
 /* ---------------- shell ---------------- */
 function setTab(t){ sel.tab=t; document.querySelectorAll('.tabs button[role=tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t)); document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+t)); render(); }
@@ -875,17 +857,23 @@ document.getElementById('prevM').onclick=()=>{if(sel.m>0){sel.m--;render();}}; d
 function render(){ selMonth.value=sel.m; if(!role)return; fillAM(); if(role.type==='am')sel.am=role.zone; selAM.value=sel.am; if(!selAM.value)sel.am='all', selAM.value='all'; ({dash:renderDash,branch:renderBranch,compare:renderCompare,year:renderYear,input:renderInput,zones:renderZones})[sel.tab](); }
 document.addEventListener('click',e=>{const a=e.target.closest('.blink'); if(a){e.preventDefault(); sel.branch=a.dataset.b; setTab('branch');}});
 load();
-(function loginMode(){
-  const au=document.getElementById('loginAuth'), code=document.getElementById('loginCode'), hint=document.getElementById('loginHint');
-  if(SB_ON){ au.style.display='flex'; code.style.display='none';
-    hint.textContent='ใช้อีเมลและรหัสผ่านที่แอดมินสร้างให้ใน Supabase · ลืมรหัสผ่านให้แจ้งแอดมินตั้งใหม่';
-    setTimeout(()=>document.getElementById('loginEmail').focus(),50); }
-  else { au.style.display='none'; code.style.display='';
-    hint.textContent='โหมดออฟไลน์ (ยังไม่ได้ตั้งค่า config.js) · รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่';
-    if(!SB_ON){ try{const r=sessionStorage.getItem(KEY_SESS); if(r)role=JSON.parse(r);}catch(e){} }
-    setTimeout(()=>code.focus(),50); }
+document.getElementById('loginHint').textContent = SB_ON
+  ? 'รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · แอดมินเปลี่ยนรหัสได้ในแท็บจัดการโซน'
+  : 'โหมดออฟไลน์ (ยังไม่ได้ตั้งค่า config.js) · รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่';
+applyRole(); render(); setSync('local');
+(async function boot(){
+  let saved=null; try{ saved=JSON.parse(sessionStorage.getItem(KEY_SESS)||'null'); }catch(e){}
+  if(SB_ON&&SB){
+    if(saved&&saved.code){
+      setSync('connecting');
+      try{ const r=await sbAuth(saved.code); if(r){ CODE=saved.code; role=r; await enterApp(); return; } }
+      catch(e){ sbErr(e); }
+      try{sessionStorage.removeItem(KEY_SESS);}catch(e){}
+    }
+    setSync('local');
+  }else if(saved&&saved.type){ role=saved; applyRole(); render(); }
+  document.getElementById('loginCode').focus();
 })();
-applyRole(); render(); setSync('local'); initSb();
 </script>
 </body>
 </html>
