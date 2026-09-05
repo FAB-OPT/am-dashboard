@@ -149,6 +149,159 @@ tr.total td{font-weight:600;background:#FAF8F5;border-top:2px solid var(--line)}
 .codes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .codes label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink-2)}
 .codes input{padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:15px}
+/* ═══════════════════════════════════════════════════════════════
+   งานออกแบบ — ทับค่าตั้งต้นด้านบน
+   สีกลางทั้งชุดเอียงอุ่นเข้าหาแดงของแบรนด์ เทาจึงอ่านว่า "เลือกมา" ไม่ใช่เทาสำเร็จรูป
+   แดงของแบรนด์เป็นสีเน้นสีเดียว · เขียว/เหลืองใช้สื่อสถานะเท่านั้น ไม่ใช่สีตกแต่ง
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --red:#C1272D; --red-dk:#97181E; --red-lt:#FBEDEE;
+  --navy:#22456B;
+  --ink:#1E1B1A; --ink-2:#6A625E; --ink-3:#9B938E;
+  --line:#E8E3DD; --line-2:#F1EDE8;
+  --paper:#FFFFFF; --paper-2:#FBF9F7; --bg:#F5F2EF;
+  --good:#17683C; --good-lt:#E7F2EB;
+  --bad:#C1272D;  --bad-lt:#FBEDEE;
+  --warn:#9C6510; --warn-lt:#FBF2E1;
+  --yellow:#FFFBEB;
+  --shadow:0 1px 2px rgba(31,27,26,.04),0 1px 3px rgba(31,27,26,.05);
+  --shadow-lg:0 2px 4px rgba(31,27,26,.04),0 12px 32px rgba(31,27,26,.10);
+  --r:10px;
+}
+body{background:var(--bg);color:var(--ink);font-size:14.5px}
+::selection{background:var(--red-lt);color:var(--red-dk)}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── หัวเว็บ ─────────────────────────────────────────────── */
+.top{background:var(--paper);border-bottom:1px solid var(--line);box-shadow:0 1px 2px rgba(31,27,26,.05)}
+.top::before{content:'';display:block;height:3px;background:var(--red)}
+.top-in{padding:14px 20px 10px;gap:12px}
+.brand{padding-left:13px;border-left:3px solid var(--red);flex-direction:column;align-items:flex-start;gap:2px}
+.brand h1{font-size:18px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+.brand span{font-size:12.5px;color:var(--ink-3)}
+.topbar{max-width:1400px;margin:0 auto;padding:0 20px 12px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:flex-start}
+.ctl .lbl{font-size:12px;color:var(--ink-3);font-weight:500}
+.ctl select{padding:7px 11px;border:1px solid var(--line);border-radius:8px;background:var(--paper);
+  box-shadow:var(--shadow);transition:border-color .15s}
+.ctl select:hover{border-color:var(--ink-3)}
+.month-nav{border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);background:var(--paper)}
+.month-nav button{padding:7px 12px;font-size:15px;color:var(--ink-2);transition:background .15s}
+.month-nav button:hover{background:var(--paper-2);color:var(--red)}
+.month-nav select{box-shadow:none;border-radius:0}
+.who{background:var(--red-lt);color:var(--red-dk);font-size:12.5px;padding:5px 12px;font-weight:600}
+.logout{margin-left:0;color:var(--ink-3);font-size:13px;padding:6px 12px;border-radius:8px;transition:.15s}
+.logout:hover{color:var(--red);background:var(--red-lt)}
+
+/* ── แท็บ ────────────────────────────────────────────────── */
+.tabs{padding:0 20px;gap:1px;border-top:1px solid var(--line-2)}
+.tabs button{padding:11px 15px;font-size:14px;font-weight:500;border-radius:8px 8px 0 0;transition:.15s}
+.tabs button:hover{color:var(--ink);background:var(--paper-2)}
+.tabs button[aria-selected=true]{color:var(--red);background:transparent}
+
+/* ── หัวข้อส่วน ──────────────────────────────────────────── */
+.sec{margin:32px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.sec h2{font-size:16px;font-weight:700;letter-spacing:-.01em}
+.sec .note{font-size:12.5px;color:var(--ink-3)}
+
+/* ── การ์ดตัวเลขสรุป ─────────────────────────────────────── */
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
+  background:transparent;border:0;border-radius:0;overflow:visible}
+@media(min-width:760px){ #kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #bKpis{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media(min-width:1080px){ #kpis{grid-template-columns:repeat(4,minmax(0,1fr))} }
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px 16px 13px;box-shadow:var(--shadow)}
+.kpi .l{font-size:12px;font-weight:500;color:var(--ink-3);letter-spacing:.01em}
+.kpi .v{font-size:27px;font-weight:700;letter-spacing:-.025em;margin:4px 0 6px;line-height:1.1}
+.kpi .d{font-size:12px;gap:8px;align-items:center}
+.chip{padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.01em}
+
+/* ── การ์ด ───────────────────────────────────────────────── */
+.card{border-radius:var(--r);box-shadow:var(--shadow);padding:16px 18px}
+.card h3{font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:12px;letter-spacing:.01em}
+
+/* ── ตาราง ───────────────────────────────────────────────── */
+.tbl-wrap{border-radius:var(--r);box-shadow:var(--shadow)}
+th,td{padding:9px 11px}
+th{background:var(--paper-2);font-size:12px;font-weight:600;color:var(--ink-2);
+  letter-spacing:.01em;border-bottom:1px solid var(--line)}
+th:first-child{background:var(--paper-2)}
+td{border-bottom:1px solid var(--line-2)}
+tbody tr:nth-child(even) td,tbody tr:nth-child(even) td:first-child{background:var(--paper-2)}
+tr:hover td,tr:hover td:first-child{background:var(--red-lt)}
+tr.total td,tr.total td:first-child{background:#F4F0EB;font-weight:700;border-top:2px solid var(--line)}
+th.grp{letter-spacing:.02em;font-size:12px;padding:7px 11px}
+.pos{color:var(--good);font-weight:600}
+.neg{color:var(--bad);font-weight:600}
+.bar i{border-radius:999px}
+.rank{color:var(--ink-3);font-variant-numeric:tabular-nums}
+
+/* ── ปุ่ม ────────────────────────────────────────────────── */
+.btn{border-radius:8px;padding:8px 14px;font-weight:500;box-shadow:var(--shadow);
+  transition:background .15s,border-color .15s,transform .05s}
+.btn:hover{background:var(--paper-2);border-color:var(--ink-3)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{box-shadow:0 1px 2px rgba(193,39,45,.28)}
+.btn.ghost{box-shadow:none;background:transparent;border-color:transparent;color:var(--ink-2)}
+.btn.ghost:hover{background:var(--paper);border-color:var(--line)}
+.seg{border-radius:8px;box-shadow:var(--shadow);overflow:hidden}
+.seg button{padding:6px 13px;font-weight:500;transition:.15s}
+.seg button:hover{background:var(--paper-2)}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+
+/* ── ตารางกรอกข้อมูล ─────────────────────────────────────── */
+.grid input{background:var(--yellow);padding:9px;transition:box-shadow .1s}
+.grid input:focus{background:#fff;box-shadow:inset 0 0 0 2px var(--red)}
+.grid td.calc{background:var(--paper-2);font-size:12.5px}
+.grid td:first-child{font-weight:500}
+
+/* ── สถานะที่จัดเก็บ ─────────────────────────────────────── */
+.sync{border-radius:999px;font-size:12px;padding:5px 11px;font-weight:500;box-shadow:var(--shadow)}
+.sync.on{background:var(--good-lt);color:var(--good);border-color:#CDE6D8}
+.sync.err{background:var(--bad-lt);color:var(--bad);border-color:#F2D5D7}
+.sync.off{background:var(--warn-lt);color:var(--warn);border-color:#EFE0C0}
+
+/* ── ยังไม่มีข้อมูล ──────────────────────────────────────── */
+.empty{padding:48px 32px;border-radius:var(--r);border:1px dashed #DDD6CE;background:var(--paper);
+  color:var(--ink-2);line-height:1.9}
+.empty b{font-size:16px;display:block;margin-bottom:4px}
+
+/* ── จัดการโซน ───────────────────────────────────────────── */
+.zone{border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:16px}
+.zone-h{background:var(--paper-2);padding:13px 16px}
+.zone-h input{border-radius:7px;padding:7px 9px}
+.zone-b{padding:7px 16px;border-bottom:1px solid var(--line-2)}
+.zone-b:hover{background:var(--paper-2)}
+.zone-b input{border-radius:7px}
+.codes input{border-radius:8px;padding:9px 11px}
+
+/* ── หน้าล็อกอิน ─────────────────────────────────────────── */
+.login{background:
+  radial-gradient(60rem 40rem at 50% -10%, #FDF6F2 0%, transparent 65%),
+  var(--bg);
+  padding:20px}
+.login-box{width:min(380px,100%);border:1px solid var(--line);border-top:0;border-radius:14px;
+  padding:34px 34px 30px;box-shadow:var(--shadow-lg);gap:12px;position:relative;overflow:hidden}
+.login-box::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--red)}
+.login-mark{font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--red);margin-bottom:2px}
+.login-box h1{font-size:23px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
+.login-box p{font-size:13.5px;color:var(--ink-2);margin-bottom:6px}
+.login-box input{padding:12px 14px;border-radius:9px;font-size:17px;letter-spacing:.16em;
+  background:var(--paper-2);transition:.15s}
+.login-box input:focus{background:#fff;border-color:var(--red);outline:none;
+  box-shadow:0 0 0 3px var(--red-lt)}
+.login-box input::placeholder{letter-spacing:normal;color:var(--ink-3)}
+.login-box .btn{padding:11px;font-size:15px;font-weight:600}
+.login-box .err{font-size:13px;min-height:18px;margin:0}
+.login-box .hint{font-size:12px;line-height:1.6;color:var(--ink-3);margin:0}
+
+/* ── อื่น ๆ ──────────────────────────────────────────────── */
+.legend{font-size:12.5px;margin-top:10px}
+.hint{font-size:12.5px;line-height:1.65}
+.toolbar{gap:10px}
+.msg{color:var(--good);font-weight:600;font-size:12.5px}
+
 /* ---------- storage / sync badge ---------- */
 .sync{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:20px;background:var(--bg);color:var(--ink-2);border:1px solid var(--line);white-space:nowrap}
 .sync i{width:8px;height:8px;border-radius:50%;background:var(--ink-3);display:block;flex:0 0 auto}
@@ -164,8 +317,9 @@ html{-webkit-text-size-adjust:100%}
 .tbl-wrap{-webkit-overflow-scrolling:touch}
 @media(max-width:700px){
   body{font-size:14px}
-  .top-in{padding:10px 12px;gap:8px}
-  .brand{margin-right:0;flex:1 1 100%;flex-wrap:wrap;gap:4px}
+  .top-in{padding:11px 12px 8px;gap:8px;align-items:center}
+  .topbar{padding:0 12px 10px;gap:10px}
+  .brand{margin-right:auto;flex:1 1 auto;min-width:0;gap:2px}
   .brand h1{font-size:16px}
   .brand span{font-size:11px;flex:1 1 100%}
   .ctl{flex:1 1 100%;gap:8px}
@@ -176,7 +330,8 @@ html{-webkit-text-size-adjust:100%}
   .month-nav button{padding:9px 15px;font-size:16px}
   .tabs{padding:0 12px}
   .tabs button{padding:11px 12px;font-size:14px}
-  .logout{margin-left:0;padding:11px 10px}
+  .logout{padding:7px 10px;font-size:12.5px;flex:0 0 auto}
+  .who{font-size:12px;padding:4px 10px}
   main{padding:14px 12px 48px}
   .sec{flex-wrap:wrap;gap:6px;margin:22px 0 8px}
   .sec .right{margin-left:0;flex:1 1 100%;flex-wrap:wrap}
@@ -204,7 +359,12 @@ html{-webkit-text-size-adjust:100%}
   .legend{flex-wrap:wrap;gap:8px 14px}
 }
 @media(max-width:420px){
-  .kpis{grid-template-columns:1fr}
+  .kpis{gap:9px}
+  .kpi{padding:11px 12px}
+  .kpi .l{font-size:11.5px}
+  .kpi .v{font-size:19px;margin:3px 0 5px}
+  .kpi .d{font-size:11px;gap:5px}
+  .chip{padding:2px 6px;font-size:11px}
   .chart-wrap{height:210px}
   .chart-wrap.tall{height:260px}
   .brand h1{font-size:15px}
@@ -215,8 +375,9 @@ html{-webkit-text-size-adjust:100%}
 <body>
 <div id="login" class="login">
   <form class="login-box" id="loginForm">
-    <h1>Area Manager Performance</h1>
-    <p>ส้มตำเจ๊แดง · ใส่รหัสเข้าใช้งาน</p>
+    <div class="login-mark">ส้มตำเจ๊แดง</div>
+    <h1>Area Manager<br>Performance</h1>
+    <p>ใส่รหัสเข้าใช้งานเพื่อดูผลประกอบการรายสาขา</p>
     <input id="loginCode" type="password" placeholder="รหัสเข้าใช้งาน" autocomplete="off" autofocus>
     <button class="btn primary" type="submit" id="loginBtn">เข้าใช้งาน</button>
     <p class="err" id="loginErr"></p>
@@ -226,14 +387,17 @@ html{-webkit-text-size-adjust:100%}
 <header class="top">
   <div class="top-in">
     <div class="brand"><h1>Area Manager Performance</h1><span>ส้มตำเจ๊แดง · เทียบ YoY และ MoM</span></div>
-    <label class="ctl" id="ctlAM">ผู้ดูแล <select id="selAM"></select></label>
     <span class="ctl who" id="who"></span>
     <span class="sync" id="syncBadge" title="ที่จัดเก็บข้อมูล"><i></i><span id="syncText">กำลังเชื่อมต่อ…</span></span>
-    <div class="ctl">เดือน
+    <button class="logout" id="btnLogout" title="ออกจากระบบ">ออกจากระบบ</button>
+  </div>
+  <div class="topbar">
+    <label class="ctl" id="ctlAM"><span class="lbl">ผู้ดูแล</span><select id="selAM"></select></label>
+    <div class="ctl"><span class="lbl">เดือน</span>
       <div class="month-nav">
-        <button id="prevM" title="เดือนก่อน">‹</button>
+        <button id="prevM" title="เดือนก่อน" aria-label="เดือนก่อน">‹</button>
         <select id="selMonth"></select>
-        <button id="nextM" title="เดือนถัดไป">›</button>
+        <button id="nextM" title="เดือนถัดไป" aria-label="เดือนถัดไป">›</button>
       </div>
     </div>
   </div>
@@ -244,7 +408,6 @@ html{-webkit-text-size-adjust:100%}
     <button role="tab" data-tab="year">สรุปทั้งปี</button>
     <button role="tab" data-tab="input">กรอกข้อมูล</button>
     <button role="tab" data-tab="zones" id="tabZones" style="display:none">จัดการโซน</button>
-    <button class="logout" id="btnLogout" title="ออกจากระบบ">ออก</button>
   </nav>
 </header>
 
@@ -572,7 +735,24 @@ function metrics(m,id){
 }
 
 /* ---------------- charts ---------------- */
-if(window.Chart){Chart.defaults.font.family='Sarabun'; Chart.defaults.color='#5A5A5A';}
+if(window.Chart){
+  const C=Chart.defaults;
+  C.font.family='Sarabun, system-ui, sans-serif'; C.font.size=12; C.color='#6A625E';
+  C.borderColor='#EFEAE4'; C.maintainAspectRatio=false;
+  C.plugins.legend.labels.usePointStyle=true;
+  C.plugins.legend.labels.boxWidth=8; C.plugins.legend.labels.boxHeight=8;
+  C.plugins.legend.labels.padding=14; C.plugins.legend.labels.font={size:12};
+  C.plugins.tooltip.backgroundColor='rgba(30,27,26,.95)';
+  C.plugins.tooltip.padding=10; C.plugins.tooltip.cornerRadius=8;
+  C.plugins.tooltip.boxPadding=5; C.plugins.tooltip.titleFont={size:12.5,weight:'600'};
+  C.plugins.tooltip.bodyFont={size:12.5}; C.plugins.tooltip.displayColors=true;
+  C.elements.bar.borderRadius=3; C.elements.bar.borderSkipped=false;
+  C.elements.line.tension=.3; C.elements.line.borderWidth=2;
+  C.elements.point.radius=2.5; C.elements.point.hoverRadius=5; C.elements.point.hitRadius=8;
+  try{ C.scale.grid.color='#F0ECE7'; C.scale.grid.drawTicks=false;
+       C.scale.border.display=false; C.scale.ticks.padding=6; }catch(e){}
+  try{ C.datasets.bar.maxBarThickness=34; }catch(e){}
+}
 const charts={};
 function mkChart(id,cfg){ if(!window.Chart)return; if(charts[id]) charts[id].destroy(); charts[id]=new Chart(document.getElementById(id),cfg); }
 const shortName=n=>n.replace('ร้านส้มตำเจ๊แดง ','').replace(/^\((.*)\)$/,'$1').replace(' (เจ๊แดง จุ่มนัวร์)','');
