@@ -14,6 +14,6 @@
    ปล่อยว่างไว้ = หน้าเว็บทำงานโหมดออฟไลน์ (เก็บใน localStorage + ล็อกอินด้วยรหัสเดิม)
    ═══════════════════════════════════════════════════════════════ */
 window.AM_CONFIG = {
-  url: '',
-  key: ''
+  url: 'https://prkoyrorasldnqekhhtv.supabase.co',
+  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBya295cm9yYXNsZG5xZWtoaHR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2MjY0MTIsImV4cCI6MjEwNDIwMjQxMn0.EXorrudWaQcLxXqemx0q_YalZ-xM02TKBWmJ5eRXdNQ'
 };
