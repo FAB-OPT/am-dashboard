@@ -6,6 +6,7 @@
 <title>ส้มตำเจ๊แดง Area Manager Performance</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="config.js"></script>
 <script>
 /*!
@@ -302,6 +303,29 @@ th.grp{letter-spacing:.02em;font-size:12px;padding:7px 11px}
 .toolbar{gap:10px}
 .msg{color:var(--good);font-weight:600;font-size:12.5px}
 
+/* ---------- นำเข้าไฟล์ ---------- */
+.drop{border:1.5px dashed #D9D1C8;border-radius:var(--r);background:var(--paper);
+  padding:16px 18px;margin-bottom:14px;transition:border-color .15s,background .15s}
+.drop.over{border-color:var(--red);background:var(--red-lt)}
+.drop-in{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.drop-txt{flex:1;min-width:220px;display:flex;flex-direction:column;gap:3px}
+.drop-txt b{font-size:14.5px;font-weight:600}
+.drop-txt span{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.modal{position:fixed;inset:0;z-index:200;background:rgba(30,27,26,.45);
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--paper);border-radius:14px;box-shadow:var(--shadow-lg);
+  width:min(560px,100%);max-height:86vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-box h3{font-size:17px;font-weight:700;padding:20px 22px 12px;margin:0}
+.modal-body{padding:0 22px 4px;overflow:auto;font-size:13.5px;line-height:1.75}
+.modal-body .row{display:flex;gap:10px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line-2)}
+.modal-body .row b{min-width:112px;color:var(--ink-2);font-weight:500;font-size:13px}
+.modal-body select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+.modal-body .ok{color:var(--good);font-weight:600}
+.modal-body .miss{color:var(--warn)}
+.modal-body ul{margin:6px 0 0;padding-left:20px;color:var(--ink-2);font-size:12.5px}
+.modal-foot{display:flex;gap:10px;justify-content:flex-end;padding:14px 22px 18px;
+  border-top:1px solid var(--line-2);background:var(--paper-2)}
+
 /* ---------- storage / sync badge ---------- */
 .sync{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:20px;background:var(--bg);color:var(--ink-2);border:1px solid var(--line);white-space:nowrap}
 .sync i{width:8px;height:8px;border-radius:50%;background:var(--ink-3);display:block;flex:0 0 auto}
@@ -355,6 +379,12 @@ html{-webkit-text-size-adjust:100%}
   .zone-b input{flex:1 1 100%;font-size:16px;border-color:var(--line);background:#fff}
   .codes input{font-size:16px}
   .toolbar .btn{flex:1 1 auto;padding:10px 12px}
+  .drop-in{gap:12px}
+  .drop-in .btn{width:100%}
+  .modal-box h3{padding:16px 16px 10px}
+  .modal-body{padding:0 16px}
+  .modal-body .row{flex-wrap:wrap;gap:4px}
+  .modal-foot{padding:12px 16px 16px}
   .msg{margin-left:0;flex:1 1 100%}
   .legend{flex-wrap:wrap;gap:8px 14px}
 }
@@ -503,8 +533,18 @@ html{-webkit-text-size-adjust:100%}
   <!-- ================= INPUT ================= -->
   <section class="view" id="view-input">
     <div class="sec"><h2 id="inputTitle"></h2><span class="note">ช่องสีเหลือง = กรอก · ช่องเทา = คำนวณอัตโนมัติ · บันทึกทันทีที่พิมพ์</span></div>
+    <div class="drop" id="drop">
+      <div class="drop-in">
+        <div class="drop-txt">
+          <b>นำเข้าจากไฟล์ Excel</b>
+          <span>ลากไฟล์รายงานประจำเดือนมาวางตรงนี้ หรือกดเลือกไฟล์ — ระบบอ่านตารางกรอกข้อมูลให้เอง ไม่ต้องพิมพ์ทีละช่อง</span>
+        </div>
+        <button class="btn primary" type="button" id="btnPickFile">เลือกไฟล์</button>
+        <input type="file" id="fileXlsx" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+      </div>
+    </div>
     <div class="toolbar">
-      <span class="hint">วางจาก Excel ได้เลย: copy ตั้งแต่ช่อง Sales 2025 ถึงคำอธิบาย (ทั้งแถว หรือหลายแถว) แล้วคลิกช่องแรกของสาขาแรก กด Ctrl+V — คอลัมน์ YoY ที่ติดมาจะถูกข้ามให้เอง</span>
+      <span class="hint">หรือวางจาก Excel ก็ได้: copy ตั้งแต่ช่อง Sales 2025 ถึงคำอธิบาย (ทั้งแถว หรือหลายแถว) แล้วคลิกช่องแรกของสาขาแรก กด Ctrl+V — คอลัมน์ YoY ที่ติดมาจะถูกข้ามให้เอง</span>
       <span class="msg" id="inputMsg"></span>
     </div>
     <div class="tbl-wrap" id="inputGrid"></div>
@@ -526,6 +566,17 @@ html{-webkit-text-size-adjust:100%}
     </div>
   </section>
 </main>
+
+<div class="modal" id="impModal" hidden>
+  <div class="modal-box">
+    <h3 id="impTitle">ตรวจก่อนนำเข้า</h3>
+    <div class="modal-body" id="impBody"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" type="button" id="impCancel">ยกเลิก</button>
+      <button class="btn primary" type="button" id="impOk">นำเข้าข้อมูล</button>
+    </div>
+  </div>
+</div>
 
 <script>
 try{document.documentElement.lang='th';}catch(e){}
@@ -707,6 +758,7 @@ function val(m,id,f){ const v=rec(m,id)[f]; return (v===''||v==null||isNaN(+v))?
 function hasData(m,ids){ return ids.some(id=>val(m,id,'s26')!=null||val(m,id,'s25')!=null); }
 
 /* ---------------- helpers ---------------- */
+const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=n=>n==null?'–':Math.round(n).toLocaleString('th-TH');
 const fmtPct=(p,sign=true)=>p==null?'–':((sign&&p>0?'+':'')+(p*100).toFixed(1)+'%');
 const pct=(a,b)=>(a==null||b==null||a===0)?null:(b-a)/Math.abs(a);
@@ -930,7 +982,7 @@ function refreshCalc(id){
     td.textContent=fmtPct(r.yoy[k]); if(r.yoy[k]==null)td.textContent=''; td.className='calc '+cls(r.yoy[k],k==='c'||k==='l');});
 }
 function parseNum(s){ if(s==null)return ''; s=String(s).trim().replace(/[,฿\s]/g,''); if(s==='')return ''; let pctv=false; if(s.endsWith('%')){pctv=true;s=s.slice(0,-1);} if(s.startsWith('(')&&s.endsWith(')'))s='-'+s.slice(1,-1); const n=parseFloat(s); if(isNaN(n))return ''; return pctv?n/100:n; }
-function setField(id,f,raw){ const r=rec(sel.m,id,true); if(f==='note'){r.note=raw;return;} let v=parseNum(raw); if(f==='osc'&&v!==''&&v>1)v=v/100; if(v==='')delete r[f]; else r[f]=v; }
+function setField(id,f,raw,m){ const r=rec(m===undefined?sel.m:m,id,true); if(f==='note'){r.note=raw;return;} let v=parseNum(raw); if(f==='osc'&&v!==''&&v>1)v=v/100; if(v==='')delete r[f]; else r[f]=v; }
 function flash(t){ const el=document.getElementById('inputMsg'); el.textContent=t; clearTimeout(el._t); el._t=setTimeout(()=>el.textContent='',2500); }
 
 const grid=document.getElementById('inputGrid');
@@ -946,6 +998,182 @@ grid.addEventListener('paste',e=>{const el=e.target; if(!el.dataset.f)return; co
     cols.forEach((v,j)=>{const t=grid.querySelector(`input[data-r="${r0+i}"][data-c="${c0+j}"]`); if(!t)return; t.value=v.trim(); setField(t.dataset.id,t.dataset.f,t.value); cells++;});
     markDirty(sel.m,row[0].dataset.id); refreshCalc(row[0].dataset.id);});
   save(); flash(`วางข้อมูล ${lines.length} แถว (${cells} ช่อง) แล้ว`);});
+
+/* ═══════════ นำเข้าจากไฟล์ Excel ═══════════
+   ยึดตามแบบฟอร์ม Monthly Area Manager Performance Report (บล็อกกรอกข้อมูล แถว 107 เป็นต้นไป)
+   หัวตาราง 2 ชั้น: แถวบนเป็นชื่อกลุ่ม แถวล่างเป็น 2025 / 2026 / YoY %
+   คอลัมน์ B..AB = 9 กลุ่ม กลุ่มละ 3 ช่อง (YoY เว้นไว้ให้เว็บคำนวณเอง) · AC=OT AD=OSC AE=Complaint AF=หมายเหตุ */
+const XL_MONTHS=[
+  ['มกราคม','ม.ค','jan'],['กุมภาพันธ์','ก.พ','feb'],['มีนาคม','มี.ค','mar'],['เมษายน','เม.ย','apr'],
+  ['พฤษภาคม','พ.ค','may'],['มิถุนายน','มิ.ย','jun'],['กรกฎาคม','ก.ค','jul'],['สิงหาคม','ส.ค','aug'],
+  ['กันยายน','ก.ย','sep'],['ตุลาคม','ต.ค','oct'],['พฤศจิกายน','พ.ย','nov'],['ธันวาคม','ธ.ค','dec']];
+function xlMonth(t){
+  const v=String(t==null?'':t).toLowerCase();
+  if(!v.trim()) return null;
+  for(let i=0;i<12;i++) for(const w of XL_MONTHS[i]) if(v.includes(w)) return i;
+  return null;
+}
+// ชื่อสาขาในไฟล์กับในเว็บมักเขียนไม่เหมือนกันเป๊ะ — ตัดคำนำหน้าแบรนด์ วงเล็บ ช่องว่าง แล้วค่อยเทียบ
+function xlKey(t){
+  return String(t==null?'':t)
+    .replace(/ร้านส้มตำเจ๊แดง/g,'').replace(/ส้มตำเจ๊แดง/g,'').replace(/เจ๊แดง จุ่มนัวร์/g,'')
+    .replace(/[()\[\]{}"']/g,' ')
+    .replace(/[\s\u00A0.·・,\-–—_/]/g,'')
+    .toLowerCase();
+}
+function xlNum(v){
+  if(v==null||v==='') return '';
+  if(typeof v==='number') return isFinite(v)?v:'';
+  const t=String(v).trim();
+  if(!t||/^#/.test(t)||t==='-'||t==='–') return '';       // #DIV/0! ฯลฯ จากสูตรในไฟล์
+  return parseNum(t);
+}
+const XL_MAIN=[['s25',1],['s26',2],['e25',4],['e26',5],['tdi25',7],['tdi26',8],['kdi25',10],['kdi26',11],
+  ['td25',13],['td26',14],['kd25',16],['kd26',17],['c25',19],['c26',20],['l25',22],['l26',23],
+  ['ot',28],['osc',29],['cp',30]];
+const XL_PREV=[['s26',1],['e26',2],['c26',3],['l26',4],['ot',6],['cp',7]];
+
+function xlParse(wb){
+  const found=[];
+  wb.SheetNames.forEach(sn=>{
+    const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:true,defval:null,blankrows:true});
+    const at=(r,c)=>(rows[r]&&rows[r][c]!=null)?rows[r][c]:null;
+    const txt=(r,c)=>String(at(r,c)==null?'':at(r,c));
+    // หาแถวหัวตารางย่อย: B=2025 C=2026 D มีคำว่า YoY
+    for(let i=0;i<rows.length;i++){
+      if(!/2025/.test(txt(i,1))||!/2026/.test(txt(i,2))||!/yoy/i.test(txt(i,3))) continue;
+      const rowsOut=[];
+      for(let j=i+1;j<rows.length;j++){
+        const nm=txt(j,0).trim();
+        if(/^(รวม|total)/i.test(nm)) break;
+        if(!nm){ if(!txt(j+1,0).trim()&&!txt(j+2,0).trim()) break; continue; }
+        const f={};
+        XL_MAIN.forEach(([k,c])=>{ const v=k==='note'?null:xlNum(at(j,c)); if(v!=='') f[k]=v; });
+        const note=txt(j,31).trim(); if(note) f.note=note;
+        if(Object.keys(f).length) rowsOut.push({name:nm,fields:f});
+      }
+      // เดือน: หาป้าย "เดือน (Month)" เหนือหัวตาราง แล้วอ่านช่องถัดไปในแถวเดียวกัน
+      let mo=null;
+      for(let k=Math.max(0,i-8);k<i&&mo==null;k++){
+        if(!/เดือน|month/i.test(txt(k,0))) continue;
+        if(/ก่อนหน้า|previous/i.test(txt(k,0))) continue;
+        for(let c=1;c<8&&mo==null;c++) mo=xlMonth(at(k,c));
+      }
+      if(mo==null) mo=xlMonth(sn);
+      if(rowsOut.length) found.push({sheet:sn,startRow:i+2,month:mo,rows:rowsOut,kind:'main'});
+      i=i+rowsOut.length;
+    }
+    // บล็อกเดือนก่อนหน้า: หัวตารางชั้นเดียว สาขา | Sales | EBIT | COGs | COL | COL% | OT | Complaint
+    for(let i=0;i<rows.length;i++){
+      if(!/สาขา|branch/i.test(txt(i,0))) continue;
+      if(!/^sales/i.test(txt(i,1).trim())||!/ebit/i.test(txt(i,2))) continue;
+      const rowsOut=[];
+      for(let j=i+1;j<rows.length;j++){
+        const nm=txt(j,0).trim();
+        if(/^(รวม|total)/i.test(nm)) break;
+        if(!nm){ if(!txt(j+1,0).trim()&&!txt(j+2,0).trim()) break; continue; }
+        const f={}; XL_PREV.forEach(([k,c])=>{ const v=xlNum(at(j,c)); if(v!=='') f[k]=v; });
+        if(Object.keys(f).length) rowsOut.push({name:nm,fields:f});
+      }
+      let mo=null;
+      for(let k=Math.max(0,i-6);k<i&&mo==null;k++){
+        if(!/ก่อนหน้า|previous/i.test(txt(k,0))) continue;
+        for(let c=1;c<8&&mo==null;c++) mo=xlMonth(at(k,c));
+      }
+      if(rowsOut.length) found.push({sheet:sn,startRow:i+2,month:mo,rows:rowsOut,kind:'prev'});
+    }
+  });
+  return found;
+}
+function xlMatch(block){
+  const pool=scopeBranches();
+  const byKey={}; pool.forEach(b=>{ byKey[xlKey(b.name)]=b; });
+  const hit=[], miss=[];
+  block.rows.forEach(r=>{
+    const k=xlKey(r.name);
+    let b=byKey[k];
+    if(!b&&k.length>=4) b=pool.find(x=>{const t=xlKey(x.name); return t.includes(k)||k.includes(t);});
+    b?hit.push({b,fields:r.fields,name:r.name}):miss.push(r.name);
+  });
+  return {hit,miss};
+}
+
+let impPending=null;
+function xlShow(blocks){
+  const main=blocks.filter(b=>b.kind==='main');
+  if(!main.length){
+    alert('อ่านไฟล์ไม่เจอตารางกรอกข้อมูล\n\nไฟล์ต้องเป็นแบบฟอร์ม Monthly Area Manager Performance Report ที่มีหัวตาราง 2025 / 2026 / YoY %');
+    return;
+  }
+  const blk=main[0], prev=blocks.find(b=>b.kind==='prev');
+  const m=blk.month!=null?blk.month:sel.m;
+  const {hit,miss}=xlMatch(blk);
+  const pv=prev?xlMatch(prev):null;
+  impPending={blk,prev,hit,miss,pv};
+  const opts=MONTHS.map((n,i)=>`<option value="${i}" ${i===m?'selected':''}>${n} ${YEAR}</option>`).join('');
+  document.getElementById('impBody').innerHTML=
+    `<div class="row"><b>ไฟล์</b><span>${esc(blk.sheet)} · เริ่มอ่านแถวที่ ${blk.startRow}</span></div>`+
+    `<div class="row"><b>ลงเดือน</b><select id="impMonth">${opts}</select>`+
+      (blk.month==null?' <span class="miss">ไฟล์ไม่ได้ระบุเดือน — เลือกเอง</span>':'')+`</div>`+
+    `<div class="row"><b>สาขาที่ตรงกัน</b><span class="ok">${hit.length} สาขา</span></div>`+
+    (miss.length?`<div class="row"><b>เทียบชื่อไม่ได้</b><span class="miss">${miss.length} สาขา — จะข้ามไป`+
+      `<ul>${miss.slice(0,12).map(n=>`<li>${esc(n)}</li>`).join('')}${miss.length>12?'<li>…</li>':''}</ul></span></div>`:'')+
+    (pv&&pv.hit.length?`<div class="row"><b>เดือนก่อนหน้า</b><span>${pv.hit.length} สาขา — เติมเฉพาะช่องที่ยังว่าง</span></div>`:'')+
+    `<div class="row" style="border:0"><b></b><span class="hint">ช่องที่ว่างในไฟล์จะไม่ไปลบข้อมูลเดิมในเว็บ</span></div>`;
+  document.getElementById('impOk').disabled=!hit.length;
+  document.getElementById('impModal').hidden=false;
+}
+function xlApply(){
+  if(!impPending) return;
+  const m=+document.getElementById('impMonth').value;
+  const {hit,pv}=impPending;
+  let cells=0;
+  hit.forEach(({b,fields})=>{
+    Object.keys(fields).forEach(f=>{ setField(b.id,f,fields[f],m); cells++; });
+    markDirty(m,b.id);
+  });
+  let pcells=0;
+  if(pv&&pv.hit.length&&m>0){
+    const pm=m-1;
+    pv.hit.forEach(({b,fields})=>{
+      let touched=false;
+      Object.keys(fields).forEach(f=>{
+        if(val(pm,b.id,f)!=null) return;                 // มีข้อมูลอยู่แล้ว ไม่ทับ
+        setField(b.id,f,fields[f],pm); pcells++; touched=true;
+      });
+      if(touched) markDirty(pm,b.id);
+    });
+  }
+  save();
+  sel.m=m; sel.tab='input';
+  document.getElementById('impModal').hidden=true; impPending=null;
+  render();
+  flash(`นำเข้าแล้ว ${hit.length} สาขา (${cells} ช่อง)`+(pcells?` · เดือนก่อนหน้าอีก ${pcells} ช่อง`:''));
+}
+function xlRead(file){
+  if(!file) return;
+  if(!window.XLSX){ alert('ตัวอ่านไฟล์ Excel ยังโหลดไม่เสร็จ ลองใหม่อีกครั้ง'); return; }
+  flash('กำลังอ่านไฟล์…');
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ xlShow(xlParse(XLSX.read(rd.result,{type:'array'}))); }
+    catch(e){ console.error(e); alert('อ่านไฟล์ไม่สำเร็จ: '+((e&&e.message)||'ไฟล์อาจเสียหรือไม่ใช่ไฟล์ Excel')); } };
+  rd.onerror=()=>alert('อ่านไฟล์ไม่สำเร็จ');
+  rd.readAsArrayBuffer(file);
+}
+document.getElementById('btnPickFile').onclick=()=>document.getElementById('fileXlsx').click();
+document.getElementById('fileXlsx').onchange=e=>{ xlRead(e.target.files[0]); e.target.value=''; };
+document.getElementById('impCancel').onclick=()=>{ document.getElementById('impModal').hidden=true; impPending=null; };
+document.getElementById('impOk').onclick=xlApply;
+document.getElementById('impModal').onclick=e=>{ if(e.target.id==='impModal'){ document.getElementById('impModal').hidden=true; impPending=null; } };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!document.getElementById('impModal').hidden){ document.getElementById('impModal').hidden=true; impPending=null; } });
+(function(){
+  const d=document.getElementById('drop');
+  ['dragenter','dragover'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.add('over');}));
+  ['dragleave','drop'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();if(ev==='dragleave'&&d.contains(e.relatedTarget))return;d.classList.remove('over');}));
+  d.addEventListener('drop',e=>{ const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]; if(f)xlRead(f); });
+  // กันเบราว์เซอร์เปิดไฟล์ทับหน้าเว็บถ้าวางพลาดนอกกรอบ
+  ['dragover','drop'].forEach(ev=>window.addEventListener(ev,e=>{ if(!d.contains(e.target)) e.preventDefault(); }));
+})();
 
 document.getElementById('btnCopyPrev').onclick=()=>{ if(sel.m===0)return flash('มกราคมไม่มีเดือนก่อนในปีนี้'); const bs=scopeBranches(); let n=0; bs.forEach(b=>{const p=rec(sel.m-1,b.id); GROUPS.forEach(([k])=>{ if(p[k+'26']!=null){rec(sel.m,b.id,true)[k+'25']=p[k+'26'];n++;} }); markDirty(sel.m,b.id);}); save(); renderInput(); flash(n?`คัดลอกมา ${n} ช่อง (ใช้ชั่วคราวเท่านั้น — ตัวเลข 2025 จริงควรมาจากปีก่อน)`:'เดือนก่อนยังไม่มีข้อมูล'); };
 document.getElementById('btnClearMonth').onclick=()=>{ if(!confirm(`ล้างข้อมูล ${MONTHS[sel.m]} ของ ${scopeLabel()} ทั้งหมด?`))return; scopeBranches().forEach(b=>{ if(store.data[sel.m])delete store.data[sel.m][b.id]; markDirty(sel.m,b.id); }); save(); renderInput(); flash('ล้างแล้ว'); };
