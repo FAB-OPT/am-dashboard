@@ -303,6 +303,34 @@ th.grp{letter-spacing:.02em;font-size:12px;padding:7px 11px}
 .toolbar{gap:10px}
 .msg{color:var(--good);font-weight:600;font-size:12.5px}
 
+/* ---------- คำอธิบายให้อ่านง่าย ---------- */
+.kpi .l{display:flex;flex-direction:column;gap:1px}
+.kpi .l .u{font-size:10.5px;font-weight:500;color:var(--ink-3);letter-spacing:.03em}
+.kpi .d .cmp{color:var(--ink-3);font-size:11.5px}
+.readme-line{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;
+  margin:10px 0 0;font-size:12px;color:var(--ink-2)}
+.readme-line b{color:var(--ink);font-weight:600;letter-spacing:.04em}
+.readme-line .sw{display:inline-block;width:10px;height:10px;border-radius:3px;
+  vertical-align:-1px;margin-right:5px}
+.readme-line .sw.up{background:var(--good)}
+.readme-line .sw.dn{background:var(--bad)}
+.readme-line .mute{color:var(--ink-3)}
+.card h3 .h3sub{font-weight:400;color:var(--ink-3);font-size:12px;margin-left:6px}
+th.grp span{display:block;font-size:10px;font-weight:500;opacity:.82;letter-spacing:.02em;margin-top:1px}
+.help-btn{border:1px solid var(--line);background:var(--paper);border-radius:999px;
+  padding:5px 12px;font-size:12.5px;font-weight:600;color:var(--ink-2);cursor:pointer;
+  box-shadow:var(--shadow);transition:.15s;white-space:nowrap}
+.help-btn:hover{color:var(--red);border-color:var(--red);background:var(--red-lt)}
+.gloss{width:100%;border-collapse:collapse}
+.gloss th{text-align:left;vertical-align:top;padding:9px 14px 9px 0;background:transparent;
+  font-size:13px;font-weight:600;color:var(--ink);white-space:normal;width:38%;
+  border-bottom:1px solid var(--line-2);position:static}
+.gloss th span{display:block;font-size:10.5px;font-weight:500;color:var(--ink-3);letter-spacing:.03em}
+.gloss td{text-align:left;padding:9px 0;font-size:12.5px;color:var(--ink-2);line-height:1.65;
+  white-space:normal;border-bottom:1px solid var(--line-2)}
+.gloss tr:nth-child(even) th{background:var(--paper-2)}
+.gloss tr:hover td,.gloss tr:hover th{background:transparent}
+
 /* ---------- นำเข้าไฟล์ ---------- */
 .drop{border:1.5px dashed #D9D1C8;border-radius:var(--r);background:var(--paper);
   padding:16px 18px;margin-bottom:14px;transition:border-color .15s,background .15s}
@@ -381,6 +409,10 @@ html{-webkit-text-size-adjust:100%}
   .zone-b input{flex:1 1 100%;font-size:16px;border-color:var(--line);background:#fff}
   .codes input{font-size:16px}
   .toolbar .btn{flex:1 1 auto;padding:10px 12px}
+  .help-btn{padding:5px 10px;font-size:12px}
+  .readme-line{gap:4px 12px;font-size:11.5px}
+  .gloss th{width:auto;display:block;padding-bottom:2px;border:0}
+  .gloss td{display:block;padding-top:0;padding-bottom:10px}
   .drop-in{gap:12px}
   .drop-in .btn{width:100%}
   .modal-box h3{padding:16px 16px 10px}
@@ -418,9 +450,10 @@ html{-webkit-text-size-adjust:100%}
 </div>
 <header class="top">
   <div class="top-in">
-    <div class="brand"><h1>Area Manager Performance</h1><span>ส้มตำเจ๊แดง · เทียบ YoY และ MoM</span></div>
+    <div class="brand"><h1>Area Manager Performance</h1><span>ส้มตำเจ๊แดง · เทียบกับปีก่อนและเดือนก่อน</span></div>
     <span class="ctl who" id="who"></span>
     <span class="sync" id="syncBadge" title="ที่จัดเก็บข้อมูล"><i></i><span id="syncText">กำลังเชื่อมต่อ…</span></span>
+    <button type="button" class="help-btn" id="btnHelp" title="วิธีอ่านหน้านี้">? วิธีอ่าน</button>
     <button class="logout" id="btnLogout" title="ออกจากระบบ">ออกจากระบบ</button>
   </div>
   <div class="topbar">
@@ -450,18 +483,24 @@ html{-webkit-text-size-adjust:100%}
     <div id="dashBody">
       <div class="sec"><h2 id="dashTitle"></h2><span class="note" id="dashSub"></span></div>
       <div class="kpis" id="kpis"></div>
+      <p class="readme-line">
+        <span><b>▲ ▼</b> เพิ่มขึ้น / ลดลง จากช่วงที่นำมาเทียบ</span>
+        <span><i class="sw up"></i> เขียว = ดีขึ้น</span>
+        <span><i class="sw dn"></i> แดง = แย่ลง</span>
+        <span class="mute">ต้นทุน ค่าแรง ค่าล่วงเวลา และข้อร้องเรียน ยิ่งเพิ่มยิ่งแดง</span>
+      </p>
 
-      <div class="sec"><h2>ยอดขายรายสาขา</h2><span class="note">2025 เทียบ 2026 เดือนเดียวกัน</span></div>
+      <div class="sec"><h2>ยอดขายรายสาขา</h2><span class="note">แท่งเทา = ปีก่อน · แท่งแดง = ปีนี้ เดือนเดียวกัน</span></div>
       <div class="card"><div class="chart-wrap tall"><canvas id="chSales"></canvas></div></div>
 
       <div class="two" style="margin-top:18px">
-        <div class="card"><h3>แนวโน้มยอดขายรายเดือน (฿)</h3><div class="chart-wrap"><canvas id="chTrend"></canvas></div></div>
-        <div class="card"><h3>EBIT รายสาขา 2025 vs 2026 (฿)</h3><div class="chart-wrap"><canvas id="chEbit"></canvas></div></div>
+        <div class="card"><h3>แนวโน้มยอดขายรายเดือน <span class="h3sub">บาท</span></h3><div class="chart-wrap"><canvas id="chTrend"></canvas></div></div>
+        <div class="card"><h3>กำไรจากการดำเนินงาน (EBIT) รายสาขา — 2025 เทียบ 2026</h3><div class="chart-wrap"><canvas id="chEbit"></canvas></div></div>
       </div>
 
       <div class="two" style="margin-top:18px">
-        <div class="card"><h3>COL % to Sales รายสาขา (เส้นแดง = เฉลี่ยพื้นที่)</h3><div class="chart-wrap"><canvas id="chCol"></canvas></div></div>
-        <div class="card"><h3>ข้อร้องเรียนและ OT รายสาขา</h3><div class="chart-wrap"><canvas id="chCp"></canvas></div></div>
+        <div class="card"><h3>ค่าแรงคิดเป็น % ของยอดขาย รายสาขา <span class="h3sub">เส้นประแดง = ค่าเฉลี่ยของพื้นที่</span></h3><div class="chart-wrap"><canvas id="chCol"></canvas></div></div>
+        <div class="card"><h3>ข้อร้องเรียนและค่าล่วงเวลา (OT) รายสาขา</h3><div class="chart-wrap"><canvas id="chCp"></canvas></div></div>
       </div>
 
       <div class="sec"><h2>ผลการดำเนินงานรายสาขา</h2><span class="note">YoY = เทียบเดือนเดียวกันปีก่อน · MoM = เทียบเดือนก่อนหน้า</span></div>
@@ -482,16 +521,16 @@ html{-webkit-text-size-adjust:100%}
       <div class="right"><div class="month-nav"><button id="prevB">‹</button><select id="selBranch" style="min-width:320px"></select><button id="nextB">›</button></div></div></div>
     <div class="kpis" id="bKpis" style="margin-bottom:18px"></div>
     <div class="two">
-      <div class="card"><h3>ยอดขายรายเดือน 2025 vs 2026 (฿)</h3><div class="chart-wrap"><canvas id="chB1"></canvas></div></div>
-      <div class="card"><h3>EBIT รายเดือน (฿)</h3><div class="chart-wrap"><canvas id="chB2"></canvas></div></div>
+      <div class="card"><h3>ยอดขายรายเดือน — 2025 เทียบ 2026 <span class="h3sub">บาท</span></h3><div class="chart-wrap"><canvas id="chB1"></canvas></div></div>
+      <div class="card"><h3>กำไรจากการดำเนินงาน (EBIT) รายเดือน <span class="h3sub">บาท</span></h3><div class="chart-wrap"><canvas id="chB2"></canvas></div></div>
     </div>
     <div class="two" style="margin-top:18px">
-      <div class="card"><h3>COGs และ COL % to Sales รายเดือน 2026</h3><div class="chart-wrap"><canvas id="chB3"></canvas></div></div>
-      <div class="card"><h3>จำนวนบิล (Trans) และ Ticket เฉลี่ย 2026</h3><div class="chart-wrap"><canvas id="chB4"></canvas></div></div>
+      <div class="card"><h3>ต้นทุนวัตถุดิบและค่าแรง คิดเป็น % ของยอดขาย <span class="h3sub">รายเดือน 2026</span></h3><div class="chart-wrap"><canvas id="chB3"></canvas></div></div>
+      <div class="card"><h3>จำนวนบิลและยอดขายเฉลี่ยต่อบิล <span class="h3sub">รายเดือน 2026</span></h3><div class="chart-wrap"><canvas id="chB4"></canvas></div></div>
     </div>
     <div class="two" style="margin-top:18px">
       <div class="card"><h3>ข้อร้องเรียนรายเดือน</h3><div class="chart-wrap" style="height:220px"><canvas id="chB5"></canvas></div></div>
-      <div class="card"><h3>OT รายเดือน (฿)</h3><div class="chart-wrap" style="height:220px"><canvas id="chB6"></canvas></div></div>
+      <div class="card"><h3>ค่าล่วงเวลา (OT) รายเดือน <span class="h3sub">บาท</span></h3><div class="chart-wrap" style="height:220px"><canvas id="chB6"></canvas></div></div>
     </div>
     <div class="sec"><h2>ตารางรายเดือน</h2><span class="note" id="bSub"></span></div>
     <div class="tbl-wrap" id="bTable"></div>
@@ -509,7 +548,7 @@ html{-webkit-text-size-adjust:100%}
   <!-- ================= YEAR ================= -->
   <section class="view" id="view-year">
     <div class="sec"><h2 id="yearTitle"></h2><span class="note">รวมทุกสาขาในขอบเขตที่เลือก · เดือนที่ยังไม่กรอกจะเป็นขีด</span></div>
-    <div class="card" style="margin-bottom:18px"><h3>ยอดขายและ EBIT รายเดือน 2026</h3><div class="chart-wrap"><canvas id="chYear"></canvas></div></div>
+    <div class="card" style="margin-bottom:18px"><h3>ยอดขายและกำไร (EBIT) รายเดือน 2026</h3><div class="chart-wrap"><canvas id="chYear"></canvas></div></div>
     <div class="tbl-wrap" id="yearTable"></div>
     <div class="card" style="margin-top:18px"><h3>ยอดขาย 2026 รายสาขา แยกรายเดือน (฿) — คลิกชื่อในคำอธิบายเพื่อซ่อน/แสดง</h3><div class="chart-wrap tall"><canvas id="chYearBr"></canvas></div></div>
     <div class="sec"><h2>รายสาขาทั้งปี</h2><span class="note">รวมเฉพาะเดือนที่กรอกแล้ว</span></div>
@@ -569,6 +608,31 @@ html{-webkit-text-size-adjust:100%}
   </section>
 </main>
 
+<div class="modal" id="helpModal" hidden>
+  <div class="modal-box">
+    <h3>วิธีอ่านหน้านี้</h3>
+    <div class="modal-body">
+      <p class="hint" style="margin:0 0 12px">ตัวเลขทุกช่องเทียบกับ 2 ช่วงเสมอ — <b>เดือนเดียวกันของปีก่อน</b> และ <b>เดือนก่อนหน้า</b> ลูกศรบอกว่าเพิ่มหรือลด สีบอกว่าดีขึ้นหรือแย่ลง</p>
+      <table class="gloss"><tbody>
+        <tr><th>ยอดขาย <span>Sales</span></th><td>เงินที่ขายได้ทั้งหมดก่อนหักอะไร</td></tr>
+        <tr><th>กำไรจากการดำเนินงาน <span>EBIT</span></th><td>กำไรของสาขาหลังหักต้นทุนและค่าใช้จ่าย แต่ยังไม่หักดอกเบี้ยและภาษี — ยิ่งมากยิ่งดี</td></tr>
+        <tr><th>ต้นทุนวัตถุดิบ <span>COGs</span></th><td>ค่าวัตถุดิบที่ใช้ทำอาหาร — <b>ยิ่งเพิ่มยิ่งแย่</b></td></tr>
+        <tr><th>ค่าแรงพนักงาน <span>COL</span></th><td>ค่าแรงทั้งหมดของสาขา — <b>ยิ่งเพิ่มยิ่งแย่</b></td></tr>
+        <tr><th>ค่าแรง % ของยอดขาย <span>COL % to Sales</span></th><td>ค่าแรงคิดเป็นกี่ % ของยอดขาย ใช้เทียบสาขาที่ขนาดต่างกันได้ — ยิ่งต่ำยิ่งดี</td></tr>
+        <tr><th>ค่าล่วงเวลา <span>OT</span></th><td>ค่าทำงานนอกเวลา ถ้าสูงมักแปลว่าคนไม่พอหรือจัดกะไม่ลงตัว</td></tr>
+        <tr><th>จำนวนบิล <span>Trans</span></th><td>จำนวนครั้งที่มีการขาย = จำนวนลูกค้าโดยประมาณ</td></tr>
+        <tr><th>ยอดต่อบิล <span>Ticket</span></th><td>ยอดขายเฉลี่ยต่อ 1 บิล ยิ่งสูงแปลว่าลูกค้าสั่งต่อครั้งมากขึ้น</td></tr>
+        <tr><th>ข้อร้องเรียน <span>Complaint</span></th><td>จำนวนครั้งที่ลูกค้าร้องเรียน — <b>ยิ่งเพิ่มยิ่งแย่</b></td></tr>
+        <tr><th>คะแนนบริการ <span>OSC %</span></th><td>คะแนนตรวจมาตรฐานการบริการ — ยิ่งสูงยิ่งดี</td></tr>
+        <tr><th>เทียบปีก่อน <span>YoY</span></th><td>เทียบกับ<b>เดือนเดียวกัน</b>ของปีที่แล้ว ใช้ดูการเติบโตจริงโดยไม่ติดเรื่องฤดูกาล</td></tr>
+        <tr><th>เทียบเดือนก่อน <span>MoM</span></th><td>เทียบกับเดือนที่ผ่านมา ใช้ดูว่าเดือนนี้ดีขึ้นหรือแย่ลงจากเดือนที่แล้ว</td></tr>
+        <tr><th>จุด <span>pt</span></th><td>หน่วยของผลต่างระหว่าง % สองตัว เช่น จาก 18% เป็น 20% คือเพิ่มขึ้น 2 จุด</td></tr>
+      </tbody></table>
+    </div>
+    <div class="modal-foot"><button class="btn primary" type="button" id="helpClose">เข้าใจแล้ว</button></div>
+  </div>
+</div>
+
 <div class="modal" id="impModal" hidden>
   <div class="modal-box">
     <h3 id="impTitle">ตรวจก่อนนำเข้า</h3>
@@ -599,7 +663,7 @@ const DEFAULT_CFG={vpCode:'VP2026',adminCode:'ADMIN2026',zones:[
 let cfg=null; const AMS=[]; const BRANCHES=[];
 function rebuild(){ AMS.length=0; BRANCHES.length=0; cfg.zones.forEach(z=>{AMS.push(z); z.branches.forEach(b=>BRANCHES.push({id:b.id,name:b.name,am:z.id}));}); }
 // input fields in Excel order (Sales, EBIT, Trans DI, Ticket DI, Trans Del, Ticket Del, COGs, COL) x (2025,2026) then OT, OSC, Complaint, note
-const GROUPS=[['s','Sales (฿)'],['e','EBIT (฿)'],['tdi','Trans Dine In'],['kdi','Ticket Dine In (฿)'],['td','Trans Del'],['kd','Ticket Del (฿)'],['c','COGs (฿)'],['l','COL (฿)']];
+const GROUPS=[['s','ยอดขาย<span>Sales · ฿</span>'],['e','กำไร<span>EBIT · ฿</span>'],['tdi','บิลหน้าร้าน<span>Trans Dine In</span>'],['kdi','ยอดต่อบิลหน้าร้าน<span>Ticket Dine In · ฿</span>'],['td','บิลเดลิเวอรี<span>Trans Del</span>'],['kd','ยอดต่อบิลเดลิเวอรี<span>Ticket Del · ฿</span>'],['c','ต้นทุนวัตถุดิบ<span>COGs · ฿</span>'],['l','ค่าแรง<span>COL · ฿</span>']];
 const FIELDS=[]; GROUPS.forEach(([k])=>{FIELDS.push(k+'25',k+'26')}); FIELDS.push('ot','osc','cp');
 
 /* ---------------- state / storage ---------------- */
@@ -765,7 +829,8 @@ const fmt=n=>n==null?'–':Math.round(n).toLocaleString('th-TH');
 const fmtPct=(p,sign=true)=>p==null?'–':((sign&&p>0?'+':'')+(p*100).toFixed(1)+'%');
 const pct=(a,b)=>(a==null||b==null||a===0)?null:(b-a)/Math.abs(a);
 const cls=(p,inv=false)=>p==null?'mute':((inv?-p:p)>0?'pos':(inv?-p:p)<0?'neg':'mute');
-const chip=(p,inv=false,lab='')=>p==null?`<span class="chip flat">–</span>`:`<span class="chip ${(inv?-p:p)>0?'up':(inv?-p:p)<0?'dn':'flat'}">${fmtPct(p)} ${lab}</span>`;
+const arrow=p=>p>0?'▲':p<0?'▼':'•';
+const chip=(p,inv=false,lab='')=>p==null?`<span class="chip flat">–</span>`:`<span class="chip ${(inv?-p:p)>0?'up':(inv?-p:p)<0?'dn':'flat'}">${arrow(p)}${(Math.abs(p)*100).toFixed(1)}% ${lab}</span>`;
 const sum=(arr)=>arr.some(x=>x!=null)?arr.reduce((a,b)=>a+(b||0),0):null;
 function scopeBranches(){ if(role&&role.type==='am') sel.am=role.zone; return sel.am==='all'?BRANCHES:BRANCHES.filter(b=>b.am===sel.am); }
 function zoneLabel(z){ return (z.brand?z.brand+' · ':'')+z.name+(z.full?' — '+z.full:''); }
@@ -824,16 +889,18 @@ function renderDash(){
   document.getElementById('dashSub').textContent=`${withData.length} / ${bs.length} สาขากรอกข้อมูลแล้ว`;
   const A=agg(m,ids), P=m>0?agg(m-1,ids):null;
   const colA25=colPct(A,'25'), colA26=colPct(A,'26'), colP=P?colPct(P,'26'):null;
-  const kpi=(l,v,yoy,mom,inv)=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="d">${yoy!==undefined?('YoY '+chip(yoy,inv)):''}${mom!==undefined?('MoM '+chip(mom,inv)):''}</div></div>`;
+  // ชื่อไทยนำ ศัพท์อังกฤษ+หน่วยเป็นบรรทัดรอง · ป้ายเทียบใช้คำไทยแทน YoY/MoM
+  const lab=(th,en)=>`${th}<span class="u">${en}</span>`;
+  const kpi=(l,v,yoy,mom,inv)=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="d">${yoy!==undefined?('<span class="cmp">ปีก่อน</span>'+chip(yoy,inv)):''}${mom!==undefined?('<span class="cmp">เดือนก่อน</span>'+chip(mom,inv)):''}</div></div>`;
   document.getElementById('kpis').innerHTML=
-    kpi('ยอดขายรวม (฿)',fmt(A.s26),pct(A.s25,A.s26),P?pct(P.s26,A.s26):null)+
-    kpi('EBIT รวม (฿)',fmt(A.e26),pct(A.e25,A.e26),P?pct(P.e26,A.e26):null)+
-    kpi('COGs รวม (฿)',fmt(A.c26),pct(A.c25,A.c26),P?pct(P.c26,A.c26):null,true)+
-    kpi('COL รวม (฿)',fmt(A.l26),pct(A.l25,A.l26),P?pct(P.l26,A.l26):null,true)+
-    `<div class="kpi"><div class="l">COL % to Sales</div><div class="v">${colA26==null?'–':(colA26*100).toFixed(1)+'%'}</div><div class="d">ปีก่อน ${colA25==null?'–':(colA25*100).toFixed(1)+'%'} ${colA25!=null&&colA26!=null?`<span class="chip ${colA26-colA25>0?'dn':'up'}">${(colA26-colA25>0?'+':'')+((colA26-colA25)*100).toFixed(1)} pt</span>`:''}</div></div>`+
-    `<div class="kpi"><div class="l">ข้อร้องเรียน</div><div class="v">${fmt(A.cp)}</div><div class="d">เดือนก่อน ${P?fmt(P.cp):'–'} ${P&&P.cp!=null&&A.cp!=null?`<span class="chip ${A.cp-P.cp>0?'dn':A.cp-P.cp<0?'up':'flat'}">${A.cp-P.cp>0?'+':''}${A.cp-P.cp}</span>`:''}</div></div>`+
-    kpi('OT รวม (฿)',fmt(A.ot),undefined,P?pct(P.ot,A.ot):null,true)+
-    `<div class="kpi"><div class="l">สาขาที่ยอดขายลด YoY</div><div class="v">${withData.filter(x=>x.r.yoy.s<0).length} <span style="font-size:15px;color:var(--ink-3);font-weight:400">/ ${withData.length} สาขา</span></div><div class="d">มีประเด็น ≥2 ข้อ: ${withData.filter(x=>x.r.score>=2).length} สาขา</div></div>`;
+    kpi(lab('ยอดขายรวม','Sales · บาท'),fmt(A.s26),pct(A.s25,A.s26),P?pct(P.s26,A.s26):null)+
+    kpi(lab('กำไรจากการดำเนินงาน','EBIT · บาท'),fmt(A.e26),pct(A.e25,A.e26),P?pct(P.e26,A.e26):null)+
+    kpi(lab('ต้นทุนวัตถุดิบ','COGs · บาท'),fmt(A.c26),pct(A.c25,A.c26),P?pct(P.c26,A.c26):null,true)+
+    kpi(lab('ค่าแรงพนักงาน','COL · บาท'),fmt(A.l26),pct(A.l25,A.l26),P?pct(P.l26,A.l26):null,true)+
+    `<div class="kpi"><div class="l">ค่าแรงคิดเป็น % ของยอดขาย<span class="u">COL % to Sales</span></div><div class="v">${colA26==null?'–':(colA26*100).toFixed(1)+'%'}</div><div class="d">ปีก่อน ${colA25==null?'–':(colA25*100).toFixed(1)+'%'} ${colA25!=null&&colA26!=null?`<span class="chip ${colA26-colA25>0?'dn':'up'}">${(colA26-colA25>0?'+':'')+((colA26-colA25)*100).toFixed(1)} pt</span>`:''}</div></div>`+
+    `<div class="kpi"><div class="l">ข้อร้องเรียน<span class="u">Complaint · ครั้ง</span></div><div class="v">${fmt(A.cp)}</div><div class="d">เดือนก่อน ${P?fmt(P.cp):'–'} ${P&&P.cp!=null&&A.cp!=null?`<span class="chip ${A.cp-P.cp>0?'dn':A.cp-P.cp<0?'up':'flat'}">${A.cp-P.cp>0?'+':''}${A.cp-P.cp}</span>`:''}</div></div>`+
+    kpi(lab('ค่าล่วงเวลา','OT · บาท'),fmt(A.ot),undefined,P?pct(P.ot,A.ot):null,true)+
+    `<div class="kpi"><div class="l">สาขาที่ยอดขายลดลง<span class="u">เทียบเดือนเดียวกันปีก่อน</span></div><div class="v">${withData.filter(x=>x.r.yoy.s<0).length} <span style="font-size:15px;color:var(--ink-3);font-weight:400">/ ${withData.length} สาขา</span></div><div class="d">มีประเด็น ≥2 ข้อ: ${withData.filter(x=>x.r.score>=2).length} สาขา</div></div>`;
 
   // charts
   const labels=withData.map(x=>shortName(x.b.name));
@@ -861,8 +928,8 @@ function renderDash(){
     <td>${r.col26==null?'–':(r.col26*100).toFixed(1)+'%'}</td><td class="${cls(r.colD,true)}">${r.colD==null?'–':(r.colD>0?'+':'')+(r.colD*100).toFixed(1)+' pt'}</td>
     <td class="${r.cp>=3?'neg':''}">${fmt(r.cp)}</td><td class="${cls(r.mom.cp,true)}">${r.mom.cp==null?'–':(r.mom.cp>0?'+':'')+r.mom.cp}</td>
     <td class="status ${r.score?'warn':'ok'}">${r.score?'⚠ '+r.issues.join(', '):'✔ ปกติ'}${r.note?`<div class="mute" style="font-size:12px">${r.note}</div>`:''}</td></tr>`;}).join('');
-  document.getElementById('perfTable').innerHTML=`<table><thead><tr><th></th><th class="grp" colspan="2">ยอดขาย</th><th class="grp alt" colspan="2">EBIT</th><th class="grp">COGs</th><th class="grp alt" colspan="2">COL % to Sales</th><th class="grp" colspan="2">Complaint</th><th></th></tr>
-    <tr><th>สาขา</th><th>YoY</th><th>MoM</th><th>YoY</th><th>MoM</th><th>YoY</th><th>เดือนนี้</th><th>Δ YoY</th><th>เดือนนี้</th><th>Δ MoM</th><th style="text-align:left">สถานะ / ประเด็นที่พบ</th></tr></thead><tbody>${rows}</tbody></table>`;
+  document.getElementById('perfTable').innerHTML=`<table><thead><tr><th></th><th class="grp" colspan="2">ยอดขาย</th><th class="grp alt" colspan="2">กำไร (EBIT)</th><th class="grp">ต้นทุนวัตถุดิบ</th><th class="grp alt" colspan="2">ค่าแรง % ของยอดขาย</th><th class="grp" colspan="2">ข้อร้องเรียน</th><th></th></tr>
+    <tr><th>สาขา</th><th title="เทียบเดือนเดียวกันปีก่อน">เทียบปีก่อน</th><th title="เทียบเดือนก่อนหน้า">เทียบเดือนก่อน</th><th title="เทียบเดือนเดียวกันปีก่อน">เทียบปีก่อน</th><th title="เทียบเดือนก่อนหน้า">เทียบเดือนก่อน</th><th title="เทียบเดือนเดียวกันปีก่อน">เทียบปีก่อน</th><th>เดือนนี้</th><th title="ต่างจากปีก่อนกี่จุด">ต่างจากปีก่อน</th><th>เดือนนี้</th><th title="ต่างจากเดือนก่อนกี่ครั้ง">ต่างจากเดือนก่อน</th><th style="text-align:left">สถานะ / ประเด็นที่พบ</th></tr></thead><tbody>${rows}</tbody></table>`;
 
   // top / worst
   const best=[...withData].filter(x=>x.r.yoy.s!=null).sort((a,b)=>b.r.yoy.s-a.r.yoy.s).slice(0,5);
@@ -965,7 +1032,7 @@ function renderInput(){
   const m=sel.m, bs=scopeBranches();
   document.getElementById('inputTitle').textContent=`กรอกข้อมูล ${MONTHS[m]} ${YEAR} — ${scopeLabel()}`;
   document.getElementById('storageNote').textContent=storageText();
-  const head1=`<tr><th rowspan="2" style="text-align:left">สาขา</th>${GROUPS.map(([k,t],i)=>`<th class="grp ${i%2?'alt':''}" colspan="3">${t}</th>`).join('')}<th class="grp" colspan="2">COL % to Sales</th><th class="grp alt" rowspan="2">OT (฿)</th><th class="grp" rowspan="2">OSC %</th><th class="grp alt" rowspan="2">Complaint</th><th class="grp" rowspan="2">OSS Failure / Complaint Explanation</th></tr>`;
+  const head1=`<tr><th rowspan="2" style="text-align:left">สาขา</th>${GROUPS.map(([k,t],i)=>`<th class="grp ${i%2?'alt':''}" colspan="3">${t}</th>`).join('')}<th class="grp" colspan="2">ค่าแรง % ของยอดขาย<span>COL % to Sales</span></th><th class="grp alt" rowspan="2">ค่าล่วงเวลา<span>OT · ฿</span></th><th class="grp" rowspan="2">คะแนนบริการ<span>OSC %</span></th><th class="grp alt" rowspan="2">ข้อร้องเรียน<span>Complaint</span></th><th class="grp" rowspan="2">OSS Failure / Complaint Explanation</th></tr>`;
   const head2=`<tr>${GROUPS.map(()=>`<th>${PREV}</th><th>${YEAR}</th><th>YoY</th>`).join('')}<th>${PREV}</th><th>${YEAR}</th></tr>`;
   const rows=bs.map((b,ri)=>{const r=rec(m,b.id); const inp=(f,ci)=>`<td><input inputmode="decimal" data-r="${ri}" data-c="${ci}" data-id="${b.id}" data-f="${f}" value="${r[f]??''}"></td>`;
     let ci=0; let h=`<tr><td title="${b.name}">${b.name}</td>`;
@@ -1164,6 +1231,14 @@ function xlRead(file){
 }
 document.getElementById('btnPickFile').onclick=()=>document.getElementById('fileXlsx').click();
 document.getElementById('fileXlsx').onchange=e=>{ xlRead(e.target.files[0]); e.target.value=''; };
+(function(){
+  const hm=document.getElementById('helpModal');
+  const close=()=>{hm.hidden=true;};
+  document.getElementById('btnHelp').onclick=()=>{hm.hidden=false;};
+  document.getElementById('helpClose').onclick=close;
+  hm.onclick=e=>{ if(e.target===hm) close(); };
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
+})();
 document.getElementById('impCancel').onclick=()=>{ document.getElementById('impModal').hidden=true; impPending=null; };
 document.getElementById('impOk').onclick=xlApply;
 document.getElementById('impModal').onclick=e=>{ if(e.target.id==='impModal'){ document.getElementById('impModal').hidden=true; impPending=null; } };
