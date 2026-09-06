@@ -303,6 +303,29 @@ th.grp{letter-spacing:.02em;font-size:12px;padding:7px 11px}
 .toolbar{gap:10px}
 .msg{color:var(--good);font-weight:600;font-size:12.5px}
 
+/* ---------- แถบเดือน ---------- */
+.months{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding:3px;max-width:min(58vw,640px)}
+.months::-webkit-scrollbar{display:none}
+.months button{border:0;background:transparent;cursor:pointer;white-space:nowrap;
+  padding:6px 11px 5px;border-radius:7px;font-size:13px;font-weight:500;color:var(--ink-2);
+  display:inline-flex;flex-direction:column;align-items:center;gap:4px;line-height:1;transition:.12s}
+.months button:hover{background:var(--paper-2);color:var(--ink)}
+.months button i{width:5px;height:5px;border-radius:50%;background:transparent}
+.months button.has i{background:var(--good)}
+.months button[aria-pressed=true]{background:var(--red);color:#fff;font-weight:600}
+.months button[aria-pressed=true] i{background:rgba(255,255,255,.85)}
+.months button[aria-pressed=true]:not(.has) i{background:rgba(255,255,255,.35)}
+
+/* ---------- ค้นหา / เรียงลำดับ ---------- */
+.search input{padding:7px 12px;border:1px solid var(--line);border-radius:999px;
+  background:var(--paper);box-shadow:var(--shadow);font-size:13px;min-width:190px;transition:.15s}
+.search input:hover{border-color:var(--ink-3)}
+.search input:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px var(--red-lt)}
+th.sortable{cursor:pointer;user-select:none;transition:background .12s}
+th.sortable:hover{background:#F2EDE7;color:var(--ink)}
+th.sortable .ar{display:inline-block;width:11px;color:var(--red);font-size:10px}
+th.sortable.on{color:var(--red)}
+
 /* ---------- คำอธิบายให้อ่านง่าย ---------- */
 .kpi .l{display:flex;flex-direction:column;gap:1px}
 .kpi .l .u{font-size:10.5px;font-weight:500;color:var(--ink-3);letter-spacing:.03em}
@@ -379,8 +402,10 @@ html{-webkit-text-size-adjust:100%}
   .ctl{flex:1 1 100%;gap:8px}
   .ctl.who{flex:0 0 auto}
   .ctl select{flex:1;min-width:0;width:100%;font-size:16px;padding:9px 10px}
-  .month-nav{flex:1}
-  .month-nav select{flex:1;min-width:0}
+  .month-nav{flex:1;min-width:0}
+  .months{max-width:none;flex:1}
+  .search input{min-width:0;width:100%}
+  .sec .right .search{flex:1 1 100%}
   .month-nav button{padding:9px 15px;font-size:16px}
   .tabs{padding:0 12px}
   .tabs button{padding:11px 12px;font-size:14px}
@@ -461,7 +486,7 @@ html{-webkit-text-size-adjust:100%}
     <div class="ctl"><span class="lbl">เดือน</span>
       <div class="month-nav">
         <button id="prevM" title="เดือนก่อน" aria-label="เดือนก่อน">‹</button>
-        <select id="selMonth"></select>
+        <div class="months" id="months" role="tablist"></div>
         <button id="nextM" title="เดือนถัดไป" aria-label="เดือนถัดไป">›</button>
       </div>
     </div>
@@ -490,8 +515,25 @@ html{-webkit-text-size-adjust:100%}
         <span class="mute">ต้นทุน ค่าแรง ค่าล่วงเวลา และข้อร้องเรียน ยิ่งเพิ่มยิ่งแดง</span>
       </p>
 
-      <div class="sec"><h2>ยอดขายรายสาขา</h2><span class="note">แท่งเทา = ปีก่อน · แท่งแดง = ปีนี้ เดือนเดียวกัน</span></div>
-      <div class="card"><div class="chart-wrap tall"><canvas id="chSales"></canvas></div></div>
+      <div class="two" style="margin-top:20px">
+        <div class="card"><h3>สาขาที่ต้องให้ความช่วยเหลือ</h3><div id="topWorst"></div></div>
+        <div class="card"><h3>สาขาผลงานโดดเด่น <span class="h3sub">ยอดขายโตเทียบปีก่อนสูงสุด</span></h3><div id="topBest"></div></div>
+      </div>
+
+      <div class="sec"><h2>ผลการดำเนินงานรายสาขา</h2>
+        <span class="note" id="perfCount"></span>
+        <div class="right">
+          <div class="search"><input id="brSearch" type="search" placeholder="ค้นหาสาขา" autocomplete="off"></div>
+          <button class="btn ghost" id="btnClearSort" style="display:none">ล้างการเรียง</button>
+        </div>
+      </div>
+      <div class="tbl-wrap" id="perfTable"></div>
+      <p class="readme-line" style="margin-top:8px"><span class="mute">คลิกหัวคอลัมน์เพื่อเรียงลำดับ · คลิกชื่อสาขาเพื่อดูรายเดือนของสาขานั้น</span></p>
+
+      <div id="amBlock"></div>
+
+      <div class="sec"><h2>กราฟประกอบ</h2><span class="note">แท่งเทา = ปีก่อน · แท่งแดง = ปีนี้ เดือนเดียวกัน</span></div>
+      <div class="card"><h3>ยอดขายรายสาขา</h3><div class="chart-wrap tall"><canvas id="chSales"></canvas></div></div>
 
       <div class="two" style="margin-top:18px">
         <div class="card"><h3>แนวโน้มยอดขายรายเดือน <span class="h3sub">บาท</span></h3><div class="chart-wrap"><canvas id="chTrend"></canvas></div></div>
@@ -502,16 +544,6 @@ html{-webkit-text-size-adjust:100%}
         <div class="card"><h3>ค่าแรงคิดเป็น % ของยอดขาย รายสาขา <span class="h3sub">เส้นประแดง = ค่าเฉลี่ยของพื้นที่</span></h3><div class="chart-wrap"><canvas id="chCol"></canvas></div></div>
         <div class="card"><h3>ข้อร้องเรียนและค่าล่วงเวลา (OT) รายสาขา</h3><div class="chart-wrap"><canvas id="chCp"></canvas></div></div>
       </div>
-
-      <div class="sec"><h2>ผลการดำเนินงานรายสาขา</h2><span class="note">YoY = เทียบเดือนเดียวกันปีก่อน · MoM = เทียบเดือนก่อนหน้า</span></div>
-      <div class="tbl-wrap" id="perfTable"></div>
-
-      <div class="two" style="margin-top:18px">
-        <div class="card"><h3>สาขาผลงานโดดเด่น — ยอดขายโต YoY สูงสุด</h3><div id="topBest"></div></div>
-        <div class="card"><h3>สาขาที่ต้องให้ความช่วยเหลือ</h3><div id="topWorst"></div></div>
-      </div>
-
-      <div id="amBlock"></div>
     </div>
   </section>
 
@@ -670,7 +702,7 @@ const FIELDS=[]; GROUPS.forEach(([k])=>{FIELDS.push(k+'25',k+'26')}); FIELDS.pus
 const KEY='jd_am_dashboard_v1', KEY_CFG='jd_am_dashboard_cfg_v1', KEY_SESS='jd_am_dashboard_sess';
 let role=null; // {type:'am'|'vp'|'admin', zone?:id}
 let store={data:{}};            // data[m][branchId] = {field:number|string}
-let sel={branch:null,am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy'};
+let sel={q:'',sk:null,sd:-1,branch:null,am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy'};
 let storageOK=true;
 /* ---- ที่จัดเก็บข้อมูล: Supabase (ข้อมูลกลาง) + localStorage (สำเนาออฟไลน์) ---- */
 let SB=null, CLOUD=false, syncState='local';
@@ -918,10 +950,33 @@ function renderDash(){
   mkChart('chCp',{type:'bar',data:{labels,datasets:[{label:'Complaint (ครั้ง)',data:withData.map(x=>x.r.cp),backgroundColor:withData.map(x=>x.r.cp>=3?'#C1272D':'#E8A0A3'),borderRadius:2,yAxisID:'y'},{type:'line',label:'OT (฿)',data:withData.map(x=>x.r.ot),borderColor:'#1F4E78',backgroundColor:'#1F4E78',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{x:{grid:{display:false},ticks:{font:{size:11},maxRotation:45}},y:{position:'left',ticks:{stepSize:1,callback:v=>fmt(v)},grid:{color:'#EFECE7'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>fmt(v)}}}}});
 
-  // performance table
+  // performance table — ค้นหาและเรียงลำดับได้ ไม่งั้น 45 สาขาหาไม่เจอว่าใครควรดูก่อน
   const maxAbs=Math.max(.01,...withData.map(x=>Math.abs(x.r.yoy.s||0)));
+  const SK={name:x=>x.b.name,'yoy.s':x=>x.r.yoy.s,'mom.s':x=>x.r.mom.s,'yoy.e':x=>x.r.yoy.e,
+    'mom.e':x=>x.r.mom.e,'yoy.c':x=>x.r.yoy.c,col26:x=>x.r.col26,colD:x=>x.r.colD,
+    cp:x=>x.r.cp,'mom.cp':x=>x.r.mom.cp,score:x=>x.r.score};
+  let shown=withData;
+  if(sel.q){ const q=sel.q.trim().toLowerCase(); if(q) shown=shown.filter(x=>x.b.name.toLowerCase().includes(q)); }
+  if(sel.sk&&SK[sel.sk]){
+    const g=SK[sel.sk];
+    shown=[...shown].sort((a,b)=>{
+      const x=g(a),y=g(b);
+      if(typeof x==='string') return sel.sd*y.localeCompare(x,'th');
+      if(x==null&&y==null) return 0;
+      if(x==null) return 1;                 // ช่องว่างไปท้ายเสมอ ไม่ว่าจะเรียงทางไหน
+      if(y==null) return -1;
+      return sel.sd*(x-y);
+    });
+  }
+  const pc=document.getElementById('perfCount');
+  if(pc) pc.textContent=shown.length===withData.length
+    ? `${withData.length} สาขา`
+    : `แสดง ${shown.length} จาก ${withData.length} สาขา`;
+  const bc=document.getElementById('btnClearSort');
+  if(bc) bc.style.display=sel.sk?'':'none';
+  const sortable=(t,k,extra='')=>`<th class="sortable ${sel.sk===k?'on':''}" data-sk="${k}" ${extra}>${t}<span class="ar">${sel.sk===k?(sel.sd<0?'▼':'▲'):''}</span></th>`;
   const bar=p=>p==null?'<span class="mute">–</span>':`<span class="bar ${p<0?'neg':''}"><span class="${cls(p)}">${fmtPct(p)}</span><i style="width:${Math.min(60,Math.abs(p)/maxAbs*60).toFixed(0)}px"></i></span>`;
-  const rows=withData.map(x=>{const r=x.r;return `<tr><td><a href="#" class="blink" data-b="${x.b.id}">${x.b.name}</a>${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${(AMS.find(a=>a.id===x.b.am)||{}).name}</span>`:''}</td>
+  const rows=shown.map(x=>{const r=x.r;return `<tr><td><a href="#" class="blink" data-b="${x.b.id}">${x.b.name}</a>${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${(AMS.find(a=>a.id===x.b.am)||{}).name}</span>`:''}</td>
     <td>${bar(r.yoy.s)}</td><td class="${cls(r.mom.s)}">${fmtPct(r.mom.s)}</td>
     <td class="${cls(r.yoy.e)}">${fmtPct(r.yoy.e)}</td><td class="${cls(r.mom.e)}">${fmtPct(r.mom.e)}</td>
     <td class="${cls(r.yoy.c,true)}">${fmtPct(r.yoy.c)}</td>
@@ -929,7 +984,7 @@ function renderDash(){
     <td class="${r.cp>=3?'neg':''}">${fmt(r.cp)}</td><td class="${cls(r.mom.cp,true)}">${r.mom.cp==null?'–':(r.mom.cp>0?'+':'')+r.mom.cp}</td>
     <td class="status ${r.score?'warn':'ok'}">${r.score?'⚠ '+r.issues.join(', '):'✔ ปกติ'}${r.note?`<div class="mute" style="font-size:12px">${r.note}</div>`:''}</td></tr>`;}).join('');
   document.getElementById('perfTable').innerHTML=`<table><thead><tr><th></th><th class="grp" colspan="2">ยอดขาย</th><th class="grp alt" colspan="2">กำไร (EBIT)</th><th class="grp">ต้นทุนวัตถุดิบ</th><th class="grp alt" colspan="2">ค่าแรง % ของยอดขาย</th><th class="grp" colspan="2">ข้อร้องเรียน</th><th></th></tr>
-    <tr><th>สาขา</th><th title="เทียบเดือนเดียวกันปีก่อน">เทียบปีก่อน</th><th title="เทียบเดือนก่อนหน้า">เทียบเดือนก่อน</th><th title="เทียบเดือนเดียวกันปีก่อน">เทียบปีก่อน</th><th title="เทียบเดือนก่อนหน้า">เทียบเดือนก่อน</th><th title="เทียบเดือนเดียวกันปีก่อน">เทียบปีก่อน</th><th>เดือนนี้</th><th title="ต่างจากปีก่อนกี่จุด">ต่างจากปีก่อน</th><th>เดือนนี้</th><th title="ต่างจากเดือนก่อนกี่ครั้ง">ต่างจากเดือนก่อน</th><th style="text-align:left">สถานะ / ประเด็นที่พบ</th></tr></thead><tbody>${rows}</tbody></table>`;
+    <tr>${sortable('สาขา','name')}${sortable('เทียบปีก่อน','yoy.s','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เทียบเดือนก่อน','mom.s','title="เทียบเดือนก่อนหน้า"')}${sortable('เทียบปีก่อน','yoy.e','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เทียบเดือนก่อน','mom.e','title="เทียบเดือนก่อนหน้า"')}${sortable('เทียบปีก่อน','yoy.c','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เดือนนี้','col26')}${sortable('ต่างจากปีก่อน','colD','title="ต่างจากปีก่อนกี่จุด"')}${sortable('เดือนนี้','cp')}${sortable('ต่างจากเดือนก่อน','mom.cp','title="ต่างจากเดือนก่อนกี่ครั้ง"')}${sortable('สถานะ / ประเด็นที่พบ','score','style="text-align:left"')}</tr></thead><tbody>${rows}</tbody></table>`;
 
   // top / worst
   const best=[...withData].filter(x=>x.r.yoy.s!=null).sort((a,b)=>b.r.yoy.s-a.r.yoy.s).slice(0,5);
@@ -1334,12 +1389,35 @@ document.getElementById('btnLogout').onclick=()=>{ stopPoll(); CLOUD=false; CODE
 function setTab(t){ sel.tab=t; document.querySelectorAll('.tabs button[role=tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t)); document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+t)); render(); }
 document.querySelectorAll('.tabs button[role=tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 document.querySelectorAll('#cmpMode button').forEach(b=>b.onclick=()=>{sel.cmp=b.dataset.m; document.querySelectorAll('#cmpMode button').forEach(x=>x.setAttribute('aria-pressed',x===b)); renderCompare();});
-const selAM=document.getElementById('selAM'), selMonth=document.getElementById('selMonth');
+const selAM=document.getElementById('selAM'), monthBar=document.getElementById('months');
 function fillAM(){ selAM.innerHTML=`<option value="all">ทุกพื้นที่ (รวมทุกโซน)</option>`+AMS.map(a=>`<option value="${a.id}">${a.brand?a.brand+' · ':''}${a.name} — ${a.branches.length} สาขา</option>`).join(''); }
-selMonth.innerHTML=MONTHS.map((n,i)=>`<option value="${i}">${n} ${YEAR}</option>`).join('');
-selAM.onchange=()=>{sel.am=selAM.value;render();}; selMonth.onchange=()=>{sel.m=+selMonth.value;render();};
+function fillMonths(){
+  const ids=scopeBranches().map(b=>b.id);
+  monthBar.innerHTML=MSHORT.map((n,i)=>
+    `<button type="button" role="tab" data-m="${i}" aria-pressed="${i===sel.m}" `+
+    `class="${hasData(i,ids)?'has':''}" title="${MONTHS[i]} ${YEAR}${hasData(i,ids)?' · กรอกแล้ว':' · ยังไม่มีข้อมูล'}">`+
+    `${n}<i></i></button>`).join('');
+  const on=monthBar.querySelector('[aria-pressed=true]');
+  if(on&&on.scrollIntoView) on.scrollIntoView({inline:'center',block:'nearest'});
+}
+monthBar.onclick=e=>{ const b=e.target.closest('button[data-m]'); if(!b)return; sel.m=+b.dataset.m; render(); };
+selAM.onchange=()=>{sel.am=selAM.value;render();};
 document.getElementById('prevM').onclick=()=>{if(sel.m>0){sel.m--;render();}}; document.getElementById('nextM').onclick=()=>{if(sel.m<11){sel.m++;render();}};
-function render(){ selMonth.value=sel.m; if(!role)return; fillAM(); if(role.type==='am')sel.am=role.zone; selAM.value=sel.am; if(!selAM.value)sel.am='all', selAM.value='all'; ({dash:renderDash,branch:renderBranch,compare:renderCompare,year:renderYear,input:renderInput,zones:renderZones})[sel.tab](); }
+function render(){ if(!role)return; fillMonths(); fillAM(); if(role.type==='am')sel.am=role.zone; selAM.value=sel.am; if(!selAM.value)sel.am='all', selAM.value='all'; ({dash:renderDash,branch:renderBranch,compare:renderCompare,year:renderYear,input:renderInput,zones:renderZones})[sel.tab](); }
+/* ค้นหาและเรียงลำดับตารางสาขา */
+(function(){
+  const q=document.getElementById('brSearch');
+  let t=null;
+  q.addEventListener('input',()=>{ clearTimeout(t); t=setTimeout(()=>{ sel.q=q.value; if(sel.tab==='dash')renderDash(); },160); });
+  q.addEventListener('keydown',e=>{ if(e.key==='Escape'){ q.value=''; sel.q=''; renderDash(); } });
+  document.getElementById('perfTable').addEventListener('click',e=>{
+    const th=e.target.closest('th.sortable'); if(!th)return;
+    const k=th.dataset.sk;
+    if(sel.sk===k) sel.sd=-sel.sd; else { sel.sk=k; sel.sd=k==='name'?-1:-1; }
+    renderDash();
+  });
+  document.getElementById('btnClearSort').onclick=()=>{ sel.sk=null; sel.sd=-1; renderDash(); };
+})();
 document.addEventListener('click',e=>{const a=e.target.closest('.blink'); if(a){e.preventDefault(); sel.branch=a.dataset.b; setTab('branch');}});
 load();
 document.getElementById('loginHint').textContent = SB_ON
