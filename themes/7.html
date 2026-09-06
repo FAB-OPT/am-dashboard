@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><title>แบบ 7 — เขียวสงบ</title><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700;800&family=Anuphan:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"><style>
+:root{--bg:#F3F5F0;--panel:#FCFDFB;--line:#DCE3D6;--line-2:#E9EDE4;--ink:#232B22;--ink-2:#5E6A59;--ink-3:#909B8B;
+  --brand:#4A6B4E;--brand-soft:#E6EDE4;--green:#3E7D53;--green-soft:#E4EFE6;--red:#A8514A;--red-soft:#F6E9E7;--amber:#8A7534;--clay:#C8A48A;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Anuphan,sans-serif;font-size:14.5px;line-height:1.65}
+h1,h2,h3{margin:0}
+.top{background:var(--panel);border-bottom:1px solid var(--line)}
+.top-in{max-width:1300px;margin:0 auto;padding:18px 26px 12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.brand{margin-right:auto}
+.brand h1{font-size:21px;font-weight:600;letter-spacing:-.015em;color:var(--brand)}
+.brand span{display:block;font-size:12.5px;color:var(--ink-3);margin-top:2px}
+.who{padding:5px 14px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:12px;font-weight:600}
+.sync{display:inline-flex;align-items:center;gap:7px;padding:5px 13px;border-radius:999px;background:var(--green-soft);color:var(--green);font-size:12px;font-weight:600}
+.sync i{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.help-btn,.logout{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 14px;font-size:12.5px;color:var(--ink-2);cursor:pointer;font-family:inherit}
+.logout{border-color:transparent;color:var(--ink-3)}
+.topbar{max-width:1300px;margin:0 auto;padding:0 26px 16px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.ctl{display:flex;align-items:center;gap:10px;min-width:0}
+.ctl .lbl{font-size:12px;color:var(--ink-3)}
+.ctl select{border:1px solid var(--line);border-radius:12px;padding:8px 13px;background:var(--panel);font-family:inherit;font-size:13.5px}
+.month-nav{display:flex;align-items:center;border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
+.month-nav>button{background:transparent;border:0;color:var(--ink-3);padding:8px 12px;cursor:pointer;font-size:15px}
+.months{display:flex;overflow-x:auto;padding:4px}
+.months button{background:transparent;border:0;border-radius:10px;color:var(--ink-2);padding:6px 12px;cursor:pointer;font-family:inherit;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.months button i{width:5px;height:5px;border-radius:50%;background:transparent}
+.months button.has i{background:var(--clay)}
+.months button[aria-pressed=true]{background:var(--brand);color:#fff;font-weight:600}
+.months button[aria-pressed=true] i{background:rgba(255,255,255,.9)}
+.tabs{max-width:1300px;margin:0 auto;padding:0 26px;display:flex;gap:8px}
+.tabs button{background:transparent;border:0;border-radius:12px 12px 0 0;color:var(--ink-2);padding:11px 16px;cursor:pointer;font-family:inherit;font-size:13.5px}
+.tabs button[aria-selected=true]{background:var(--bg);color:var(--brand);font-weight:600}
+main{max-width:1300px;margin:0 auto;padding:28px 26px 64px}
+.sec{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin:34px 0 16px}
+.sec:first-child{margin-top:0}
+.sec h2{font-size:19px;font-weight:600;letter-spacing:-.01em}
+.sec .note{color:var(--ink-3);font-size:12.5px}
+.sec .right{margin-left:auto}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.kpi .l{font-size:12.5px;color:var(--ink-2)}
+.kpi .u{display:block;font-size:10px;letter-spacing:.11em;color:var(--ink-3)}
+.kpi .v{font-size:28px;font-weight:600;margin:9px 0 9px;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:14px;color:var(--ink-3)}
+.kpi .d{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--ink-3)}
+.cmp{font-size:11px}
+.chip{padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.up{color:var(--green);background:var(--green-soft)}
+.dn{color:var(--red);background:var(--red-soft)}
+.readme-line{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin:14px 0 0}
+.readme-line .sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.readme-line .sw.up{background:var(--green)}.readme-line .sw.dn{background:var(--red)}
+.readme-line .mute{color:var(--ink-3)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.card h3{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.h3sub{color:var(--ink-3);font-weight:400;font-size:11.5px}
+.tbl-wrap{overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:12px 14px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-2);font-size:13px}
+th{background:var(--brand-soft);color:var(--ink-2);font-size:11.5px;font-weight:600;position:sticky;top:0}
+th.grp{background:var(--brand);color:#fff;text-align:center}
+th.grp.alt{background:#6E8A6C}
+td:first-child,th:first-child,.left{text-align:left}
+tbody tr:hover td{background:#F6F9F4}
+.pos{color:var(--green);font-weight:600}.neg{color:var(--red);font-weight:600}.mute{color:var(--ink-3)}
+.status{white-space:normal;max-width:300px;font-size:12.5px}
+.status.warn{color:var(--amber)}.status.ok{color:var(--green)}
+.list td{border-bottom:1px solid var(--line-2);white-space:normal;padding:11px 8px}
+.list td.rank{color:var(--ink-3);width:26px;text-align:center}
+.list td.pos,.list td.mute{white-space:nowrap}
+.search input{border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-family:inherit;font-size:13px;min-width:200px;background:var(--panel)}
+
+.list td:nth-child(2){text-align:left}
+</style></head><body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><h1>Area Manager Performance</h1><span>ส้มตำเจ๊แดง · เทียบกับปีก่อนและเดือนก่อน</span></div>
+    <span class="who">Admin</span>
+    <span class="sync on"><i></i>Supabase · ซิงก์แล้ว</span>
+    <button class="help-btn">? วิธีอ่าน</button>
+    <button class="logout">ออกจากระบบ</button>
+  </div>
+  <div class="topbar">
+    <label class="ctl"><span class="lbl">ผู้ดูแล</span><select><option>ทุกพื้นที่ (รวมทุกโซน)</option></select></label>
+    <div class="ctl"><span class="lbl">เดือน</span>
+      <div class="month-nav"><button>‹</button><div class="months">
+        <button class="has">ม.ค.<i></i></button><button class="has">ก.พ.<i></i></button>
+        <button class="has">มี.ค.<i></i></button><button class="has">เม.ย.<i></i></button>
+        <button class="has">พ.ค.<i></i></button><button class="has">มิ.ย.<i></i></button>
+        <button class="has" aria-pressed="true">ก.ค.<i></i></button><button class="has">ส.ค.<i></i></button>
+        <button>ก.ย.<i></i></button><button>ต.ค.<i></i></button>
+        <button>พ.ย.<i></i></button><button>ธ.ค.<i></i></button>
+      </div><button>›</button></div>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button aria-selected="true">ภาพรวม</button><button>รายสาขา</button><button>ตารางเทียบข้อมูล</button>
+    <button>สรุปทั้งปี</button><button>กรอกข้อมูล</button><button>จัดการโซน</button>
+  </nav>
+</header>
+<main>
+  <div class="sec"><h2>กรกฎาคม 2026 — ทุกพื้นที่ (5 โซน · 45 สาขา)</h2><span class="note">45 / 45 สาขากรอกข้อมูลแล้ว</span></div>
+  <div class="kpis">
+    <div class="kpi"><div class="l">ยอดขายรวม<span class="u">SALES · บาท</span></div><div class="v">82,216,874</div>
+      <div class="d"><span class="cmp">ปีก่อน</span><span class="chip up">▲4.7%</span><span class="cmp">เดือนก่อน</span><span class="chip dn">▼1.9%</span></div></div>
+    <div class="kpi"><div class="l">กำไรจากการดำเนินงาน<span class="u">EBIT · บาท</span></div><div class="v">9,417,988</div>
+      <div class="d"><span class="cmp">ปีก่อน</span><span class="chip up">▲4.5%</span><span class="cmp">เดือนก่อน</span><span class="chip up">▲5.9%</span></div></div>
+    <div class="kpi"><div class="l">ต้นทุนวัตถุดิบ<span class="u">COGS · บาท</span></div><div class="v">29,080,907</div>
+      <div class="d"><span class="cmp">ปีก่อน</span><span class="chip dn">▲4.8%</span><span class="cmp">เดือนก่อน</span><span class="chip up">▼2.1%</span></div></div>
+    <div class="kpi"><div class="l">ค่าแรงพนักงาน<span class="u">COL · บาท</span></div><div class="v">15,845,262</div>
+      <div class="d"><span class="cmp">ปีก่อน</span><span class="chip dn">▲2.4%</span><span class="cmp">เดือนก่อน</span><span class="chip up">▼1.0%</span></div></div>
+    <div class="kpi"><div class="l">ค่าแรงคิดเป็น % ของยอดขาย<span class="u">COL % TO SALES</span></div><div class="v">19.3%</div>
+      <div class="d"><span class="cmp">ปีก่อน 19.7%</span><span class="chip up">-0.4 pt</span></div></div>
+    <div class="kpi"><div class="l">ข้อร้องเรียน<span class="u">COMPLAINT · ครั้ง</span></div><div class="v">132</div>
+      <div class="d"><span class="cmp">เดือนก่อน 124</span><span class="chip dn">+8</span></div></div>
+    <div class="kpi"><div class="l">ค่าล่วงเวลา<span class="u">OT · บาท</span></div><div class="v">950,047</div>
+      <div class="d"><span class="cmp">เดือนก่อน</span><span class="chip up">▼1.3%</span></div></div>
+    <div class="kpi"><div class="l">สาขาที่ยอดขายลดลง<span class="u">เทียบเดือนเดียวกันปีก่อน</span></div><div class="v">18 <small>/ 45 สาขา</small></div>
+      <div class="d"><span class="cmp">มีประเด็น ≥2 ข้อ: 30 สาขา</span></div></div>
+  </div>
+  <p class="readme-line"><span><b>▲ ▼</b> เพิ่มขึ้น / ลดลง จากช่วงที่นำมาเทียบ</span>
+    <span><i class="sw up"></i>เขียว = ดีขึ้น</span><span><i class="sw dn"></i>แดง = แย่ลง</span>
+    <span class="mute">ต้นทุน ค่าแรง ค่าล่วงเวลา และข้อร้องเรียน ยิ่งเพิ่มยิ่งแดง</span></p>
+
+  <div class="two">
+    <div class="card"><h3>สาขาที่ต้องให้ความช่วยเหลือ</h3>
+      <table class="list"><tbody>
+        <tr><td class="rank">1</td><td>ร้านส้มตำเจ๊แดง (สามเสน)</td><td class="status warn">ยอดขายลด, กำไรลด, ต้นทุนแรงงานสูงขึ้น</td></tr>
+        <tr><td class="rank">2</td><td>ร้านส้มตำเจ๊แดง (สยาม)</td><td class="status warn">ยอดขายลด, กำไรลด, ร้องเรียนสูง</td></tr>
+        <tr><td class="rank">3</td><td>ร้านส้มตำเจ๊แดง (ฟิวเจอร์ปาร์ค รังสิต)</td><td class="status warn">ยอดขายลด, ต้นทุนแรงงานสูงขึ้น</td></tr>
+        <tr><td class="rank">4</td><td>ร้านส้มตำเจ๊แดง (ไอคอนสยาม)</td><td class="status warn">กำไรลด, ร้องเรียนสูง</td></tr>
+      </tbody></table></div>
+    <div class="card"><h3>สาขาผลงานโดดเด่น <span class="h3sub">ยอดขายโตเทียบปีก่อนสูงสุด</span></h3>
+      <table class="list"><tbody>
+        <tr><td class="rank">1</td><td>ร้านส้มตำเจ๊แดง (ปั๊มบางจาก-ศาลายา)</td><td class="pos">+29.4%</td><td class="mute">3,051,567 ฿</td></tr>
+        <tr><td class="rank">2</td><td>ร้านส้มตำเจ๊แดง (สยามพารากอน)</td><td class="pos">+26.2%</td><td class="mute">2,256,174 ฿</td></tr>
+        <tr><td class="rank">3</td><td>ร้านส้มตำเจ๊แดง (Paseo กาญจนาภิเษก)</td><td class="pos">+26.2%</td><td class="mute">1,328,725 ฿</td></tr>
+        <tr><td class="rank">4</td><td>ร้านส้มตำเจ๊แดง (บางจากสุขุมวิท 62)</td><td class="pos">+25.1%</td><td class="mute">2,954,851 ฿</td></tr>
+      </tbody></table></div>
+  </div>
+
+  <div class="sec"><h2>ผลการดำเนินงานรายสาขา</h2><span class="note">45 สาขา</span>
+    <div class="right"><div class="search"><input placeholder="ค้นหาสาขา"></div></div></div>
+  <div class="tbl-wrap"><table>
+    <thead>
+      <tr><th></th><th class="grp" colspan="2">ยอดขาย</th><th class="grp alt" colspan="2">กำไร (EBIT)</th><th class="grp">ต้นทุนวัตถุดิบ</th><th class="grp alt" colspan="2">ค่าแรง % ของยอดขาย</th><th class="grp">ข้อร้องเรียน</th><th></th></tr>
+      <tr><th>สาขา</th><th>เทียบปีก่อน</th><th>เทียบเดือนก่อน</th><th>เทียบปีก่อน</th><th>เทียบเดือนก่อน</th><th>เทียบปีก่อน</th><th>เดือนนี้</th><th>ต่างจากปีก่อน</th><th>เดือนนี้</th><th class="left">สถานะ / ประเด็นที่พบ</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>ร้านส้มตำเจ๊แดง (ดุสิต เซ็นทรัล พาร์ค)</td><td class="pos">+26.7%</td><td class="neg">-28.4%</td><td class="neg">-14.8%</td><td class="neg">-59.5%</td><td class="neg">+33.7%</td><td>18.4%</td><td class="neg">+0.9 pt</td><td>3</td><td class="status warn">⚠ กำไรลด, ต้นทุนแรงงานสูงขึ้น</td></tr>
+      <tr><td>ร้านส้มตำเจ๊แดง (พรานนก)</td><td class="pos">+3.9%</td><td class="neg">-16.2%</td><td class="neg">-31.1%</td><td class="neg">-34.0%</td><td class="neg">+15.9%</td><td>18.3%</td><td class="pos">-1.4 pt</td><td>4</td><td class="status warn">⚠ กำไรลด, ร้องเรียนสูง</td></tr>
+      <tr><td>ร้านส้มตำเจ๊แดง (เซ็นทรัลพระราม 2)</td><td class="pos">+3.1%</td><td class="neg">-60.2%</td><td class="neg">-60.1%</td><td class="neg">-72.0%</td><td class="neg">+7.1%</td><td>17.2%</td><td class="neg">+0.2 pt</td><td>0</td><td class="status ok">✔ ปกติ</td></tr>
+      <tr><td>ร้านส้มตำเจ๊แดง (The Bright พระราม 2)</td><td class="neg">-11.3%</td><td class="pos">+62.6%</td><td class="neg">-76.7%</td><td class="neg">-59.1%</td><td class="pos">-6.0%</td><td>20.4%</td><td class="neg">+0.7 pt</td><td>4</td><td class="status warn">⚠ ยอดขายลด, ร้องเรียนสูง</td></tr>
+      <tr><td>ร้านส้มตำเจ๊แดง (PTT ราชพฤกษ์)</td><td class="neg">-1.1%</td><td class="pos">+100.7%</td><td class="pos">+82.8%</td><td class="pos">+139.9%</td><td class="pos">-2.4%</td><td>18.1%</td><td class="neg">+0.2 pt</td><td>2</td><td class="status warn">⚠ ยอดขายลด</td></tr>
+      <tr><td>ร้านส้มตำเจ๊แดง (สยาม)</td><td class="pos">+5.2%</td><td class="neg">-61.6%</td><td class="neg">-7.2%</td><td class="neg">-57.1%</td><td class="pos">-4.6%</td><td>18.7%</td><td class="pos">-1.3 pt</td><td>6</td><td class="status warn">⚠ กำไรลด, ร้องเรียนสูง</td></tr>
+    </tbody>
+  </table></div>
+</main>
+</body></html>

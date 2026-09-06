@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>เลือกธีม — Area Manager Performance</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F4F2;--panel:#fff;--line:#DEDED8;--ink:#1A1A17;--ink-2:#5E5E56;--ink-3:#93938A;--red:#A81C22}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:'IBM Plex Sans Thai',system-ui,sans-serif;font-size:15px;line-height:1.6}
+header{background:var(--panel);border-bottom:1px solid var(--line);padding:24px 20px 20px}
+.in{max-width:1180px;margin:0 auto}
+h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em}
+header p{margin:6px 0 0;color:var(--ink-2);font-size:14px}
+header p b{color:var(--red)}
+main{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:20px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;
+  display:flex;flex-direction:column}
+.shot{position:relative;height:220px;overflow:hidden;border-bottom:1px solid var(--line);background:#fff}
+.shot iframe{position:absolute;top:0;left:0;width:1400px;height:1000px;border:0;
+  transform:scale(.315);transform-origin:0 0;pointer-events:none}
+.meta{padding:13px 16px 15px;display:flex;flex-direction:column;gap:5px;flex:1}
+.num{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--ink-3)}
+.name{font-size:16px;font-weight:700;letter-spacing:-.01em}
+.desc{font-size:13px;color:var(--ink-2);line-height:1.6;flex:1}
+.open{display:inline-block;margin-top:8px;padding:9px 14px;background:var(--ink);color:#fff;
+  text-decoration:none;border-radius:6px;font-size:13.5px;font-weight:600;text-align:center}
+.open:hover{background:#000}
+.note{margin:26px 0 0;padding:16px 18px;background:#FFF9E6;border:1px solid #EBDCA8;
+  border-radius:10px;font-size:13.5px;color:#6B5B22;line-height:1.75}
+@media(max-width:520px){
+  .grid{grid-template-columns:1fr}
+  .shot{height:180px}
+  .shot iframe{transform:scale(.26)}
+}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <h1>เลือกธีมหน้าตาเว็บ — 10 แบบ</h1>
+  <p>กดปุ่ม <b>เปิดดูเต็มจอ</b> เพื่อดูของจริง แล้วบอกหมายเลขที่ชอบ · ทุกแบบใช้ข้อมูลและเนื้อหาชุดเดียวกัน ต่างกันที่สี ตัวอักษร ความหนาแน่น และการจัดวาง</p>
+</div></header>
+<main>
+  <div class="grid" id="grid"></div>
+  <p class="note"><b>หมายเหตุ:</b> หน้าตัวอย่างเหล่านี้เป็นภาพนิ่งเพื่อดูหน้าตาเท่านั้น กดปุ่มหรือช่องต่าง ๆ ยังไม่ทำงาน
+  และตัวเลขที่เห็นเป็นข้อมูลตัวอย่าง ไม่ใช่ยอดจริง · เลือกได้แล้วบอกหมายเลข เดี๋ยวเอาไปทำเต็มทั้งเว็บให้</p>
+</main>
+<script>
+const THEMES=[
+  [1,'ห้องควบคุม','พื้นมืด ตัวเลขเป็นฟอนต์ระยะเท่ากันสว่างเด่น จุดสถานะเรืองแสง เหมาะกับการเปิดค้างทั้งวันและฉายบนจอใหญ่ในห้องประชุม'],
+  [2,'แอปสมัยใหม่','พื้นเทาอ่อน การ์ดขาวมุมมนเงานุ่ม ชิปทรงแคปซูล สีหลักน้ำเงินอมเขียว โปร่งสบายตา เป็นแนวที่คนคุ้นเคยที่สุด'],
+  [3,'นิตยสาร','ตัวเลขใหญ่มาก คอนทราสต์สูง ไม่มีกล่องเลย เนื้อหาวางบนหน้ากระดาษตรง ๆ แบ่งด้วยเส้นหนา ดูมีน้ำหนัก'],
+  [4,'แน่นและไว','ตัวหนังสือเล็ก แถวถี่ ตัวเลขสรุปเรียง 8 ช่องในแถวเดียว ทั้งหน้าจบใน 1 หน้าจอไม่ต้องเลื่อน'],
+  [5,'แบรนด์เจ๊แดง','แถบหัวแดงของแบรนด์เต็มความกว้าง พื้นครีมอุ่น แท็บแบบโฟลเดอร์ การ์ดมีขีดแดงด้านซ้าย ดูเป็นสื่อของร้านเอง'],
+  [6,'กริดสวิส','จัดตามกริดเป๊ะ ๆ เส้นดำหนา ตัวอักษรระยะห่างกว้าง ชิปเป็นบล็อกสีทึบ เป็นระเบียบและจริงจัง'],
+  [7,'เขียวสงบ','เขียวใบไม้กับดินเผา คอนทราสต์ต่ำ มุมมนมาก บรรทัดห่าง ไม่บีบสายตาเวลาเปิดดูนาน ๆ'],
+  [8,'เส้นหนา','ขอบดำหนา เงาแข็งทิ้งมุม แถบหัวเหลืองสด จำง่ายที่สุด มีบุคลิกชัดที่สุดในสิบแบบ'],
+  [9,'แบบแปลนช่าง','พื้นตารางกริดจาง ๆ เส้นประ ป้ายกำกับเป็นฟอนต์ระยะเท่ากัน น้ำเงินหมึกช่าง ให้ความรู้สึกแม่นยำ'],
+  [10,'จอเทรด','แถบหัวดำ ตัวเลขทุกช่องเป็นฟอนต์ระยะเท่ากัน มีเส้นแบ่งคอลัมน์ทุกเส้น แน่นและอ่านเร็วแบบจอเทรดหุ้น'],
+];
+document.getElementById('grid').innerHTML=THEMES.map(([n,name,desc])=>`
+  <div class="item">
+    <div class="shot"><iframe src="${n}.html" loading="lazy" scrolling="no" title="ตัวอย่างแบบ ${n}"></iframe></div>
+    <div class="meta">
+      <span class="num">แบบ ${n}</span>
+      <span class="name">${name}</span>
+      <span class="desc">${desc}</span>
+      <a class="open" href="${n}.html" target="_blank" rel="noopener">เปิดดูเต็มจอ →</a>
+    </div>
+  </div>`).join('');
+</script>
+</body>
+</html>
