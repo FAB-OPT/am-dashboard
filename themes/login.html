@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<title>หน้าเข้าใช้งาน 6 แบบ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F5F4;--panel:#FFFFFF;--panel-2:#FCFAF9;--line:#E9E3E1;--line-2:#F3EEED;
+  --ink:#241C1B;--ink-2:#6E625F;--ink-3:#9E918E;
+  --brand:#C0605C;--brand-2:#A85450;--brand-soft:#FBEEED;--red:#A81B12;
+  --f:'Noto Sans Thai Looped','Noto Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#E6E2E0;padding:22px;font-family:var(--f);color:var(--ink)}
+.grid{max-width:1560px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.cell{display:flex;flex-direction:column;gap:9px}
+.cap b{font-size:15px;font-weight:700}
+.cap span{font-size:12.5px;color:#6E625F;display:block;margin-top:1px}
+.stage{height:470px;border-radius:12px;overflow:hidden;border:1px solid #D8D2D0;
+  display:flex;align-items:center;justify-content:center;padding:20px}
+button,input{font:inherit;color:inherit}
+h1,h2{margin:0}
+.lbl{font-size:12px;font-weight:700;color:var(--ink-2);display:block;margin-bottom:6px}
+.inp{width:100%;padding:12px 62px 12px 14px;border:1px solid var(--line);border-radius:11px;
+  font-size:15px;letter-spacing:.1em;background:var(--panel-2)}
+.inp::placeholder{letter-spacing:normal;color:var(--ink-3);font-size:13.5px}
+.iw{position:relative;display:flex;align-items:center}
+.peek{position:absolute;right:6px;border:0;background:transparent;color:var(--ink-3);
+  font-size:11.5px;font-weight:700;padding:7px 9px;border-radius:8px}
+.go{border:0;background:var(--brand);color:#fff;border-radius:11px;padding:13px;
+  font-size:14.5px;font-weight:700;width:100%;margin-top:12px}
+.tip{font-size:11px;line-height:1.6;color:var(--ink-3);margin:14px 0 0;padding-top:11px;
+  border-top:1px solid var(--line-2)}
+
+/* ══ A · เรียบขาว ══ */
+.A{background:var(--bg)}
+.A .card{background:#fff;border-radius:20px;padding:34px 30px 26px;width:330px;
+  box-shadow:0 10px 40px rgba(36,28,27,.13);text-align:center}
+.A img{width:52px;height:52px;border-radius:13px;object-fit:contain}
+.A h1{font-size:21px;font-weight:700;margin-top:14px;letter-spacing:-.02em}
+.A p{margin:6px 0 22px;font-size:12.5px;color:var(--ink-2);line-height:1.55}
+.A .lbl{text-align:left}
+.A .rule{width:34px;height:3px;background:var(--brand);border-radius:2px;margin:13px auto 0}
+
+/* ══ B · สองฝั่ง ══ */
+.B{background:var(--bg)}
+.B .card{display:flex;width:520px;border-radius:18px;overflow:hidden;
+  box-shadow:0 10px 40px rgba(36,28,27,.13);background:#fff}
+.B .side{width:190px;flex:0 0 auto;padding:26px 20px;color:#fff;
+  background:linear-gradient(165deg,#C9706C,var(--brand) 60%,#AF5551);
+  display:flex;flex-direction:column;justify-content:space-between}
+.B .side img{width:44px;height:44px;border-radius:11px;object-fit:contain;background:#fff}
+.B .side h1{font-size:17px;font-weight:700;line-height:1.3;letter-spacing:-.02em}
+.B .side p{margin:7px 0 0;font-size:11.5px;color:rgba(255,255,255,.8);line-height:1.55}
+.B .form{flex:1;padding:30px 26px 26px}
+.B .form h2{font-size:16px;font-weight:700;margin-bottom:16px}
+
+/* ══ C · ไม่มีการ์ด ══ */
+.C{background:var(--bg)}
+.C .card{width:330px}
+.C img{width:46px;height:46px;border-radius:12px;object-fit:contain}
+.C h1{font-size:25px;font-weight:700;margin-top:16px;letter-spacing:-.03em;line-height:1.2}
+.C p{margin:7px 0 24px;font-size:12.5px;color:var(--ink-2);line-height:1.55}
+.C .inp{background:transparent;border:0;border-bottom:2px solid var(--line);border-radius:0;
+  padding-left:0;font-size:17px}
+.C .peek{right:0}
+.C .go{border-radius:999px;margin-top:20px}
+
+/* ══ D · แถบบนขาว ══ */
+.D{background:var(--bg)}
+.D .card{background:#fff;border-radius:18px;width:340px;overflow:hidden;
+  box-shadow:0 10px 40px rgba(36,28,27,.13)}
+.D .head{padding:24px 26px 20px;display:flex;align-items:center;gap:13px;
+  border-bottom:3px solid var(--brand)}
+.D .head img{width:44px;height:44px;border-radius:11px;object-fit:contain}
+.D h1{font-size:18px;font-weight:700;line-height:1.25;letter-spacing:-.02em}
+.D .head p{margin:3px 0 0;font-size:11.5px;color:var(--ink-3)}
+.D .form{padding:22px 26px 24px}
+
+/* ══ E · พื้นแดงทั้งหน้า ══ */
+.E{background:linear-gradient(165deg,#C9706C,#B15A56 55%,#93413E)}
+.E .card{width:320px;text-align:center;color:#fff}
+.E img{width:54px;height:54px;border-radius:14px;object-fit:contain;background:#fff}
+.E h1{font-size:22px;font-weight:700;margin-top:14px;letter-spacing:-.02em}
+.E p{margin:6px 0 22px;font-size:12.5px;color:rgba(255,255,255,.78);line-height:1.55}
+.E .box{background:#fff;border-radius:16px;padding:22px 22px 20px;text-align:left;color:var(--ink)}
+.E .tip{color:var(--ink-3)}
+
+/* ══ F · กะทัดรัด ══ */
+.F{background:var(--bg)}
+.F .card{background:#fff;border-radius:16px;width:310px;padding:22px 22px 20px;
+  box-shadow:0 8px 30px rgba(36,28,27,.12);border-top:4px solid var(--brand)}
+.F .top{display:flex;align-items:center;gap:11px;margin-bottom:18px}
+.F img{width:38px;height:38px;border-radius:10px;object-fit:contain}
+.F h1{font-size:15.5px;font-weight:700;line-height:1.3;letter-spacing:-.01em}
+.F .top p{margin:2px 0 0;font-size:11px;color:var(--ink-3)}
+.F .go{margin-top:11px}
+</style></head>
+<body>
+<div class="grid">
+
+<div class="cell"><div class="cap"><b>A · เรียบขาว</b><span>ไม่มีแถบสี โลโก้อยู่บนพื้นขาวจึงกลืน · จัดกึ่งกลางทั้งหมด</span></div>
+<div class="stage A"><div class="card">
+  <img src="assets/logo-mark.png" alt="">
+  <h1>Area Manager Performance</h1>
+  <div class="rule"></div>
+  <p>รายงานผลประกอบการรายสาขา</p>
+  <span class="lbl">รหัสเข้าใช้งาน</span>
+  <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+  <button class="go">เข้าใช้งาน</button>
+  <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p>
+</div></div></div>
+
+<div class="cell"><div class="cap"><b>B · สองฝั่ง</b><span>ฝั่งซ้ายเป็นแบรนด์ ฝั่งขวาเป็นฟอร์ม แยกหน้าที่ชัด</span></div>
+<div class="stage B"><div class="card">
+  <div class="side">
+    <img src="assets/logo-mark.png" alt="">
+    <div><h1>Area Manager Performance</h1><p>รายงานผลประกอบการรายสาขา</p></div>
+  </div>
+  <div class="form">
+    <h2>เข้าใช้งาน</h2>
+    <span class="lbl">รหัสเข้าใช้งาน</span>
+    <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+    <button class="go">เข้าใช้งาน</button>
+    <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p>
+  </div>
+</div></div></div>
+
+<div class="cell"><div class="cap"><b>C · ไม่มีการ์ด</b><span>วางบนพื้นหน้าตรง ๆ ช่องกรอกเป็นเส้นใต้ โปร่งมาก</span></div>
+<div class="stage C"><div class="card">
+  <img src="assets/logo-mark.png" alt="">
+  <h1>Area Manager<br>Performance</h1>
+  <p>รายงานผลประกอบการรายสาขา · เทียบกับปีก่อน</p>
+  <span class="lbl">รหัสเข้าใช้งาน</span>
+  <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+  <button class="go">เข้าใช้งาน</button>
+</div></div></div>
+
+<div class="cell"><div class="cap"><b>D · แถบบนขาว</b><span>โลโก้กับชื่ออยู่บนพื้นขาว มีเส้นแดงคั่น ไม่มีพื้นสีทึบ</span></div>
+<div class="stage D"><div class="card">
+  <div class="head">
+    <img src="assets/logo-mark.png" alt="">
+    <div><h1>Area Manager Performance</h1><p>รายงานผลประกอบการรายสาขา</p></div>
+  </div>
+  <div class="form">
+    <span class="lbl">รหัสเข้าใช้งาน</span>
+    <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+    <button class="go">เข้าใช้งาน</button>
+    <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · แอดมินเปลี่ยนรหัสได้ในแท็บจัดการโซน</p>
+  </div>
+</div></div></div>
+
+<div class="cell"><div class="cap"><b>E · พื้นแดงทั้งหน้า</b><span>ทั้งจอเป็นสีแบรนด์ กล่องขาวเฉพาะส่วนที่ต้องกรอก</span></div>
+<div class="stage E"><div class="card">
+  <img src="assets/logo-mark.png" alt="">
+  <h1>Area Manager Performance</h1>
+  <p>รายงานผลประกอบการรายสาขา</p>
+  <div class="box">
+    <span class="lbl">รหัสเข้าใช้งาน</span>
+    <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+    <button class="go">เข้าใช้งาน</button>
+    <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p>
+  </div>
+</div></div></div>
+
+<div class="cell"><div class="cap"><b>F · กะทัดรัด</b><span>เล็กที่สุด เข้าเรื่องเร็ว ขีดแดงบางบนขอบการ์ด</span></div>
+<div class="stage F"><div class="card">
+  <div class="top">
+    <img src="assets/logo-mark.png" alt="">
+    <div><h1>Area Manager Performance</h1><p>รายงานผลประกอบการรายสาขา</p></div>
+  </div>
+  <span class="lbl">รหัสเข้าใช้งาน</span>
+  <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+  <button class="go">เข้าใช้งาน</button>
+  <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p>
+</div></div></div>
+
+</div>
+</body></html>
