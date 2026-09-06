@@ -326,36 +326,23 @@ th.sortable.on{color:var(--brand)}
 .codes input{padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);
   font-size:15px;color:var(--ink)}
 
-/* ─────────── หน้าเข้าใช้งาน ─────────── */
+/* ─────────── หน้าเข้าใช้งาน ───────────
+   โลโก้เจ๊แดงมีพื้นขาวติดมาในตัว วางบนพื้นสีทึบเมื่อไหร่จะกลายเป็นสี่เหลี่ยม
+   ขาวแปะอยู่ทันที หัวการ์ดจึงเป็นพื้นขาว แล้วใช้เส้นแดงคั่นเป็นสีแบรนด์แทน */
 .login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
   padding:24px;overflow:auto;
   background:radial-gradient(46rem 30rem at 50% -6%,#F7E6E4 0%,transparent 62%),var(--bg)}
-.login-box{background:var(--panel);border-radius:20px;width:min(420px,100%);
-  display:flex;flex-direction:column;gap:0;box-shadow:var(--sh-lg);overflow:hidden}
+.login-box{background:var(--panel);border-radius:18px;width:min(380px,100%);
+  display:flex;flex-direction:column;box-shadow:var(--sh-lg);overflow:hidden}
 
-/* หัวการ์ด: แถบแบรนด์ พร้อมกราฟแท่งจาง ๆ บอกว่าข้างในคือรายงานตัวเลข */
-.login-head{position:relative;overflow:hidden;padding:26px 30px 24px;
-  background:linear-gradient(160deg,#C9706C 0%,var(--brand) 55%,#AF5551 100%);color:#fff}
-.login-art{position:absolute;right:18px;bottom:0;display:flex;align-items:flex-end;gap:6px;
-  height:66px;opacity:.16;pointer-events:none}
-.login-art i{display:block;width:9px;border-radius:2px 2px 0 0;background:#fff}
-.login-art i:nth-child(1){height:34%}
-.login-art i:nth-child(2){height:54%}
-.login-art i:nth-child(3){height:42%}
-.login-art i:nth-child(4){height:70%}
-.login-art i:nth-child(5){height:56%}
-.login-art i:nth-child(6){height:88%}
-.login-art i:nth-child(7){height:74%}
-.login-lockup{position:relative;display:flex;align-items:center;gap:14px}
-/* โลโก้พื้นขาวบนพื้นแดงคอนทราสต์สูงมาก ถ้าทำใหญ่จะเด่นกว่าชื่อรายงาน
-   ย่อลงและวางเคียงชื่อ ให้อ่านเป็นชุดเดียวกันแทนที่จะเป็นป้ายแปะ */
-.login-logo{display:block;width:46px;height:46px;border-radius:12px;background:#fff;
-  object-fit:contain;flex:0 0 auto}
-.login-box h1{font-size:23px;font-weight:700;line-height:1.2;letter-spacing:-.03em;color:#fff}
-.login-sub{position:relative;margin:12px 0 0;font-size:12.5px;color:rgba(255,255,255,.8);
-  line-height:1.55;max-width:76%}
+.login-head{display:flex;align-items:center;gap:14px;padding:26px 28px 21px;
+  border-bottom:3px solid var(--brand)}
+.login-logo{display:block;width:46px;height:46px;border-radius:11px;object-fit:contain;flex:0 0 auto}
+.login-title{min-width:0}
+.login-box h1{font-size:19px;font-weight:700;line-height:1.28;letter-spacing:-.025em}
+.login-sub{margin:4px 0 0;font-size:12px;color:var(--ink-3);line-height:1.5}
 
-.login-body{padding:24px 30px 26px;display:flex;flex-direction:column;gap:14px}
+.login-body{padding:23px 28px 25px;display:flex;flex-direction:column;gap:14px}
 .field{display:flex;flex-direction:column;gap:7px}
 .flabel{font-size:12px;font-weight:700;color:var(--ink-2)}
 .fwrap{position:relative;display:flex;align-items:center}
@@ -417,15 +404,9 @@ th.sortable.on{color:var(--brand)}
   .drop-in{gap:12px}
   .drop-in .btn{width:100%}
   .login{padding:14px}
-  .login-box{border-radius:18px}
-  .login-head{padding:20px 22px 18px}
-  .login-logo{width:42px;height:42px;border-radius:11px}
-  .login-lockup{gap:12px}
-  .login-box h1{font-size:23px}
-  .login-sub{font-size:12px}
-  .login-art{height:54px;right:12px}
-  .login-sub{max-width:66%}
-  .login-box h1{max-width:74%}
+  .login-head{padding:22px 22px 18px;gap:12px}
+  .login-logo{width:42px;height:42px;border-radius:10px}
+  .login-box h1{font-size:18px}
   .login-body{padding:20px 22px 22px}
   .login-box input{font-size:16px}
   .zone-h{gap:9px}
@@ -458,12 +439,11 @@ th.sortable.on{color:var(--brand)}
 <div id="login" class="login">
   <form class="login-box" id="loginForm">
     <div class="login-head">
-      <div class="login-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="login-lockup">
-        <img class="login-logo" src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง" width="320" height="320">
-        <h1>Area Manager<br>Performance</h1>
+      <img class="login-logo" src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง" width="320" height="320">
+      <div class="login-title">
+        <h1>Area Manager Performance</h1>
+        <p class="login-sub">รายงานผลประกอบการรายสาขา</p>
       </div>
-      <p class="login-sub">รายงานผลประกอบการรายสาขา · เทียบกับปีก่อนและเดือนก่อน</p>
     </div>
     <div class="login-body">
       <label class="field">
