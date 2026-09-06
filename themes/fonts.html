@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<title>เทียบฟอนต์รอบสอง</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Kanit:wght@400;500;600;700&family=Mitr:wght@400;500;600;700&family=Anuphan:wght@400;500;600;700&family=Bai+Jamjuree:wght@400;500;600;700&family=Niramit:wght@400;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F5F4;--panel:#FFFFFF;--panel-2:#FCFAF9;--line:#E9E3E1;--line-2:#F3EEED;
+  --ink:#241C1B;--ink-2:#6E625F;--ink-3:#9E918E;
+  --brand:#C0605C;--brand-2:#A85450;--brand-soft:#FBEEED;--red:#A81B12;
+  --sh-lg:0 10px 40px rgba(36,28,27,.16);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#E8E4E2;padding:24px;font-family:'Noto Sans Thai',sans-serif}
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.demo{display:flex;flex-direction:column;gap:10px}
+.tag{display:flex;align-items:baseline;gap:9px;font-family:'Noto Sans Thai',sans-serif}
+.tag b{font-size:15px;font-weight:700;color:#241C1B}
+.tag span{font-size:12px;color:#6E625F}
+button,input{font:inherit;color:inherit}
+h1{margin:0}
+
+.login-box{background:var(--panel);border-radius:20px;width:100%;
+  display:flex;flex-direction:column;box-shadow:var(--sh-lg);overflow:hidden}
+.login-head{position:relative;overflow:hidden;padding:22px 24px 20px;
+  background:linear-gradient(160deg,#C9706C 0%,var(--brand) 55%,#AF5551 100%);color:#fff}
+.login-art{position:absolute;right:16px;bottom:0;display:flex;align-items:flex-end;gap:5px;
+  height:58px;opacity:.16;pointer-events:none}
+.login-art i{display:block;width:8px;border-radius:2px 2px 0 0;background:#fff}
+.login-art i:nth-child(1){height:34%}.login-art i:nth-child(2){height:54%}
+.login-art i:nth-child(3){height:42%}.login-art i:nth-child(4){height:70%}
+.login-art i:nth-child(5){height:56%}.login-art i:nth-child(6){height:88%}
+.login-art i:nth-child(7){height:74%}
+.login-mark{position:relative;font-size:10.5px;font-weight:700;letter-spacing:.2em;color:rgba(255,255,255,.78)}
+.login-box h1{position:relative;font-size:23px;font-weight:700;line-height:1.2;
+  letter-spacing:-.03em;margin-top:6px;color:#fff;max-width:78%}
+.login-sub{position:relative;margin:8px 0 0;font-size:12px;color:rgba(255,255,255,.82);
+  line-height:1.5;max-width:70%}
+.login-body{padding:20px 24px 22px;display:flex;flex-direction:column;gap:13px}
+.field{display:flex;flex-direction:column;gap:7px}
+.flabel{font-size:12px;font-weight:700;color:var(--ink-2)}
+.fwrap{position:relative;display:flex;align-items:center}
+.login-box input{flex:1;width:100%;padding:13px 68px 13px 15px;border:1px solid var(--line);
+  border-radius:12px;font-size:16px;letter-spacing:.12em;background:var(--panel-2)}
+.login-box input::placeholder{letter-spacing:normal;color:var(--ink-3);font-size:14px}
+.peek{position:absolute;right:7px;border:0;background:transparent;color:var(--ink-3);
+  font-size:12px;font-weight:700;padding:8px 10px;border-radius:8px;cursor:pointer}
+.btn{border:1px solid var(--brand);background:var(--brand);color:#fff;border-radius:12px;
+  padding:13px;font-size:15px;font-weight:700;width:100%;cursor:pointer}
+.err{min-height:16px;margin:0}
+.hint{font-size:11.5px;line-height:1.7;color:var(--ink-3);margin:0;padding-top:12px;
+  border-top:1px solid var(--line-2)}
+/* ตัวอย่างตัวเลขในตาราง เพื่อดูว่าฟอนต์ทำงานกับตัวเลขด้วยไหม */
+.nums{display:flex;gap:14px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:11px 14px;font-variant-numeric:tabular-nums}
+.nums div{display:flex;flex-direction:column;gap:1px}
+.nums .l{font-size:10.5px;color:var(--ink-3);font-weight:600}
+.nums .v{font-size:19px;font-weight:700;letter-spacing:-.03em}
+.nums .g{color:#12805A;font-size:12px;font-weight:700}
+.nums .r{color:var(--red);font-size:12px;font-weight:700}
+</style></head>
+<body>
+<div class="wrap" id="wrap"></div>
+<script>
+const CARD = `
+<div class="login-box">
+  <div class="login-head">
+    <div class="login-art"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="login-mark">ส้มตำเจ๊แดง</div>
+    <h1>Area Manager<br>Performance</h1>
+    <p class="login-sub">รายงานผลประกอบการรายสาขา · เทียบกับปีก่อนและเดือนก่อน</p>
+  </div>
+  <div class="login-body">
+    <label class="field"><span class="flabel">รหัสเข้าใช้งาน</span>
+      <span class="fwrap"><input placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+    </label>
+    <button class="btn">เข้าใช้งาน</button>
+    <p class="err"></p>
+    <p class="hint">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · แอดมินเปลี่ยนรหัสได้ในแท็บจัดการโซน</p>
+  </div>
+</div>
+<div class="nums">
+  <div><span class="l">ยอดขายรวม</span><span class="v">82,216,874</span><span class="g">▲4.7%</span></div>
+  <div><span class="l">ต้นทุนวัตถุดิบ</span><span class="v">29,080,907</span><span class="r">▲4.8%</span></div>
+</div>`;
+const FONTS=[
+  ["Prompt","ไม่มีหัว เรขาคณิต เรียบทันสมัย"],
+  ["Kanit","ไม่มีหัว หนาแน่น มีน้ำหนัก"],
+  ["Mitr","ไม่มีหัว ปลายมน ดูเป็นมิตร"],
+  ["Anuphan","ไม่มีหัว ตัวแคบ ประหยัดพื้นที่"],
+  ["Bai Jamjuree","ไม่มีหัว เหลี่ยมนิด ๆ"],
+  ["Niramit","มีหัว ทรงคลาสสิก อ่านสบาย"],
+];
+document.getElementById('wrap').innerHTML=FONTS.map(([f,d],i)=>`
+  <div class="demo" style="font-family:'${f}',sans-serif">
+    <div class="tag"><b>${i+1}. ${f}</b><span>${d}</span></div>
+    ${CARD}
+  </div>`).join('');
+</script>
+</body></html>
