@@ -327,22 +327,22 @@ th.sortable.on{color:var(--brand)}
   font-size:15px;color:var(--ink)}
 
 /* ─────────── หน้าเข้าใช้งาน ───────────
-   โลโก้เจ๊แดงมีพื้นขาวติดมาในตัว วางบนพื้นสีทึบเมื่อไหร่จะกลายเป็นสี่เหลี่ยม
-   ขาวแปะอยู่ทันที หัวการ์ดจึงเป็นพื้นขาว แล้วใช้เส้นแดงคั่นเป็นสีแบรนด์แทน */
+   การ์ดซ้อนสองชั้น: แผ่นสีชมพูอ่อนเอียงเล็กน้อยอยู่ด้านหลัง ทำหน้าที่เป็นสีแบรนด์
+   โดยไม่ต้องเอาโลโก้ไปวางบนพื้นสีทึบ (โลโก้มีพื้นขาวติดมาในตัว) */
 .login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
-  padding:24px;overflow:auto;
-  background:radial-gradient(46rem 30rem at 50% -6%,#F7E6E4 0%,transparent 62%),var(--bg)}
-.login-box{background:var(--panel);border-radius:18px;width:min(380px,100%);
-  display:flex;flex-direction:column;box-shadow:var(--sh-lg);overflow:hidden}
+  padding:26px;overflow:auto;background:var(--bg)}
+.login-stack{position:relative;width:min(360px,100%)}
+.login-stack::before{content:'';position:absolute;inset:16px -13px -15px 13px;
+  background:#F3DBD8;border-radius:20px;transform:rotate(-1.8deg)}
+.login-box{position:relative;background:var(--panel);border-radius:18px;padding:26px 26px 23px;
+  display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 32px rgba(36,28,27,.15)}
 
-.login-head{display:flex;align-items:center;gap:14px;padding:26px 28px 21px;
-  border-bottom:3px solid var(--brand)}
-.login-logo{display:block;width:46px;height:46px;border-radius:11px;object-fit:contain;flex:0 0 auto}
+.login-head{display:flex;align-items:center;gap:12px;margin-bottom:3px}
+.login-logo{display:block;width:44px;height:44px;border-radius:11px;object-fit:contain;flex:0 0 auto}
 .login-title{min-width:0}
-.login-box h1{font-size:19px;font-weight:700;line-height:1.28;letter-spacing:-.025em}
-.login-sub{margin:4px 0 0;font-size:12px;color:var(--ink-3);line-height:1.5}
+.login-box h1{font-size:17.5px;font-weight:700;line-height:1.28;letter-spacing:-.025em}
+.login-sub{margin:3px 0 0;font-size:11.5px;color:var(--ink-3);line-height:1.5}
 
-.login-body{padding:23px 28px 25px;display:flex;flex-direction:column;gap:14px}
 .field{display:flex;flex-direction:column;gap:7px}
 .flabel{font-size:12px;font-weight:700;color:var(--ink-2)}
 .fwrap{position:relative;display:flex;align-items:center}
@@ -403,11 +403,12 @@ th.sortable.on{color:var(--brand)}
   .msg{margin-left:0;flex:1 1 100%}
   .drop-in{gap:12px}
   .drop-in .btn{width:100%}
-  .login{padding:14px}
-  .login-head{padding:22px 22px 18px;gap:12px}
-  .login-logo{width:42px;height:42px;border-radius:10px}
-  .login-box h1{font-size:18px}
-  .login-body{padding:20px 22px 22px}
+  .login{padding:18px}
+  .login-stack::before{inset:12px -9px -11px 9px}
+  .login-box{padding:22px 20px 20px;border-radius:16px}
+  .login-head{gap:11px}
+  .login-logo{width:40px;height:40px;border-radius:10px}
+  .login-box h1{font-size:16.5px}
   .login-box input{font-size:16px}
   .zone-h{gap:9px}
   .zone-h .lbl{flex:1 1 100%}
@@ -437,15 +438,15 @@ th.sortable.on{color:var(--brand)}
 </head>
 <body>
 <div id="login" class="login">
-  <form class="login-box" id="loginForm">
-    <div class="login-head">
-      <img class="login-logo" src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง" width="320" height="320">
-      <div class="login-title">
-        <h1>Area Manager Performance</h1>
-        <p class="login-sub">รายงานผลประกอบการรายสาขา</p>
+  <div class="login-stack">
+    <form class="login-box" id="loginForm">
+      <div class="login-head">
+        <img class="login-logo" src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง" width="320" height="320">
+        <div class="login-title">
+          <h1>Area Manager Performance</h1>
+          <p class="login-sub">รายงานผลประกอบการรายสาขา</p>
+        </div>
       </div>
-    </div>
-    <div class="login-body">
       <label class="field">
         <span class="flabel">รหัสเข้าใช้งาน</span>
         <span class="fwrap">
@@ -456,8 +457,8 @@ th.sortable.on{color:var(--brand)}
       <button class="btn primary" type="submit" id="loginBtn">เข้าใช้งาน</button>
       <p class="err" id="loginErr"></p>
       <p class="hint" id="loginHint">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · ถ้าลืมรหัส Admin เปลี่ยนได้ในแท็บจัดการโซน</p>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
 <header class="top">
   <div class="top-in">
