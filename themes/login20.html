@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>หน้าเข้าใช้งาน 20 แบบ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F5F4;--panel:#FFFFFF;--panel-2:#FCFAF9;--line:#E9E3E1;--line-2:#F3EEED;
+  --ink:#241C1B;--ink-2:#6E625F;--ink-3:#9E918E;
+  --brand:#C0605C;--brand-2:#A85450;--brand-3:#8E3F3C;--brand-soft:#FBEEED;--red:#A81B12;
+  --f:'Noto Sans Thai Looped','Noto Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#E6E2E0;padding:22px;font-family:var(--f);color:var(--ink)}
+.grid{max-width:1640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.cell{display:flex;flex-direction:column;gap:8px}
+.cap b{font-size:14.5px;font-weight:700}
+.cap span{font-size:12px;color:#6E625F;display:block;margin-top:1px;line-height:1.45}
+.stage{height:430px;border-radius:12px;overflow:hidden;border:1px solid #D8D2D0;
+  display:flex;align-items:center;justify-content:center;padding:18px;background:var(--bg)}
+button,input{font:inherit;color:inherit}
+h1,h2{margin:0}
+img{display:block}
+
+/* ── ชิ้นส่วนร่วม ── */
+.lbl{font-size:11.5px;font-weight:700;color:var(--ink-2);display:block;margin-bottom:6px}
+.iw{position:relative;display:flex;align-items:center}
+.inp{width:100%;padding:12px 60px 12px 14px;border:1px solid var(--line);border-radius:11px;
+  font-size:15px;letter-spacing:.1em;background:var(--panel-2)}
+.inp::placeholder{letter-spacing:normal;color:var(--ink-3);font-size:13.5px}
+.peek{position:absolute;right:6px;border:0;background:transparent;color:var(--ink-3);
+  font-size:11.5px;font-weight:700;padding:7px 9px;border-radius:8px}
+.go{border:0;background:var(--brand);color:#fff;border-radius:11px;padding:13px;
+  font-size:14.5px;font-weight:700;width:100%;margin-top:11px}
+.tip{font-size:10.5px;line-height:1.6;color:var(--ink-3);margin:13px 0 0;padding-top:10px;
+  border-top:1px solid var(--line-2)}
+.name{font-weight:700;letter-spacing:-.02em}
+.sub{color:var(--ink-3);line-height:1.5}
+</style>
+<style>
+.v1 .card{background:#fff;border-radius:20px;padding:32px 28px 24px;width:300px;text-align:center;box-shadow:0 10px 36px rgba(36,28,27,.12)}.v1 img{width:50px;height:50px;margin:0 auto;object-fit:contain}.v1 .name{font-size:19px;margin-top:13px}.v1 .rule{width:32px;height:3px;background:var(--brand);border-radius:2px;margin:11px auto 9px}.v1 .sub{font-size:12px;margin-bottom:19px}.v1 .lbl{text-align:left}
+.v2 .card{display:flex;width:100%;max-width:470px;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 10px 36px rgba(36,28,27,.12)}.v2 .side{width:165px;flex:0 0 auto;padding:22px 18px;color:#fff;background:linear-gradient(165deg,#C9706C,var(--brand) 60%,var(--brand-3));display:flex;flex-direction:column;justify-content:space-between}.v2 .side img{width:40px;height:40px;border-radius:10px;background:#fff;object-fit:contain}.v2 .side .name{font-size:15.5px;line-height:1.3;color:#fff}.v2 .side .sub{font-size:11px;color:rgba(255,255,255,.78);margin-top:5px}.v2 .form{flex:1;padding:26px 22px 22px}
+.v3 .card{width:300px}.v3 img{width:44px;height:44px;object-fit:contain}.v3 .name{font-size:23px;margin-top:14px;line-height:1.2}.v3 .sub{font-size:12px;margin:6px 0 22px}.v3 .inp{background:transparent;border:0;border-bottom:2px solid var(--line);border-radius:0;padding-left:0;font-size:16px}.v3 .peek{right:0}.v3 .go{border-radius:999px;margin-top:18px}.v3 .tip{border:0;padding-top:8px}
+.v4 .card{background:#fff;border-radius:16px;width:310px;overflow:hidden;box-shadow:0 10px 36px rgba(36,28,27,.12)}.v4 .hd{padding:20px 22px 17px;display:flex;align-items:center;gap:12px;border-bottom:3px solid var(--brand)}.v4 .hd img{width:40px;height:40px;object-fit:contain;flex:0 0 auto}.v4 .name{font-size:16px;line-height:1.25}.v4 .sub{font-size:11px;margin-top:3px}.v4 .form{padding:19px 22px 21px}
+.v5{background:linear-gradient(165deg,#C9706C,#B15A56 55%,var(--brand-3))}.v5 .card{width:295px;text-align:center;color:#fff}.v5 img{width:50px;height:50px;border-radius:13px;background:#fff;object-fit:contain;margin:0 auto}.v5 .name{font-size:19px;margin-top:12px;color:#fff}.v5 .sub{font-size:12px;color:rgba(255,255,255,.8);margin:5px 0 18px}.v5 .box{background:#fff;border-radius:15px;padding:20px 20px 18px;text-align:left;color:var(--ink)}
+.v6 .card{background:#fff;border-radius:14px;width:310px;padding:24px 24px 21px 22px;border-left:7px solid var(--brand);box-shadow:0 10px 36px rgba(36,28,27,.12)}.v6 .hd{display:flex;align-items:center;gap:11px;margin-bottom:18px}.v6 img{width:38px;height:38px;object-fit:contain;flex:0 0 auto}.v6 .name{font-size:15.5px;line-height:1.3}.v6 .sub{font-size:11px;margin-top:2px}
+.v7 .card{background:#fff;border-radius:18px;width:300px;padding:44px 26px 22px;position:relative;text-align:center;box-shadow:0 10px 36px rgba(36,28,27,.12);margin-top:30px}.v7 img{width:60px;height:60px;border-radius:50%;object-fit:contain;background:#fff;position:absolute;top:-30px;left:50%;transform:translateX(-50%);border:4px solid #fff;box-shadow:0 3px 12px rgba(36,28,27,.14)}.v7 .name{font-size:17.5px}.v7 .sub{font-size:11.5px;margin:5px 0 18px}.v7 .lbl{text-align:left}
+.v8{background:#1A1614}.v8 .card{background:#241F1D;border:1px solid #362F2C;border-radius:16px;width:305px;padding:24px 24px 21px;color:#F2EDEB}.v8 .hd{display:flex;align-items:center;gap:11px;margin-bottom:19px}.v8 img{width:40px;height:40px;border-radius:10px;background:#fff;object-fit:contain;flex:0 0 auto}.v8 .name{font-size:15.5px;line-height:1.3;color:#fff}.v8 .sub{font-size:11px;color:#9C918D;margin-top:2px}.v8 .lbl{color:#B8ACA8}.v8 .inp{background:#1A1614;border-color:#3B3330;color:#F2EDEB}.v8 .inp::placeholder{color:#7C716D}.v8 .peek{color:#9C918D}.v8 .tip{color:#7C716D;border-top-color:#362F2C}
+.v9 .card{background:#fff;border-radius:16px;width:100%;max-width:470px;padding:24px;display:flex;gap:22px;box-shadow:0 10px 36px rgba(36,28,27,.12)}.v9 .l{width:150px;flex:0 0 auto;border-right:1px solid var(--line);padding-right:20px}.v9 img{width:42px;height:42px;object-fit:contain}.v9 .name{font-size:15px;line-height:1.3;margin-top:11px}.v9 .sub{font-size:11px;margin-top:4px}.v9 .r{flex:1}
+.v10{background-image:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);background-size:24px 24px;background-color:var(--bg)}.v10 .card{background:#fff;border:1px solid var(--line);border-radius:16px;width:305px;padding:24px 24px 21px;box-shadow:0 12px 40px rgba(36,28,27,.10)}.v10 .hd{display:flex;align-items:center;gap:11px;margin-bottom:18px}.v10 img{width:40px;height:40px;object-fit:contain;flex:0 0 auto}.v10 .name{font-size:15.5px;line-height:1.3}.v10 .sub{font-size:11px;margin-top:2px}
+.v11 .card{background:#fff;border-radius:16px;width:305px;overflow:hidden;box-shadow:0 10px 36px rgba(36,28,27,.12)}.v11 .form{padding:24px 24px 20px}.v11 .hd{display:flex;align-items:center;gap:11px;margin-bottom:18px}.v11 img{width:40px;height:40px;object-fit:contain;flex:0 0 auto}.v11 .name{font-size:15.5px;line-height:1.3}.v11 .sub{font-size:11px;margin-top:2px}.v11 .foot{background:var(--brand);color:rgba(255,255,255,.9);padding:11px 24px;font-size:10.5px}.v11 .tip{display:none}
+.v12 .card{width:310px;text-align:center}.v12 img{width:52px;height:52px;object-fit:contain;margin:0 auto}.v12 .name{font-size:20px;margin-top:13px}.v12 .sub{font-size:12px;margin:6px 0 22px}.v12 .lbl{display:none}.v12 .inp{background:#fff;border:2px solid var(--line);border-radius:14px;padding:16px 60px 16px 18px;font-size:16px;text-align:center}.v12 .go{border-radius:14px;padding:16px;font-size:15.5px;margin-top:10px}.v12 .tip{border:0;padding-top:14px}
+.v13 .wrap{position:relative;width:300px}.v13 .wrap::before{content:'';position:absolute;inset:14px -10px -12px 10px;background:var(--brand-soft);border-radius:18px;transform:rotate(-1.6deg)}.v13 .card{position:relative;background:#fff;border-radius:16px;padding:24px 24px 21px;box-shadow:0 10px 30px rgba(36,28,27,.13)}.v13 .hd{display:flex;align-items:center;gap:11px;margin-bottom:18px}.v13 img{width:40px;height:40px;object-fit:contain;flex:0 0 auto}.v13 .name{font-size:15.5px;line-height:1.3}.v13 .sub{font-size:11px;margin-top:2px}
+.v14 .card{background:#fff;border:1px solid var(--ink);border-top:5px solid var(--brand);width:305px;padding:23px 24px 20px}.v14 .hd{display:flex;align-items:center;gap:11px;padding-bottom:15px;margin-bottom:17px;border-bottom:1px solid var(--line)}.v14 img{width:38px;height:38px;object-fit:contain;flex:0 0 auto}.v14 .name{font-size:15px;line-height:1.3}.v14 .sub{font-size:10.5px;margin-top:2px}.v14 .inp,.v14 .go{border-radius:0}.v14 .inp{background:#fff;border-color:var(--ink-3)}
+.v15 .card{width:290px;text-align:center}.v15 img{width:96px;height:96px;object-fit:contain;margin:0 auto}.v15 .name{font-size:16px;margin-top:14px}.v15 .sub{font-size:11.5px;margin:4px 0 20px}.v15 .lbl{display:none}.v15 .inp{text-align:center;border-radius:999px;padding:13px 56px 13px 20px}.v15 .go{border-radius:999px}.v15 .tip{border:0;padding-top:12px}
+.v16{position:relative;justify-content:flex-start;padding-left:0}.v16::before{content:'';position:absolute;left:0;top:0;bottom:0;width:118px;background:repeating-linear-gradient(135deg,var(--brand) 0 12px,#B95B57 12px 24px)}.v16 .card{background:#fff;border-radius:16px;width:300px;padding:23px 24px 20px;margin-left:78px;box-shadow:0 10px 36px rgba(36,28,27,.16);position:relative}.v16 .hd{display:flex;align-items:center;gap:11px;margin-bottom:18px}.v16 img{width:40px;height:40px;object-fit:contain;flex:0 0 auto}.v16 .name{font-size:15.5px;line-height:1.3}.v16 .sub{font-size:11px;margin-top:2px}
+.v17{background:linear-gradient(140deg,#F3D9D5,#E7B7B2 45%,#D69B96)}.v17 .card{background:rgba(255,255,255,.72);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.85);border-radius:20px;width:300px;padding:24px 24px 21px;box-shadow:0 12px 40px rgba(36,28,27,.16)}.v17 .hd{display:flex;align-items:center;gap:11px;margin-bottom:18px}.v17 img{width:40px;height:40px;object-fit:contain;flex:0 0 auto}.v17 .name{font-size:15.5px;line-height:1.3}.v17 .sub{font-size:11px;margin-top:2px}.v17 .inp{background:rgba(255,255,255,.8);border-color:rgba(255,255,255,.9)}
+.v18 .card{background:#fff;border-radius:12px;width:300px;overflow:hidden;box-shadow:0 8px 28px rgba(36,28,27,.10)}.v18 .hd{padding:20px 22px 16px;text-align:center;border-bottom:1px dashed var(--line)}.v18 img{width:44px;height:44px;object-fit:contain;margin:0 auto}.v18 .name{font-size:15px;margin-top:10px}.v18 .sub{font-size:10.5px;margin-top:3px}.v18 .form{padding:18px 22px 20px}.v18 .inp{border-radius:8px}.v18 .go{border-radius:8px}.v18 .tip{border-top-style:dashed;text-align:center}
+.v19 .card{background:#fff;border-radius:16px;width:305px;overflow:hidden;box-shadow:0 10px 36px rgba(36,28,27,.12)}.v19 .hd{background:#F6EAE7;padding:22px 22px 19px;display:flex;align-items:center;gap:12px}.v19 img{width:42px;height:42px;object-fit:contain;flex:0 0 auto}.v19 .name{font-size:15.5px;line-height:1.3}.v19 .sub{font-size:11px;margin-top:2px;color:var(--brand-2)}.v19 .form{padding:20px 22px 21px}
+.v20 .card{background:#fff;border-radius:14px;width:280px;padding:18px 18px 16px;box-shadow:0 8px 26px rgba(36,28,27,.11)}.v20 .hd{display:flex;align-items:center;gap:9px;margin-bottom:15px}.v20 img{width:30px;height:30px;object-fit:contain;flex:0 0 auto}.v20 .name{font-size:13.5px;line-height:1.25}.v20 .sub{display:none}.v20 .inp{padding:10px 54px 10px 12px;font-size:14px}.v20 .go{padding:11px;font-size:13.5px}.v20 .tip{margin-top:11px;padding-top:9px}
+</style></head><body>
+<div class="grid">
+<div class="cell"><div class="cap"><b>1 · ขาวเรียบ กึ่งกลาง</b><span>ไม่มีสีทึบเลย โลโก้บนพื้นขาว ขีดแดงสั้นใต้ชื่อ</span></div><div class="stage v1"><div class="card"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div class="name">Area Manager Performance</div><div class="rule"></div><div class="sub">รายงานผลประกอบการรายสาขา</div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>2 · สองฝั่ง แดง–ขาว</b><span>ซ้ายเป็นแบรนด์ ขวาเป็นฟอร์ม แยกหน้าที่ชัด</span></div><div class="stage v2"><div class="card"><div class="side"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><div class="form"><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div></div>
+<div class="cell"><div class="cap"><b>3 · ไม่มีการ์ด เส้นใต้</b><span>วางบนพื้นตรง ๆ ช่องกรอกเป็นเส้นใต้ ปุ่มแคปซูล</span></div><div class="stage v3"><div class="card"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div class="name">Area Manager<br>Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>4 · แถบบนขาว เส้นแดงคั่น</b><span>แบบที่ใช้อยู่ตอนนี้ ไว้เทียบ</span></div><div class="stage v4"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><div class="form"><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div></div>
+<div class="cell"><div class="cap"><b>5 · พื้นแดงทั้งจอ</b><span>ทั้งจอเป็นสีแบรนด์ กล่องขาวเฉพาะที่ต้องกรอก</span></div><div class="stage v5"><div class="card"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div><div class="box"><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div></div>
+<div class="cell"><div class="cap"><b>6 · ขีดแดงหนาด้านซ้าย</b><span>การ์ดขาว มีแถบแดงหนาที่ขอบซ้ายเป็นสีแบรนด์</span></div><div class="stage v6"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>7 · โลโก้ลอยคร่อมขอบการ์ด</b><span>โลโก้วงกลมลอยอยู่กึ่งกลางขอบบนของการ์ด</span></div><div class="stage v7"><div class="card"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>8 · พื้นมืด</b><span>จอมืด การ์ดเทาเข้ม ตัวหนังสือสว่าง</span></div><div class="stage v8"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>9 · การ์ดแนวนอน</b><span>ชื่ออยู่ซ้าย ฟอร์มอยู่ขวา ในกล่องขาวใบเดียว</span></div><div class="stage v9"><div class="card"><div class="l"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div><div class="r"><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div></div>
+<div class="cell"><div class="cap"><b>10 · พื้นลายกริด</b><span>พื้นหลังมีลายตารางจาง ๆ การ์ดขาวลอยอยู่บน</span></div><div class="stage v10"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>11 · แถบแดงใต้การ์ด</b><span>สีแบรนด์อยู่ล่างสุดเป็นฐาน ไม่ใช่ด้านบน</span></div><div class="stage v11"><div class="card"><div class="form"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div><div class="foot">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</div></div></div></div>
+<div class="cell"><div class="cap"><b>12 · ไม่มีขอบ ปุ่มใหญ่</b><span>ไม่มีกล่องไม่มีเงา ช่องกรอกและปุ่มใหญ่เต็มมือ</span></div><div class="stage v12"><div class="card"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>13 · การ์ดซ้อนสองชั้น</b><span>มีการ์ดเงาซ้อนอยู่ด้านหลัง ดูมีมิติ</span></div><div class="stage v13"><div class="wrap"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div></div>
+<div class="cell"><div class="cap"><b>14 · มุมเหลี่ยม แนวเอกสาร</b><span>ไม่มีมุมมน เส้นบาง ดูเป็นเอกสารทางการ</span></div><div class="stage v14"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>15 · โลโก้ใหญ่เป็นพระเอก</b><span>โลโก้ใหญ่กลางจอ ฟอร์มเล็ก ๆ อยู่ใต้</span></div><div class="stage v15"><div class="card"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>16 · แถบข้างเต็มความสูง</b><span>แถบแดงลายทางเต็มความสูงด้านซ้ายของจอ</span></div><div class="stage v16"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>17 · การ์ดโปร่งแสงบนพื้นไล่สี</b><span>พื้นไล่สีนุ่ม การ์ดโปร่งแสงเบลอฉากหลัง</span></div><div class="stage v17"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+<div class="cell"><div class="cap"><b>18 · เส้นบางแบบใบเสร็จ</b><span>ขาวล้วน เส้นบาง ๆ คั่นเป็นชั้น ๆ ดูเรียบมาก</span></div><div class="stage v18"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div><div class="form"><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div></div>
+<div class="cell"><div class="cap"><b>19 · แบรนด์บนพื้นครีม</b><span>ส่วนหัวเป็นพื้นครีมอุ่น ส่วนฟอร์มเป็นขาว</span></div><div class="stage v19"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div><div class="name">Area Manager Performance</div><div class="sub">รายงานผลประกอบการรายสาขา</div></div></div><div class="form"><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div></div>
+<div class="cell"><div class="cap"><b>20 · กะทัดรัดที่สุด</b><span>เล็กที่สุด โลโก้เล็ก ชื่อบรรทัดเดียว เข้าเรื่องทันที</span></div><div class="stage v20"><div class="card"><div class="hd"><img src="assets/logo-mark.png" alt="ส้มตำเจ๊แดง"><div class="name">Area Manager Performance</div></div><span class="lbl">รหัสเข้าใช้งาน</span>
+      <span class="iw"><input class="inp" placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+      <button class="go">เข้าใช้งาน</button>
+      <p class="tip">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่</p></div></div></div>
+</div>
+</body></html>
