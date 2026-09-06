@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ส้มตำเจ๊แดง Area Manager Performance</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Trirong:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="config.js"></script>
@@ -51,16 +51,18 @@
   --gold-soft:#F6EFDD;
   --slate:#2C4A52;        /* ชุดข้อมูลรอง (กราฟ, หัวตารางกลุ่มสลับ) */
   --hilite:#FFFBEA;       /* ช่องที่ต้องกรอก */
-  --serif:Trirong,Georgia,'Times New Roman',serif;
-  --sans:Sarabun,system-ui,-apple-system,sans-serif;
+  /* ฟอนต์เดียวทั้งหน้า: ตัวเลขกว้างเท่ากันทุกตัวและคมพอที่จะอ่านคอลัมน์ยาว ๆ ได้
+     น้ำหนักต่างกันคือสิ่งที่แยกหัวเรื่องออกจากเนื้อหา ไม่ใช่การเปลี่ยนฟอนต์ */
+  --display:'IBM Plex Sans Thai',system-ui,-apple-system,sans-serif;
+  --text:'IBM Plex Sans Thai',system-ui,-apple-system,sans-serif;
   --w:1360px;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 html,body{margin:0;background:var(--paper);color:var(--ink);
-  font-family:var(--sans);font-size:14.5px;line-height:1.55}
+  font-family:var(--text);font-size:14.5px;line-height:1.55}
 button,input,select,textarea{font:inherit;color:inherit}
-h1,h2,h3{margin:0;font-weight:600;font-family:var(--serif);letter-spacing:-.01em}
+h1,h2,h3{margin:0;font-weight:600;font-family:var(--display);letter-spacing:-.01em}
 ::selection{background:#EFE4CF;color:var(--ink)}
 :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -73,8 +75,8 @@ h1,h2,h3{margin:0;font-weight:600;font-family:var(--serif);letter-spacing:-.01em
 .top-in{max-width:var(--w);margin:0 auto;padding:16px 24px 10px;
   display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
 .brand{margin-right:auto;display:flex;flex-direction:column;gap:1px;min-width:0}
-.brand h1{font-family:var(--serif);font-size:25px;font-weight:600;line-height:1.1;
-  letter-spacing:-.015em}
+.brand h1{font-family:var(--display);font-size:24px;font-weight:700;line-height:1.15;
+  letter-spacing:-.02em}
 .brand span{font-size:11.5px;font-weight:600;letter-spacing:.12em;color:var(--ink-3)}
 /* เส้นแดงใต้ชื่อรายงาน — จุดเดียวที่แบรนด์ปรากฏในหน้าจอ */
 .top::after{content:'';display:block;max-width:var(--w);margin:0 auto;
@@ -137,7 +139,7 @@ main{max-width:var(--w);margin:0 auto;padding:26px 24px 72px}
 .sec{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
   margin:38px 0 14px;padding-bottom:7px;border-bottom:2px solid var(--ink)}
 .sec:first-child{margin-top:0}
-.sec h2{font-family:var(--serif);font-size:19px;font-weight:600}
+.sec h2{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.01em}
 .sec .note{color:var(--ink-3);font-size:12.5px}
 .sec .right{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
@@ -150,7 +152,7 @@ main{max-width:var(--w);margin:0 auto;padding:26px 24px 72px}
 .kpi .l{display:flex;flex-direction:column;gap:0;font-size:12.5px;
   font-weight:600;color:var(--ink-2)}
 .kpi .l .u{font-size:10px;font-weight:600;letter-spacing:.11em;color:var(--ink-3)}
-.kpi .v{font-family:var(--serif);font-size:31px;font-weight:600;letter-spacing:-.025em;
+.kpi .v{font-family:var(--display);font-size:31px;font-weight:600;letter-spacing:-.025em;
   margin:5px 0 5px;line-height:1;font-variant-numeric:tabular-nums}
 .kpi .d{display:flex;gap:7px;font-size:12px;color:var(--ink-3);flex-wrap:wrap;
   align-items:center}
@@ -176,7 +178,7 @@ main{max-width:var(--w);margin:0 auto;padding:26px 24px 72px}
 .three{display:grid;grid-template-columns:2fr 1fr;gap:22px}
 @media(max-width:900px){.two,.three{grid-template-columns:1fr;gap:16px}}
 .card{background:var(--sheet);border:1px solid var(--rule);padding:16px 18px 18px}
-.card h3{font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--ink);
+.card h3{font-family:var(--text);font-size:12.5px;font-weight:700;color:var(--ink);
   letter-spacing:.02em;margin-bottom:13px;padding-bottom:8px;
   border-bottom:1px solid var(--rule-2)}
 .card h3 .h3sub{font-weight:400;color:var(--ink-3);font-size:11.5px;margin-left:6px;
@@ -258,7 +260,7 @@ th.sortable.on{color:var(--ink)}
 .msg{margin-left:auto;font-size:12.5px;color:var(--green);font-weight:600}
 .empty{padding:52px 32px;text-align:center;color:var(--ink-2);background:var(--sheet);
   border:1px solid var(--rule);border-top:2px solid var(--ink);line-height:1.9}
-.empty b{display:block;font-family:var(--serif);font-size:19px;font-weight:600;
+.empty b{display:block;font-family:var(--display);font-size:18px;font-weight:700;
   color:var(--ink);margin-bottom:4px}
 .empty button{margin-top:12px}
 .legend{display:flex;gap:8px 18px;font-size:12px;color:var(--ink-2);margin:9px 0 0;
@@ -287,7 +289,7 @@ th.sortable.on{color:var(--ink)}
 .drop.over{border-color:var(--ink);border-style:solid;background:var(--hilite)}
 .drop-in{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .drop-txt{flex:1;min-width:220px;display:flex;flex-direction:column;gap:3px}
-.drop-txt b{font-family:var(--serif);font-size:16px;font-weight:600}
+.drop-txt b{font-family:var(--display);font-size:15.5px;font-weight:700}
 .drop-txt span{font-size:12.5px;color:var(--ink-2);line-height:1.6}
 
 /* ─────────── หน้าต่าง ─────────── */
@@ -297,7 +299,7 @@ th.sortable.on{color:var(--ink)}
 .modal-box{background:var(--sheet);border-top:3px solid var(--red);
   width:min(580px,100%);max-height:86vh;display:flex;flex-direction:column;
   box-shadow:0 20px 60px rgba(23,20,15,.28)}
-.modal-box h3{font-family:var(--serif);font-size:21px;font-weight:600;
+.modal-box h3{font-family:var(--display);font-size:20px;font-weight:700;
   padding:22px 26px 14px;margin:0}
 .modal-body{padding:0 26px 6px;overflow:auto;font-size:13.5px;line-height:1.75}
 .modal-body .row{display:flex;gap:12px;align-items:baseline;padding:8px 0;
@@ -313,7 +315,7 @@ th.sortable.on{color:var(--ink)}
   border-top:1px solid var(--rule)}
 .gloss{width:100%;border-collapse:collapse}
 .gloss th{text-align:left;vertical-align:top;padding:10px 16px 10px 0;
-  background:transparent;font-family:var(--sans);font-size:13px;font-weight:700;
+  background:transparent;font-family:var(--text);font-size:13px;font-weight:700;
   color:var(--ink);white-space:normal;width:38%;border-bottom:1px solid var(--rule-2);
   position:static;letter-spacing:0}
 .gloss th span{display:block;font-size:10px;font-weight:600;color:var(--ink-3);
@@ -355,7 +357,7 @@ th.sortable.on{color:var(--ink)}
 .login-box{background:var(--sheet);border:1px solid var(--rule);border-top:3px solid var(--red);
   padding:40px 38px 32px;width:min(400px,100%);display:flex;flex-direction:column;gap:14px}
 .login-mark{font-size:10.5px;font-weight:700;letter-spacing:.2em;color:var(--red)}
-.login-box h1{font-family:var(--serif);font-size:29px;font-weight:600;line-height:1.15;
+.login-box h1{font-family:var(--display);font-size:28px;font-weight:700;line-height:1.15;
   letter-spacing:-.02em;margin-top:2px}
 .login-box p{margin:0;color:var(--ink-2);font-size:13.5px}
 .login-box .auth{display:flex;flex-direction:column;gap:10px}
@@ -863,7 +865,7 @@ function metrics(m,id){
 /* ---------------- charts ---------------- */
 if(window.Chart){
   const C=Chart.defaults;
-  C.font.family='Sarabun, system-ui, sans-serif'; C.font.size=11.5; C.color='#6A6153';
+  C.font.family="'IBM Plex Sans Thai', system-ui, sans-serif"; C.font.size=11.5; C.color='#6A6153';
   C.borderColor='#EAE3D5'; C.maintainAspectRatio=false;
   C.plugins.legend.labels.usePointStyle=true;
   C.plugins.legend.labels.boxWidth=8; C.plugins.legend.labels.boxHeight=8;
