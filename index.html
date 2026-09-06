@@ -331,34 +331,34 @@ th.sortable.on{color:var(--brand)}
    โดยไม่ต้องเอาโลโก้ไปวางบนพื้นสีทึบ (โลโก้มีพื้นขาวติดมาในตัว) */
 .login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
   padding:26px;overflow:auto;background:var(--bg)}
-.login-stack{position:relative;width:min(360px,100%)}
-.login-stack::before{content:'';position:absolute;inset:16px -13px -15px 13px;
-  background:#F3DBD8;border-radius:20px;transform:rotate(-1.8deg)}
-.login-box{position:relative;background:var(--panel);border-radius:18px;padding:26px 26px 23px;
-  display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 32px rgba(36,28,27,.15)}
+.login-stack{position:relative;width:min(440px,100%)}
+.login-stack::before{content:'';position:absolute;inset:19px -16px -18px 16px;
+  background:#F3DBD8;border-radius:24px;transform:rotate(-1.8deg)}
+.login-box{position:relative;background:var(--panel);border-radius:22px;padding:32px 32px 28px;
+  display:flex;flex-direction:column;gap:17px;box-shadow:0 12px 38px rgba(36,28,27,.16)}
 
-.login-head{display:flex;align-items:center;gap:12px;margin-bottom:3px}
-.login-logo{display:block;width:44px;height:44px;border-radius:11px;object-fit:contain;flex:0 0 auto}
+.login-head{display:flex;align-items:center;gap:14px;margin-bottom:5px}
+.login-logo{display:block;width:54px;height:54px;border-radius:13px;object-fit:contain;flex:0 0 auto}
 .login-title{min-width:0}
-.login-box h1{font-size:17.5px;font-weight:700;line-height:1.28;letter-spacing:-.025em}
-.login-sub{margin:3px 0 0;font-size:11.5px;color:var(--ink-3);line-height:1.5}
+.login-box h1{font-size:21px;font-weight:700;line-height:1.25;letter-spacing:-.025em}
+.login-sub{margin:4px 0 0;font-size:13px;color:var(--ink-3);line-height:1.5}
 
 .field{display:flex;flex-direction:column;gap:7px}
-.flabel{font-size:12px;font-weight:700;color:var(--ink-2)}
+.flabel{font-size:13px;font-weight:700;color:var(--ink-2)}
 .fwrap{position:relative;display:flex;align-items:center}
-.login-box input{flex:1;width:100%;padding:14px 76px 14px 16px;border:1px solid var(--line);
-  border-radius:12px;font-size:17px;letter-spacing:.12em;background:var(--panel-2);transition:.14s}
+.login-box input{flex:1;width:100%;padding:17px 86px 17px 18px;border:1px solid var(--line);
+  border-radius:14px;font-size:19px;letter-spacing:.12em;background:var(--panel-2);transition:.14s}
 .login-box input:hover{border-color:var(--ink-3)}
 .login-box input:focus{outline:none;border-color:var(--brand);background:var(--panel);
   box-shadow:0 0 0 3px var(--brand-soft)}
-.login-box input::placeholder{letter-spacing:normal;color:var(--ink-3);font-size:15px}
-.peek{position:absolute;right:7px;border:0;background:transparent;color:var(--ink-3);
-  font-size:12px;font-weight:700;padding:8px 11px;border-radius:8px;cursor:pointer;transition:.14s}
+.login-box input::placeholder{letter-spacing:normal;color:var(--ink-3);font-size:16px}
+.peek{position:absolute;right:9px;border:0;background:transparent;color:var(--ink-3);
+  font-size:13px;font-weight:700;padding:9px 13px;border-radius:9px;cursor:pointer;transition:.14s}
 .peek:hover{background:var(--brand-soft);color:var(--brand)}
-.login-box .btn{padding:14px;font-size:15px;font-weight:700;border-radius:12px;width:100%}
-.login-box .err{color:var(--red);min-height:18px;font-size:13px;margin:0;font-weight:600}
-.login-box .hint{font-size:11.5px;line-height:1.7;color:var(--ink-3);margin:0;
-  padding-top:13px;border-top:1px solid var(--line-2)}
+.login-box .btn{padding:17px;font-size:16.5px;font-weight:700;border-radius:14px;width:100%}
+.login-box .err{color:var(--red);min-height:20px;font-size:14px;margin:0;font-weight:600}
+.login-box .hint{font-size:12.5px;line-height:1.7;color:var(--ink-3);margin:0;
+  padding-top:15px;border-top:1px solid var(--line-2)}
 .login-box .who-line{margin:0;color:var(--ink-3);font-size:12px}
 .login-box .auth{display:flex;flex-direction:column;gap:10px}
 .login-box .auth input{letter-spacing:normal;text-align:left;font-size:16px;padding-right:16px}
@@ -404,12 +404,13 @@ th.sortable.on{color:var(--brand)}
   .drop-in{gap:12px}
   .drop-in .btn{width:100%}
   .login{padding:18px}
-  .login-stack::before{inset:12px -9px -11px 9px}
-  .login-box{padding:22px 20px 20px;border-radius:16px}
-  .login-head{gap:11px}
-  .login-logo{width:40px;height:40px;border-radius:10px}
-  .login-box h1{font-size:16.5px}
-  .login-box input{font-size:16px}
+  .login-stack::before{inset:14px -10px -12px 10px;border-radius:20px}
+  .login-box{padding:24px 22px 22px;border-radius:18px;gap:15px}
+  .login-head{gap:12px}
+  .login-logo{width:46px;height:46px;border-radius:11px}
+  .login-box h1{font-size:18px}
+  .login-box input{font-size:17px;padding:15px 78px 15px 16px}
+  .login-box .btn{padding:15px;font-size:15.5px}
   .zone-h{gap:9px}
   .zone-h .lbl{flex:1 1 100%}
   .zone-h .lbl input{width:100%!important}
