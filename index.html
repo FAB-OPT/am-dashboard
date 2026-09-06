@@ -323,24 +323,51 @@ th.sortable.on{color:var(--brand)}
 
 /* ─────────── หน้าเข้าใช้งาน ─────────── */
 .login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
-  padding:24px;background:radial-gradient(60rem 40rem at 50% -8%,#FAEFED 0%,transparent 62%),var(--bg)}
-.login-box{background:var(--panel);border-radius:20px;padding:38px 36px 30px;width:min(400px,100%);
-  display:flex;flex-direction:column;gap:13px;box-shadow:var(--sh-lg);position:relative;overflow:hidden}
-.login-box::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--brand)}
-.login-mark{font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--brand);margin-top:2px}
-.login-box h1{font-size:27px;font-weight:700;line-height:1.18;letter-spacing:-.03em}
-.login-box p{margin:0;color:var(--ink-2);font-size:13.5px}
-.login-box .auth{display:flex;flex-direction:column;gap:10px}
-.login-box input{padding:13px 15px;border:1px solid var(--line);border-radius:12px;font-size:17px;
-  letter-spacing:.16em;text-align:center;background:var(--panel-2);transition:.14s}
-.login-box .auth input{letter-spacing:normal;text-align:left;font-size:16px}
+  padding:24px;overflow:auto;
+  background:radial-gradient(46rem 30rem at 50% -6%,#F7E6E4 0%,transparent 62%),var(--bg)}
+.login-box{background:var(--panel);border-radius:20px;width:min(420px,100%);
+  display:flex;flex-direction:column;gap:0;box-shadow:var(--sh-lg);overflow:hidden}
+
+/* หัวการ์ด: แถบแบรนด์ พร้อมกราฟแท่งจาง ๆ บอกว่าข้างในคือรายงานตัวเลข */
+.login-head{position:relative;overflow:hidden;padding:26px 30px 24px;
+  background:linear-gradient(160deg,#C9706C 0%,var(--brand) 55%,#AF5551 100%);color:#fff}
+.login-art{position:absolute;right:18px;bottom:0;display:flex;align-items:flex-end;gap:6px;
+  height:66px;opacity:.16;pointer-events:none}
+.login-art i{display:block;width:9px;border-radius:2px 2px 0 0;background:#fff}
+.login-art i:nth-child(1){height:34%}
+.login-art i:nth-child(2){height:54%}
+.login-art i:nth-child(3){height:42%}
+.login-art i:nth-child(4){height:70%}
+.login-art i:nth-child(5){height:56%}
+.login-art i:nth-child(6){height:88%}
+.login-art i:nth-child(7){height:74%}
+.login-mark{position:relative;font-size:11px;font-weight:700;letter-spacing:.2em;
+  color:rgba(255,255,255,.78)}
+.login-box h1{position:relative;font-size:26px;font-weight:700;line-height:1.2;
+  letter-spacing:-.03em;margin-top:7px;color:#fff;max-width:78%}
+.login-sub{position:relative;margin:9px 0 0;font-size:12.5px;color:rgba(255,255,255,.82);
+  line-height:1.5;max-width:72%}
+
+.login-body{padding:24px 30px 26px;display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:7px}
+.flabel{font-size:12px;font-weight:700;color:var(--ink-2)}
+.fwrap{position:relative;display:flex;align-items:center}
+.login-box input{flex:1;width:100%;padding:14px 76px 14px 16px;border:1px solid var(--line);
+  border-radius:12px;font-size:17px;letter-spacing:.12em;background:var(--panel-2);transition:.14s}
+.login-box input:hover{border-color:var(--ink-3)}
 .login-box input:focus{outline:none;border-color:var(--brand);background:var(--panel);
   box-shadow:0 0 0 3px var(--brand-soft)}
-.login-box input::placeholder{letter-spacing:normal;color:var(--ink-3)}
-.login-box .btn{padding:13px;font-size:15px;font-weight:700}
-.login-box .err{color:var(--red);min-height:18px;font-size:13px;margin:0}
-.login-box .hint{font-size:12px;line-height:1.65;color:var(--ink-3);margin:0}
+.login-box input::placeholder{letter-spacing:normal;color:var(--ink-3);font-size:15px}
+.peek{position:absolute;right:7px;border:0;background:transparent;color:var(--ink-3);
+  font-size:12px;font-weight:700;padding:8px 11px;border-radius:8px;cursor:pointer;transition:.14s}
+.peek:hover{background:var(--brand-soft);color:var(--brand)}
+.login-box .btn{padding:14px;font-size:15px;font-weight:700;border-radius:12px;width:100%}
+.login-box .err{color:var(--red);min-height:18px;font-size:13px;margin:0;font-weight:600}
+.login-box .hint{font-size:11.5px;line-height:1.7;color:var(--ink-3);margin:0;
+  padding-top:13px;border-top:1px solid var(--line-2)}
 .login-box .who-line{margin:0;color:var(--ink-3);font-size:12px}
+.login-box .auth{display:flex;flex-direction:column;gap:10px}
+.login-box .auth input{letter-spacing:normal;text-align:left;font-size:16px;padding-right:16px}
 
 /* ─────────── จอเล็ก ─────────── */
 @media(max-width:760px){
@@ -381,9 +408,15 @@ th.sortable.on{color:var(--brand)}
   .msg{margin-left:0;flex:1 1 100%}
   .drop-in{gap:12px}
   .drop-in .btn{width:100%}
-  .login{padding:16px}
-  .login-box{padding:30px 24px 24px;border-radius:18px}
-  .login-box h1{font-size:24px}
+  .login{padding:14px}
+  .login-box{border-radius:18px}
+  .login-head{padding:22px 22px 20px}
+  .login-box h1{font-size:23px}
+  .login-sub{font-size:12px}
+  .login-art{height:54px;right:12px}
+  .login-sub{max-width:66%}
+  .login-box h1{max-width:74%}
+  .login-body{padding:20px 22px 22px}
   .login-box input{font-size:16px}
   .zone-h{gap:9px}
   .zone-h .lbl{flex:1 1 100%}
@@ -414,13 +447,24 @@ th.sortable.on{color:var(--brand)}
 <body>
 <div id="login" class="login">
   <form class="login-box" id="loginForm">
-    <div class="login-mark">ส้มตำเจ๊แดง</div>
-    <h1>Area Manager<br>Performance</h1>
-    <p>ใส่รหัสเข้าใช้งานเพื่อดูผลประกอบการรายสาขา</p>
-    <input id="loginCode" type="password" placeholder="รหัสเข้าใช้งาน" autocomplete="off" autofocus>
-    <button class="btn primary" type="submit" id="loginBtn">เข้าใช้งาน</button>
-    <p class="err" id="loginErr"></p>
-    <p class="hint" id="loginHint">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · ถ้าลืมรหัส Admin เปลี่ยนได้ในแท็บจัดการโซน</p>
+    <div class="login-head">
+      <div class="login-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="login-mark">ส้มตำเจ๊แดง</div>
+      <h1>Area Manager<br>Performance</h1>
+      <p class="login-sub">รายงานผลประกอบการรายสาขา · เทียบกับปีก่อนและเดือนก่อน</p>
+    </div>
+    <div class="login-body">
+      <label class="field">
+        <span class="flabel">รหัสเข้าใช้งาน</span>
+        <span class="fwrap">
+          <input id="loginCode" type="password" placeholder="กรอกรหัสที่ได้รับ" autocomplete="off" autofocus>
+          <button class="peek" type="button" id="btnPeek" aria-label="แสดงรหัส">แสดง</button>
+        </span>
+      </label>
+      <button class="btn primary" type="submit" id="loginBtn">เข้าใช้งาน</button>
+      <p class="err" id="loginErr"></p>
+      <p class="hint" id="loginHint">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · ถ้าลืมรหัส Admin เปลี่ยนได้ในแท็บจัดการโซน</p>
+    </div>
   </form>
 </div>
 <header class="top">
@@ -1311,6 +1355,12 @@ function applyRole(){
   document.getElementById('tabZones').style.display=role.type==='admin'?'':'none';
   if(sel.tab==='zones'&&role.type!=='admin')sel.tab='dash';
 }
+/* พิมพ์รหัสบนมือถือแล้วมองไม่เห็นว่าพิมพ์อะไรไป ให้กดดูได้ */
+(function(){
+  const b=document.getElementById('btnPeek'), f=document.getElementById('loginCode');
+  b.onclick=()=>{ const show=f.type==='password'; f.type=show?'text':'password';
+    b.textContent=show?'ซ่อน':'แสดง'; b.setAttribute('aria-label',show?'ซ่อนรหัส':'แสดงรหัส'); f.focus(); };
+})();
 document.getElementById('loginForm').onsubmit=async e=>{e.preventDefault();
   const err=document.getElementById('loginErr'), box=document.getElementById('loginCode');
   const v=box.value.trim();
