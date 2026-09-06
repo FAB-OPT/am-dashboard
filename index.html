@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ส้มตำเจ๊แดง Area Manager Performance</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="config.js"></script>
@@ -52,7 +52,7 @@
   --red:#A81B12;     --red-soft:#FBE7E4;     /* แย่ลง — เข้มกว่าแดงอ่อนของเปลือก */
   --amber:#9A6A08;   --amber-soft:#FBF3E0;   /* ต้องระวัง */
   --hilite:#FFFCEB;                          /* ช่องที่ต้องกรอก */
-  --font:'Noto Sans Thai',system-ui,-apple-system,sans-serif;
+  --font:'Noto Sans Thai Looped','Noto Sans',system-ui,-apple-system,sans-serif;
   --r:14px;   --r-sm:10px;
   --sh:0 1px 3px rgba(36,28,27,.05);
   --sh-md:0 2px 6px rgba(36,28,27,.07);
@@ -882,7 +882,7 @@ function metrics(m,id){
 /* ---------------- charts ---------------- */
 if(window.Chart){
   const C=Chart.defaults;
-  C.font.family="'Noto Sans Thai', system-ui, sans-serif"; C.font.size=11.5; C.color='#6E625F';
+  C.font.family="'Noto Sans Thai Looped', 'Noto Sans', system-ui, sans-serif"; C.font.size=11.5; C.color='#6E625F';
   C.borderColor='#EFE9E7'; C.maintainAspectRatio=false;
   C.plugins.legend.labels.usePointStyle=true;
   C.plugins.legend.labels.boxWidth=8; C.plugins.legend.labels.boxHeight=8;
