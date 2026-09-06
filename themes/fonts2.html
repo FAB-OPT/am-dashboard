@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<title>เทียบฟอนต์ ชุดที่ 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;500;600;700&family=KoHo:wght@400;500;600;700&family=Krub:wght@400;500;600;700&family=Athiti:wght@400;500;600;700&family=Fahkwang:wght@400;500;600;700&family=K2D:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&family=Maitree:wght@400;500;600;700&family=Pridi:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F5F4;--panel:#FFFFFF;--panel-2:#FCFAF9;--line:#E9E3E1;--line-2:#F3EEED;
+  --ink:#241C1B;--ink-2:#6E625F;--ink-3:#9E918E;
+  --brand:#C0605C;--brand-soft:#FBEEED;--red:#A81B12;--green:#12805A;
+  --sh-lg:0 8px 30px rgba(36,28,27,.14);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#E8E4E2;padding:22px;font-family:'Noto Sans Thai',sans-serif}
+.wrap{max-width:1520px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.demo{display:flex;flex-direction:column;gap:9px}
+.tag{display:flex;flex-direction:column;gap:1px;font-family:'Noto Sans Thai',sans-serif}
+.tag b{font-size:14.5px;font-weight:700;color:#241C1B}
+.tag span{font-size:11.5px;color:#6E625F}
+button,input{font:inherit;color:inherit}
+h1{margin:0}
+.login-box{background:var(--panel);border-radius:18px;width:100%;
+  display:flex;flex-direction:column;box-shadow:var(--sh-lg);overflow:hidden}
+.login-head{position:relative;overflow:hidden;padding:19px 20px 17px;
+  background:linear-gradient(160deg,#C9706C 0%,var(--brand) 55%,#AF5551 100%);color:#fff}
+.login-art{position:absolute;right:13px;bottom:0;display:flex;align-items:flex-end;gap:4px;
+  height:48px;opacity:.16}
+.login-art i{display:block;width:7px;border-radius:2px 2px 0 0;background:#fff}
+.login-art i:nth-child(1){height:34%}.login-art i:nth-child(2){height:54%}
+.login-art i:nth-child(3){height:42%}.login-art i:nth-child(4){height:70%}
+.login-art i:nth-child(5){height:56%}.login-art i:nth-child(6){height:88%}
+.login-mark{position:relative;font-size:10px;font-weight:700;letter-spacing:.2em;color:rgba(255,255,255,.78)}
+.login-box h1{position:relative;font-size:20px;font-weight:700;line-height:1.2;
+  letter-spacing:-.03em;margin-top:5px;color:#fff;max-width:80%}
+.login-sub{position:relative;margin:7px 0 0;font-size:11.5px;color:rgba(255,255,255,.82);
+  line-height:1.5;max-width:72%}
+.login-body{padding:17px 20px 19px;display:flex;flex-direction:column;gap:11px}
+.field{display:flex;flex-direction:column;gap:6px}
+.flabel{font-size:11.5px;font-weight:700;color:var(--ink-2)}
+.fwrap{position:relative;display:flex;align-items:center}
+.login-box input{flex:1;width:100%;padding:12px 62px 12px 14px;border:1px solid var(--line);
+  border-radius:11px;font-size:15px;letter-spacing:.1em;background:var(--panel-2)}
+.login-box input::placeholder{letter-spacing:normal;color:var(--ink-3);font-size:13.5px}
+.peek{position:absolute;right:6px;border:0;background:transparent;color:var(--ink-3);
+  font-size:11.5px;font-weight:700;padding:7px 9px;border-radius:8px}
+.btn{border:1px solid var(--brand);background:var(--brand);color:#fff;border-radius:11px;
+  padding:12px;font-size:14px;font-weight:700;width:100%}
+.hint{font-size:11px;line-height:1.65;color:var(--ink-3);margin:0;padding-top:10px;
+  border-top:1px solid var(--line-2)}
+.nums{background:var(--panel);border:1px solid var(--line);border-radius:11px;
+  padding:10px 13px;font-variant-numeric:tabular-nums;display:flex;gap:13px;flex-wrap:wrap}
+.nums div{display:flex;flex-direction:column;gap:1px}
+.nums .l{font-size:10px;color:var(--ink-3);font-weight:600}
+.nums .v{font-size:17px;font-weight:700;letter-spacing:-.03em}
+.nums .g{color:var(--green);font-size:11.5px;font-weight:700}
+.nums .r{color:var(--red);font-size:11.5px;font-weight:700}
+</style></head>
+<body>
+<div class="wrap" id="wrap"></div>
+<script>
+const CARD = `
+<div class="login-box">
+  <div class="login-head">
+    <div class="login-art"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="login-mark">ส้มตำเจ๊แดง</div>
+    <h1>Area Manager<br>Performance</h1>
+    <p class="login-sub">รายงานผลประกอบการรายสาขา · เทียบกับปีก่อน</p>
+  </div>
+  <div class="login-body">
+    <label class="field"><span class="flabel">รหัสเข้าใช้งาน</span>
+      <span class="fwrap"><input placeholder="กรอกรหัสที่ได้รับ"><button class="peek">แสดง</button></span>
+    </label>
+    <button class="btn">เข้าใช้งาน</button>
+    <p class="hint">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · แอดมินเปลี่ยนรหัสได้ในแท็บจัดการโซน</p>
+  </div>
+</div>
+<div class="nums">
+  <div><span class="l">ยอดขายรวม</span><span class="v">82,216,874</span><span class="g">▲4.7%</span></div>
+  <div><span class="l">ต้นทุนวัตถุดิบ</span><span class="v">29,080,907</span><span class="r">▲4.8%</span></div>
+</div>`;
+const FONTS=[
+  ["Kodchasan","ไม่มีหัว เอียงนิด ๆ ดูมีชีวิตชีวา"],
+  ["KoHo","ไม่มีหัว เรียบหรู เส้นสม่ำเสมอ"],
+  ["Krub","ไม่มีหัว เรียบง่าย เป็นกลาง"],
+  ["Athiti","ไม่มีหัว บางและโปร่ง"],
+  ["Fahkwang","ไม่มีหัว ตัวสูงชะลูด"],
+  ["K2D","ไม่มีหัว กลม ๆ ทันสมัย"],
+  ["Chakra Petch","ไม่มีหัว เหลี่ยม แนวเทคโนโลยี"],
+  ["IBM Plex Sans Thai Looped","มีหัว ทรงเดียวกับที่เคยลอง แต่มีหัว"],
+  ["Noto Sans Thai Looped","มีหัว กลมมน อ่านง่ายมาก"],
+  ["Maitree","มีหัว เซริฟ อบอุ่น"],
+  ["Pridi","มีหัว เซริฟ หนักแน่น"],
+];
+document.getElementById('wrap').innerHTML=FONTS.map(([f,d],i)=>`
+  <div class="demo" style="font-family:'${f}',sans-serif">
+    <div class="tag"><b>${i+7}. ${f}</b><span>${d}</span></div>
+    ${CARD}
+  </div>`).join('');
+</script>
+</body></html>
