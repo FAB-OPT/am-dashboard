@@ -59,7 +59,8 @@
   --sh:0 1px 3px rgba(36,28,27,.05);
   --sh-md:0 2px 6px rgba(36,28,27,.07);
   --sh-lg:0 10px 40px rgba(36,28,27,.16);
-  --w:1340px;
+  --w:2400px;         /* ใช้ความกว้างจอเต็มที่ ตารางจะได้ไม่ต้องเลื่อนซ้ายขวา */
+  --good:var(--green); --bad:var(--red);   /* ชื่อเดิมที่ยังมีอ้างถึงอยู่ */
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -185,6 +186,22 @@ main{max-width:var(--w);margin:0 auto;padding:26px 24px 70px}
   border-radius:var(--r);box-shadow:var(--sh);-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 th,td{padding:11px 13px;border-bottom:1px solid var(--line-2);white-space:nowrap;text-align:right}
+/* ตารางเทียบข้อมูลมีได้ถึง 30 กว่าคอลัมน์ ระยะในช่องแบบปกติทำให้ล้นจอ
+   บีบระยะซ้ายขวาในช่องลง และให้หัวคอลัมน์ย่อยที่ยาวกว่าตัวเลข ("เทียบเดือนก่อน")
+   ตัดเป็นสองบรรทัดแทนที่จะดันคอลัมน์ทั้งคอลัมน์ให้กว้าง */
+.tbl-wrap table:not(.grid) th,.tbl-wrap table:not(.grid) td{padding:9px 7px;font-size:13px}
+.tbl-wrap table:not(.grid) th{font-size:11.5px}
+.tbl-wrap table:not(.grid) th:first-child,.tbl-wrap table:not(.grid) td:first-child{padding-left:14px;padding-right:10px}
+.tbl-wrap table:not(.grid) th:last-child,.tbl-wrap table:not(.grid) td:last-child{padding-right:14px}
+.tbl-wrap table:not(.grid) thead tr:last-child th{white-space:normal;line-height:1.3;vertical-align:bottom}
+.tbl-wrap table:not(.grid) th.grp{padding:7px}
+td.v2 b{display:block;font-weight:600;color:var(--ink)}
+td.v2 small{display:block;font-size:11px;font-weight:400;color:var(--ink-3);margin-top:1px}
+th.v2h small{display:block;font-size:10px;font-weight:500;color:var(--ink-3)}
+tr.total td.v2 small{font-weight:500}
+/* โหมด "ทั้งสองแบบ" มี 31 คอลัมน์ บีบระยะอีกนิดให้ยังพอดีจอกว้าง */
+.tbl-wrap table.cmp.both th,.tbl-wrap table.cmp.both td{padding-left:5px;padding-right:5px;font-size:12.5px}
+.tbl-wrap table.cmp.both th{font-size:11px}
 th{background:var(--panel-2);color:var(--ink-3);font-weight:700;font-size:11.5px;
   position:sticky;top:0;z-index:1;border-bottom:1px solid var(--line)}
 th.grp{background:var(--brand);color:#fff;text-align:center;font-weight:700;font-size:11.5px;
@@ -200,10 +217,10 @@ tr.total td,tr.total td:first-child{background:var(--panel-2);font-weight:700;
 .pos{color:var(--green);font-weight:700}
 .neg{color:var(--red);font-weight:700}
 .mute{color:var(--ink-3)}
-.bar{display:inline-flex;align-items:center;justify-content:flex-end;gap:7px;min-width:110px}
+.bar{display:inline-flex;align-items:center;justify-content:flex-end;gap:6px;min-width:96px}
 .bar i{display:block;height:7px;border-radius:999px;background:var(--green)}
 .bar.neg i{background:var(--red)}
-.status{text-align:left;white-space:normal;max-width:330px;min-width:200px;font-size:12.5px;line-height:1.55}
+.status{text-align:left;white-space:normal;max-width:330px;min-width:170px;font-size:12.5px;line-height:1.55}
 .status.ok{color:var(--green)}
 .status.warn{color:var(--amber)}
 .rank{width:32px;color:var(--ink-3);text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
@@ -228,6 +245,8 @@ th.sortable.on{color:var(--brand)}
 .grid input{width:112px;border:0;padding:10px 9px;text-align:right;background:var(--hilite);
   outline:none;font-variant-numeric:tabular-nums}
 .grid input.txt{width:260px;text-align:left}
+.grid input.w-m{width:98px}.grid input.w-n{width:68px}.grid input.w-ot{width:86px}
+.grid input.w-p{width:62px}.grid input.w-cp{width:54px}
 .grid input:focus{background:var(--panel);box-shadow:inset 0 0 0 2px var(--brand)}
 .grid td.calc{padding:0 9px;color:var(--ink-3);font-size:12.5px;background:var(--panel-2);min-width:70px}
 
@@ -628,10 +647,10 @@ body.present .rank{font-size:16px;width:40px}
   <!-- ================= COMPARE ================= -->
   <section class="view" id="view-compare">
     <div class="sec"><h2>ตารางเทียบข้อมูลรายสาขา</h2><span class="note" id="cmpSub"></span>
-      <div class="right"><div class="seg" id="cmpMode"><button aria-pressed="true" data-m="yoy">YoY</button><button data-m="mom">MoM</button><button data-m="both">ทั้งสองแบบ</button></div>
+      <div class="right"><div class="seg" id="cmpMode"><button aria-pressed="true" data-m="yoy">เทียบปีก่อน</button><button data-m="mom">เทียบเดือนก่อน</button><button data-m="both">ทั้งสองแบบ</button></div>
       <button class="btn ghost" id="btnCsv">ดาวน์โหลด CSV</button></div></div>
     <div class="tbl-wrap" id="cmpTable"></div>
-    <div class="legend"><span><i style="background:var(--good)"></i>ดีขึ้น</span><span><i style="background:var(--bad)"></i>แย่ลง</span><span>COL% Δ และ Complaint Δ: ค่าบวก = แย่ลง</span></div>
+    <div class="legend"><span><i style="background:var(--good)"></i>ดีขึ้น</span><span><i style="background:var(--bad)"></i>แย่ลง</span><span>ตัวเลขเล็กสีเทาใต้ตัวเลขเดือนนี้ คือตัวที่ใช้เทียบ (ปีก่อน หรือ เดือนก่อน)</span><span>ต้นทุน ค่าแรง และข้อร้องเรียน: ค่าบวก = แย่ลง</span></div>
   </section>
 
   <!-- ================= YEAR ================= -->
@@ -1033,7 +1052,7 @@ function renderDash(){
   if(bc) bc.style.display=sel.sk?'':'none';
   const sortable=(t,k,extra='')=>`<th class="sortable ${sel.sk===k?'on':''}" data-sk="${k}" ${extra}>${t}<span class="ar">${sel.sk===k?(sel.sd<0?'▼':'▲'):''}</span></th>`;
   const bar=p=>p==null?'<span class="mute">–</span>':`<span class="bar ${p<0?'neg':''}"><span class="${cls(p)}">${fmtPct(p)}</span><i style="width:${Math.min(60,Math.abs(p)/maxAbs*60).toFixed(0)}px"></i></span>`;
-  const rows=shown.map(x=>{const r=x.r;return `<tr><td><a href="#" class="blink" data-b="${x.b.id}">${x.b.name}</a>${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${(AMS.find(a=>a.id===x.b.am)||{}).name}</span>`:''}</td>
+  const rows=shown.map(x=>{const r=x.r;return `<tr><td><a href="#" class="blink" data-b="${x.b.id}" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</a>${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${(AMS.find(a=>a.id===x.b.am)||{}).name}</span>`:''}</td>
     <td>${bar(r.yoy.s)}</td><td class="${cls(r.mom.s)}">${fmtPct(r.mom.s)}</td>
     <td class="${cls(r.yoy.e)}">${fmtPct(r.yoy.e)}</td><td class="${cls(r.mom.e)}">${fmtPct(r.mom.e)}</td>
     <td class="${cls(r.yoy.c,true)}">${fmtPct(r.yoy.c)}</td>
@@ -1046,8 +1065,8 @@ function renderDash(){
   // top / worst
   const best=[...withData].filter(x=>x.r.yoy.s!=null).sort((a,b)=>b.r.yoy.s-a.r.yoy.s).slice(0,5);
   const worst=[...withData].sort((a,b)=>(b.r.score-a.r.score)||((a.r.yoy.s??0)-(b.r.yoy.s??0))).slice(0,5);
-  document.getElementById('topBest').innerHTML=best.length?`<table class="list"><tbody>${best.map((x,i)=>`<tr><td class="rank">${i+1}</td><td style="text-align:left">${x.b.name}</td><td class="pos">${fmtPct(x.r.yoy.s)}</td><td class="mute">${fmt(x.r.s26)} ฿</td></tr>`).join('')}</tbody></table>`:'<p class="hint">ต้องกรอกยอดขายทั้ง 2025 และ 2026</p>';
-  document.getElementById('topWorst').innerHTML=`<table class="list"><tbody>${worst.map((x,i)=>`<tr><td class="rank">${i+1}</td><td style="text-align:left">${x.b.name}</td><td class="status ${x.r.score?'warn':'ok'}">${x.r.score?x.r.issues.join(', '):'ไม่พบประเด็น'}</td></tr>`).join('')}</tbody></table>`;
+  document.getElementById('topBest').innerHTML=best.length?`<table class="list"><tbody>${best.map((x,i)=>`<tr><td class="rank">${i+1}</td><td style="text-align:left" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</td><td class="pos">${fmtPct(x.r.yoy.s)}</td><td class="mute">${fmt(x.r.s26)} ฿</td></tr>`).join('')}</tbody></table>`:'<p class="hint">ต้องกรอกยอดขายทั้ง 2025 และ 2026</p>';
+  document.getElementById('topWorst').innerHTML=`<table class="list"><tbody>${worst.map((x,i)=>`<tr><td class="rank">${i+1}</td><td style="text-align:left" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</td><td class="status ${x.r.score?'warn':'ok'}">${x.r.score?x.r.issues.join(', '):'ไม่พบประเด็น'}</td></tr>`).join('')}</tbody></table>`;
 
   // AM summary when all
   const amb=document.getElementById('amBlock');
@@ -1061,28 +1080,49 @@ function renderDash(){
 /* ---------------- render: compare ---------------- */
 function renderCompare(){
   const m=sel.m, bs=scopeBranches(), mode=sel.cmp;
-  document.getElementById('cmpSub').textContent=`${MONTHS[m]} ${YEAR} — ${scopeLabel()}${m===0&&mode!=='yoy'?' · มกราคมไม่มีเดือนก่อนให้เทียบ MoM':''}`;
+  document.getElementById('cmpSub').textContent=`${MONTHS[m]} ${YEAR} · ${scopeLabel()}${m===0&&mode!=='yoy'?' · มกราคมไม่มีเดือนก่อนให้เทียบ':''}`;
   const y=mode!=='mom', mm=mode!=='yoy';
-  const grp=(t,alt)=>`<th class="grp ${alt?'alt':''}" colspan="${(y?3:1)+(mm?2:0)}">${t}</th>`;
-  const sub=()=>(y?`<th>${PREV}</th><th>${YEAR}</th><th>YoY</th>`:`<th>${YEAR}</th>`)+(mm?`<th>เดือนก่อน</th><th>MoM</th>`:'');
-  const cell=(r,k,inv)=>(y?`<td>${fmt(r[k+'25'])}</td><td>${fmt(r[k+'26'])}</td><td class="${cls(r.yoy[k],inv)}">${fmtPct(r.yoy[k])}</td>`:`<td>${fmt(r[k+'26'])}</td>`)+(mm?`<td>${fmt(r.prev?r.prev[k+'26']:null)}</td><td class="${cls(r.mom[k],inv)}">${fmtPct(r.mom[k])}</td>`:'');
-  const ms=bs.map(b=>({b,r:metrics(m,b.id)}));
-  const rows=ms.map(({b,r})=>`<tr><td>${b.name}</td>${cell(r,'s')}${cell(r,'e')}${cell(r,'c',true)}${cell(r,'l',true)}
-    <td>${r.col25==null?'–':(r.col25*100).toFixed(1)+'%'}</td><td>${r.col26==null?'–':(r.col26*100).toFixed(1)+'%'}</td><td class="${cls(r.colD,true)}">${r.colD==null?'–':(r.colD>0?'+':'')+(r.colD*100).toFixed(1)+' pt'}</td>
-    <td>${fmt(r.tdi25)}</td><td>${fmt(r.tdi26)}</td><td class="${cls(r.yoy.tdi)}">${fmtPct(r.yoy.tdi)}</td><td>${fmt(r.kdi25)}</td><td>${fmt(r.kdi26)}</td><td class="${cls(r.yoy.kdi)}">${fmtPct(r.yoy.kdi)}</td>
-    <td>${fmt(r.td25)}</td><td>${fmt(r.td26)}</td><td class="${cls(r.yoy.td)}">${fmtPct(r.yoy.td)}</td><td>${fmt(r.kd25)}</td><td>${fmt(r.kd26)}</td><td class="${cls(r.yoy.kd)}">${fmtPct(r.yoy.kd)}</td>
-    <td>${fmt(r.ot)}</td><td>${r.osc==null?'–':(r.osc*100).toFixed(1)+'%'}</td><td class="${r.cp>=3?'neg':''}">${fmt(r.cp)}</td><td class="${cls(r.mom.cp,true)}">${r.mom.cp==null?'–':(r.mom.cp>0?'+':'')+r.mom.cp}</td></tr>`).join('');
-  const ids=bs.map(b=>b.id), A=agg(m,ids), P=m>0?agg(m-1,ids):null; const tot=(k,inv)=>(y?`<td>${fmt(A[k+'25'])}</td><td>${fmt(A[k+'26'])}</td><td class="${cls(pct(A[k+'25'],A[k+'26']),inv)}">${fmtPct(pct(A[k+'25'],A[k+'26']))}</td>`:`<td>${fmt(A[k+'26'])}</td>`)+(mm?`<td>${fmt(P?P[k+'26']:null)}</td><td class="${cls(P?pct(P[k+'26'],A[k+'26']):null,inv)}">${fmtPct(P?pct(P[k+'26'],A[k+'26']):null)}</td>`:'');
-  const c25=colPct(A,'25'),c26=colPct(A,'26');
-  const total=`<tr class="total"><td>รวม / เฉลี่ย</td>${tot('s')}${tot('e')}${tot('c',true)}${tot('l',true)}<td>${c25==null?'–':(c25*100).toFixed(1)+'%'}</td><td>${c26==null?'–':(c26*100).toFixed(1)+'%'}</td><td class="${cls(c25!=null&&c26!=null?c26-c25:null,true)}">${c25!=null&&c26!=null?((c26-c25>0?'+':'')+((c26-c25)*100).toFixed(1)+' pt'):'–'}</td>
-    <td>${fmt(A.tdi25)}</td><td>${fmt(A.tdi26)}</td><td class="${cls(pct(A.tdi25,A.tdi26))}">${fmtPct(pct(A.tdi25,A.tdi26))}</td><td>${fmt(A.kdi25)}</td><td>${fmt(A.kdi26)}</td><td class="${cls(pct(A.kdi25,A.kdi26))}">${fmtPct(pct(A.kdi25,A.kdi26))}</td>
-    <td>${fmt(A.td25)}</td><td>${fmt(A.td26)}</td><td class="${cls(pct(A.td25,A.td26))}">${fmtPct(pct(A.td25,A.td26))}</td><td>${fmt(A.kd25)}</td><td>${fmt(A.kd26)}</td><td class="${cls(pct(A.kd25,A.kd26))}">${fmtPct(pct(A.kd25,A.kd26))}</td>
-    <td>${fmt(A.ot)}</td><td>${A.osc==null?'–':(A.osc*100).toFixed(1)+'%'}</td><td>${fmt(A.cp)}</td><td>${P&&P.cp!=null&&A.cp!=null?((A.cp-P.cp>0?'+':'')+(A.cp-P.cp)):'–'}</td></tr>`;
-  document.getElementById('cmpTable').innerHTML=`<table><thead><tr><th></th>${grp('Sales (฿)')}${grp('EBIT (฿)',1)}${grp('COGs (฿)')}${grp('COL (฿)',1)}<th class="grp" colspan="3">COL % to Sales</th><th class="grp alt" colspan="3">Trans Dine In</th><th class="grp" colspan="3">Ticket Dine In</th><th class="grp alt" colspan="3">Trans Del</th><th class="grp" colspan="3">Ticket Del</th><th class="grp alt">OT</th><th class="grp">OSC%</th><th class="grp alt" colspan="2">Complaint</th></tr>
-    <tr><th>สาขา</th>${sub()}${sub()}${sub()}${sub()}<th>${PREV}</th><th>${YEAR}</th><th>Δ</th><th>${PREV}</th><th>${YEAR}</th><th>YoY</th><th>${PREV}</th><th>${YEAR}</th><th>YoY</th><th>${PREV}</th><th>${YEAR}</th><th>YoY</th><th>${PREV}</th><th>${YEAR}</th><th>YoY</th><th>฿</th><th>%</th><th>เดือนนี้</th><th>Δ MoM</th></tr></thead><tbody>${rows}${total}</tbody></table>`;
+  /* ตัวเลขที่ใช้เทียบ (ปีก่อน หรือ เดือนก่อน) ซ้อนอยู่ใต้ตัวเลขเดือนนี้ในช่องเดียวกัน
+     เดิมแยกเป็นคอลัมน์ของตัวเอง ตารางเลยยาว 32 คอลัมน์และล้นจอ ตอนนี้เหลือ 23 */
+  const v2=(top,base)=>`<td class="v2"><b>${top}</b><small>${base}</small></td>`;
+  const pc=x=>x==null?'–':(x*100).toFixed(1)+'%';
+  const tdP=(p,inv)=>`<td class="${cls(p,inv)}">${fmtPct(p)}</td>`;
+  const tdPt=d=>`<td class="${cls(d,true)}">${d==null?'–':(d>0?'+':'')+(d*100).toFixed(1)+' pt'}</td>`;
+  const raw=(mo,id)=>{ const o={}; FIELDS.forEach(f=>o[f]=val(mo,id,f)); return o; };
+  const line=(first,c,p,isTotal)=>{
+    // หมวดเงิน: เทียบได้ทั้งปีก่อนและเดือนก่อน ตามโหมดที่เลือก
+    const money=(k,inv)=>v2(fmt(c[k+'26']), y?fmt(c[k+'25']):fmt(p?p[k+'26']:null))+
+      (y?tdP(pct(c[k+'25'],c[k+'26']),inv):'')+(mm?tdP(p?pct(p[k+'26'],c[k+'26']):null,inv):'');
+    // บิลและยอดต่อบิล: มีแต่ของปีก่อนให้เทียบ
+    const yo=k=>v2(fmt(c[k+'26']),fmt(c[k+'25']))+tdP(pct(c[k+'25'],c[k+'26']));
+    const c26=colPct(c,'26'), c25=colPct(c,'25'), cp0=p?colPct(p,'26'):null;
+    const col=v2(pc(c26), y?pc(c25):pc(cp0))+
+      (y?tdPt(c26!=null&&c25!=null?c26-c25:null):'')+(mm?tdPt(c26!=null&&cp0!=null?c26-cp0:null):'');
+    const cpD=p&&p.cp!=null&&c.cp!=null?c.cp-p.cp:null;
+    return `<tr${isTotal?' class="total"':''}>${first}${money('s')}${money('e')}${money('c',true)}${money('l',true)}${col}`+
+      `${yo('tdi')}${yo('kdi')}${yo('td')}${yo('kd')}`+
+      `<td>${fmt(c.ot)}</td><td>${pc(c.osc)}</td><td class="${!isTotal&&c.cp>=3?'neg':''}">${fmt(c.cp)}</td>`+
+      `<td class="${cls(cpD,true)}">${cpD==null?'–':(cpD>0?'+':'')+cpD}</td></tr>`;
+  };
+  const rows=bs.map(b=>line(`<td title="${esc(b.name)}">${esc(shortName(b.name))}</td>`, raw(m,b.id), m>0?raw(m-1,b.id):null)).join('');
+  const ids=bs.map(b=>b.id);
+  const total=line('<td>รวม / เฉลี่ย</td>', agg(m,ids), m>0?agg(m-1,ids):null, true);
+  const n=1+(y?1:0)+(mm?1:0);
+  const G=(t,en,alt,span)=>`<th class="grp ${alt?'alt':''}" colspan="${span}">${t}<span>${en}</span></th>`;
+  const vh=b=>`<th class="v2h">${YEAR}<small>${b}</small></th>`;
+  const subM=vh(y?PREV:'เดือนก่อน')+(y?'<th>เทียบปีก่อน</th>':'')+(mm?'<th>เทียบเดือนก่อน</th>':'');
+  const subC=vh(y?PREV:'เดือนก่อน')+(y?'<th>ต่างจากปีก่อน</th>':'')+(mm?'<th>ต่างจากเดือนก่อน</th>':'');
+  const subY=vh(PREV)+'<th>เทียบปีก่อน</th>';
+  document.getElementById('cmpTable').innerHTML=`<table class="cmp ${mode}"><thead><tr><th></th>`+
+    G('ยอดขาย','Sales · ฿',0,n)+G('กำไร','EBIT · ฿',1,n)+G('ต้นทุนวัตถุดิบ','COGs · ฿',0,n)+G('ค่าแรง','COL · ฿',1,n)+
+    G('ค่าแรง % ของยอดขาย','COL % to Sales',0,n)+
+    G('บิลหน้าร้าน','Trans Dine In',1,2)+G('ยอดต่อบิลหน้าร้าน','Ticket Dine In · ฿',0,2)+
+    G('บิลเดลิเวอรี','Trans Del',1,2)+G('ยอดต่อบิลเดลิเวอรี','Ticket Del · ฿',0,2)+
+    G('ค่าล่วงเวลา','OT · ฿',1,1)+G('คะแนนบริการ','OSS %',0,1)+G('ข้อร้องเรียน','Complaint',1,2)+
+    `</tr><tr><th>สาขา</th>${subM}${subM}${subM}${subM}${subC}${subY}${subY}${subY}${subY}`+
+    `<th>เดือนนี้</th><th>เดือนนี้</th><th>เดือนนี้</th><th>ต่างจากเดือนก่อน</th></tr></thead>`+
+    `<tbody>${rows}${total}</tbody></table>`;
 }
-
-/* ---------------- render: year ---------------- */
 function renderYear(){
   const ids=scopeBranches().map(b=>b.id);
   document.getElementById('yearTitle').textContent=`สรุปทั้งปี ${YEAR} — ${scopeLabel()}`;
@@ -1098,7 +1138,7 @@ function renderYear(){
   document.getElementById('yearTable').innerHTML=`<table><thead><tr><th>เดือน</th><th>Sales ${PREV}</th><th>Sales ${YEAR}</th><th>YoY</th><th>EBIT ${PREV}</th><th>EBIT ${YEAR}</th><th>YoY</th><th>COGs ${YEAR}</th><th>YoY</th><th>COL ${YEAR}</th><th>COL%</th><th>OT</th><th>Complaint</th></tr></thead><tbody>${M.map((a,i)=>row(MONTHS[i],a)).join('')}${row('รวมทั้งปี',T,'total')}</tbody></table>`;
   const bs=scopeBranches();
   const brows=bs.map(b=>{const a={}; FIELDS.forEach(f=>a[f]=sum(MONTHS.map((_,i)=>val(i,b.id,f)))); const neg=MONTHS.filter((_,i)=>{const p=pct(val(i,b.id,'s25'),val(i,b.id,'s26'));return p!=null&&p<0}).length; const n=MONTHS.filter((_,i)=>val(i,b.id,'s26')!=null).length; const c26=colPct(a,'26');
-    return `<tr><td>${b.name}${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${(AMS.find(x=>x.id===b.am)||{}).name}</span>`:''}</td><td class="mute">${n}</td><td>${fmt(a.s25)}</td><td>${fmt(a.s26)}</td><td class="${cls(pct(a.s25,a.s26))}">${fmtPct(pct(a.s25,a.s26))}</td><td>${fmt(a.e25)}</td><td>${fmt(a.e26)}</td><td class="${cls(pct(a.e25,a.e26))}">${fmtPct(pct(a.e25,a.e26))}</td><td>${c26==null?'–':(c26*100).toFixed(1)+'%'}</td><td>${fmt(a.ot)}</td><td>${fmt(a.cp)}</td><td class="${neg?'neg':''}">${neg?neg+' เดือน':'–'}</td></tr>`;}).join('');
+    return `<tr><td title="${esc(b.name)}">${esc(shortName(b.name))}${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${(AMS.find(x=>x.id===b.am)||{}).name}</span>`:''}</td><td class="mute">${n}</td><td>${fmt(a.s25)}</td><td>${fmt(a.s26)}</td><td class="${cls(pct(a.s25,a.s26))}">${fmtPct(pct(a.s25,a.s26))}</td><td>${fmt(a.e25)}</td><td>${fmt(a.e26)}</td><td class="${cls(pct(a.e25,a.e26))}">${fmtPct(pct(a.e25,a.e26))}</td><td>${c26==null?'–':(c26*100).toFixed(1)+'%'}</td><td>${fmt(a.ot)}</td><td>${fmt(a.cp)}</td><td class="${neg?'neg':''}">${neg?neg+' เดือน':'–'}</td></tr>`;}).join('');
   document.getElementById('yearBranchTable').innerHTML=`<table><thead><tr><th>สาขา</th><th>เดือนที่กรอก</th><th>Sales ${PREV}</th><th>Sales ${YEAR}</th><th>YoY</th><th>EBIT ${PREV}</th><th>EBIT ${YEAR}</th><th>YoY</th><th>COL%</th><th>OT</th><th>Complaint</th><th>เดือนที่ยอดขายลด</th></tr></thead><tbody>${brows}</tbody></table>`;
 }
 
@@ -1146,7 +1186,7 @@ function renderInput(){
   document.getElementById('storageNote').textContent=storageText();
   const head1=`<tr><th rowspan="2" style="text-align:left">สาขา</th>${GROUPS.map(([k,t],i)=>`<th class="grp ${i%2?'alt':''}" colspan="3">${t}</th>`).join('')}<th class="grp" colspan="2">ค่าแรง % ของยอดขาย<span>COL % to Sales</span></th><th class="grp alt" rowspan="2">ค่าล่วงเวลา<span>OT · ฿</span></th><th class="grp" rowspan="2">คะแนนบริการ<span>OSS %</span></th><th class="grp alt" rowspan="2">ข้อร้องเรียน<span>Complaint</span></th><th class="grp" rowspan="2">OSS Failure / Complaint Explanation</th></tr>`;
   const head2=`<tr>${GROUPS.map(()=>`<th>${PREV}</th><th>${YEAR}</th><th>YoY</th>`).join('')}<th>${PREV}</th><th>${YEAR}</th></tr>`;
-  const rows=bs.map((b,ri)=>{const r=rec(m,b.id); const inp=(f,ci)=>`<td><input inputmode="decimal" data-r="${ri}" data-c="${ci}" data-id="${b.id}" data-f="${f}" value="${r[f]??''}"></td>`;
+  const rows=bs.map((b,ri)=>{const r=rec(m,b.id); const inp=(f,ci)=>`<td><input class="${/^(s|e|c|l)2[56]$/.test(f)?'w-m':/^(tdi|kdi|td|kd)2[56]$/.test(f)?'w-n':f==='ot'?'w-ot':f==='cp'?'w-cp':'w-p'}" inputmode="decimal" data-r="${ri}" data-c="${ci}" data-id="${b.id}" data-f="${f}" value="${r[f]??''}"></td>`;
     let ci=0; let h=`<tr><td title="${b.name}">${b.name}</td>`;
     GROUPS.forEach(([k])=>{h+=inp(k+'25',ci++)+inp(k+'26',ci++)+`<td class="calc" data-calc="${k}" data-id="${b.id}"></td>`;});
     h+=`<td class="calc" data-calc="col25" data-id="${b.id}"></td><td class="calc" data-calc="col26" data-id="${b.id}"></td>`;
@@ -1497,7 +1537,33 @@ document.getElementById('btnExport').onclick=()=>{ const json=JSON.stringify({ve
 document.getElementById('btnPushCloud').onclick=()=>{ if(!confirm('อัปโหลดข้อมูลและการตั้งค่าของเครื่องนี้ทับข้อมูลกลางทั้งหมด?'))return; pushAll(); };
 document.getElementById('btnImport').onclick=()=>document.getElementById('fileImport').click();
 document.getElementById('fileImport').onchange=e=>{ const f=e.target.files[0]; if(!f)return; const rd=new FileReader(); rd.onload=()=>{ try{ const j=JSON.parse(rd.result); if(!j.data)throw 0; const mode=confirm('กด OK = รวมกับข้อมูลเดิม (เดือนที่ซ้ำจะใช้ของไฟล์)\nกด Cancel = แทนที่ข้อมูลเดิมทั้งหมด'); if(mode){ Object.keys(j.data).forEach(m=>{store.data[m]={...(store.data[m]||{}),...j.data[m]};}); } else store={data:j.data}; Object.keys(store.data).forEach(m=>markMonth(m)); save(); if(j.cfg&&role&&role.type==='admin'&&confirm('ไฟล์นี้มีการตั้งค่าโซน/รหัสด้วย ต้องการใช้ค่าจากไฟล์แทนด้วยหรือไม่?')){cfg=j.cfg;saveCfg();} render(); flash('นำเข้าแล้ว'); }catch(err){ alert('ไฟล์ไม่ถูกต้อง — ต้องเป็นไฟล์ JSON ที่สำรองจากหน้านี้'); } }; rd.readAsText(f); e.target.value=''; };
-document.getElementById('btnCsv').onclick=()=>{ const tbl=document.querySelector('#cmpTable table'); if(!tbl)return; const rows=[...tbl.querySelectorAll('tr')].map(tr=>[...tr.children].map(c=>'"'+c.textContent.replace(/"/g,'""').replace(/\s+/g,' ').trim()+'"').join(',')); offerFile(`compare_${sel.am}_${MSHORT[sel.m]}${YEAR}.csv`,'\ufeff'+rows.join('\n'),'text/csv;charset=utf-8'); };
+document.getElementById('btnCsv').onclick=()=>{
+  const m=sel.m, bs=scopeBranches(), ids=bs.map(b=>b.id);
+  const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const num=v=>v==null?'':Math.round(v*100)/100;
+  const pp=v=>v==null?'':Math.round(v*1000)/10;
+  const raw=(mo,id)=>{ const o={}; FIELDS.forEach(f=>o[f]=val(mo,id,f)); return o; };
+  const MONEY=[['s','ยอดขาย'],['e','กำไร EBIT'],['c','ต้นทุนวัตถุดิบ COGs'],['l','ค่าแรง COL']];
+  const OPS=[['tdi','บิลหน้าร้าน'],['kdi','ยอดต่อบิลหน้าร้าน'],['td','บิลเดลิเวอรี'],['kd','ยอดต่อบิลเดลิเวอรี']];
+  const head=['สาขา','ผู้ดูแล'];
+  MONEY.forEach(([k,t])=>head.push(`${t} ${PREV}`,`${t} ${YEAR}`,`${t} เดือนก่อน`,`${t} เทียบปีก่อน %`,`${t} เทียบเดือนก่อน %`));
+  head.push(`ค่าแรง % ${PREV}`,`ค่าแรง % ${YEAR}`,'ค่าแรง % เดือนก่อน','ค่าแรง % ต่างจากปีก่อน (pt)','ค่าแรง % ต่างจากเดือนก่อน (pt)');
+  OPS.forEach(([k,t])=>head.push(`${t} ${PREV}`,`${t} ${YEAR}`,`${t} เทียบปีก่อน %`));
+  head.push('ค่าล่วงเวลา OT','คะแนนบริการ OSS %','ข้อร้องเรียน','ข้อร้องเรียน ต่างจากเดือนก่อน','หมายเหตุ');
+  const line=(name,zone,c,p,note)=>{
+    const o=[name,zone];
+    MONEY.forEach(([k])=>o.push(num(c[k+'25']),num(c[k+'26']),num(p?p[k+'26']:null),pp(pct(c[k+'25'],c[k+'26'])),pp(p?pct(p[k+'26'],c[k+'26']):null)));
+    const c25=colPct(c,'25'), c26=colPct(c,'26'), cp0=p?colPct(p,'26'):null;
+    o.push(pp(c25),pp(c26),pp(cp0),pp(c26!=null&&c25!=null?c26-c25:null),pp(c26!=null&&cp0!=null?c26-cp0:null));
+    OPS.forEach(([k])=>o.push(num(c[k+'25']),num(c[k+'26']),pp(pct(c[k+'25'],c[k+'26']))));
+    o.push(num(c.ot),pp(c.osc),num(c.cp),p&&p.cp!=null&&c.cp!=null?c.cp-p.cp:'',note||'');
+    return o.map(q).join(',');
+  };
+  const out=[head.map(q).join(',')];
+  bs.forEach(b=>out.push(line(b.name,(AMS.find(a=>a.id===b.am)||{}).name||'',raw(m,b.id),m>0?raw(m-1,b.id):null,rec(m,b.id).note)));
+  out.push(line('รวม / เฉลี่ย','',agg(m,ids),m>0?agg(m-1,ids):null,''));
+  offerFile(`เทียบข้อมูล_${sel.am}_${MSHORT[m]}${YEAR}.csv`,'\ufeff'+out.join('\n'),'text/csv;charset=utf-8');
+};
 
 /* ---------------- zones (admin) ---------------- */
 function renderZones(){
