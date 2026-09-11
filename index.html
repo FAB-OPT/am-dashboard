@@ -793,9 +793,21 @@ function migrate(){ const map={}; DEFAULT_CFG.zones.forEach(z=>z.branches.forEac
 function localSave(){ try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){storageOK=false;} }
 function localSaveCfg(){ try{localStorage.setItem(KEY_CFG,JSON.stringify(cfg));}catch(e){storageOK=false;} }
 function markDirty(m,id){ dirty.add(String(m)+'|'+id); }
+/* จดรายการที่ยังส่งขึ้นฐานไม่สำเร็จไว้ในเครื่องด้วย
+   ถ้าปิดแท็บก่อนส่งทัน หรือเน็ตหลุด เปิดเว็บครั้งหน้าจะส่งต่อให้ก่อนดึงข้อมูลจากฐาน
+   เดิมไม่มีส่วนนี้ การดึงข้อมูลจากฐานตอนเปิดเว็บจะทับของที่ยังไม่ได้ส่งหายไปเงียบ ๆ */
+const KEY_PENDING='jd_am_pending_sync';
+function pendingWho(){ return role?role.type+':'+(role.zone||''):''; }
+function persistPending(){
+  try{
+    const k=[...dirty];
+    if(k.length||cfgDirty) localStorage.setItem(KEY_PENDING,JSON.stringify({keys:k,cfg:cfgDirty,year:YEAR,who:pendingWho()}));
+    else localStorage.removeItem(KEY_PENDING);
+  }catch(e){}
+}
 function markMonth(m){ Object.keys(store.data[m]||{}).forEach(id=>markDirty(m,id)); }
-function saveCfg(){ localSaveCfg(); rebuild(); if(CLOUD){cfgDirty=true; scheduleFlush();} }
-function save(){ localSave(); if(CLOUD) scheduleFlush(); }
+function saveCfg(){ localSaveCfg(); rebuild(); if(CLOUD){cfgDirty=true; persistPending(); scheduleFlush();} }
+function save(){ localSave(); if(CLOUD){ persistPending(); scheduleFlush(); } }
 function scheduleFlush(){ if(!CLOUD)return; setSync('saving'); clearTimeout(flushT); flushT=setTimeout(flush,700); }
 
 async function flush(){
@@ -813,9 +825,11 @@ async function flush(){
       }
     }
     await touch();
+    persistPending();
     setSync('cloud');
   }catch(e){
     keys.forEach(k=>dirty.add(k)); if(doCfg)cfgDirty=true;
+    persistPending();
     sbErr(e); setTimeout(()=>{ if(dirty.size||cfgDirty) flush(); }, 5000);
   }
 }
@@ -905,7 +919,22 @@ function stopPoll(){ if(pollT)clearInterval(pollT); pollT=null; }
 async function enterApp(){
   setSync('connecting');
   try{
+    // มีงานค้างส่งจากครั้งก่อน (คนเดียวกัน ปีเดียวกัน) ส่งขึ้นฐานก่อน แล้วค่อยดึงข้อมูลจากฐาน
+    let pend=null; try{ pend=JSON.parse(localStorage.getItem(KEY_PENDING)||'null'); }catch(e){}
+    if(pend&&pend.year===YEAR&&pend.who===pendingWho()&&((pend.keys||[]).length||pend.cfg)){
+      CLOUD=true;
+      (pend.keys||[]).forEach(k=>dirty.add(k));
+      if(pend.cfg&&role.type==='admin') cfgDirty=true;
+      await flush();
+      if(dirty.size||cfgDirty){
+        // ยังส่งไม่ได้ อย่าดึงจากฐานมาทับ ใช้ของในเครื่องไปก่อน ระบบจะลองส่งซ้ำเอง
+        applyRole(); render(); startPoll(); setSync('error','มีข้อมูลค้างส่ง กำลังลองใหม่');
+        return;
+      }
+      flash('ส่งข้อมูลที่ค้างไว้จากครั้งก่อนขึ้นฐานแล้ว');
+    }
     const hasCfg=await pullAll();
+    await pullAliases();
     CLOUD=true;
     // ครั้งแรกสุด: แอดมินอัปโหลดผัง 5 โซนจากเครื่องขึ้นฐานให้
     if(!hasCfg&&role.type==='admin'){ cfgDirty=true; await flush(); }
@@ -1271,10 +1300,23 @@ function xlSim(a,b){
   const d=Math.min(...prev);
   return Math.max(0,1-d/p.length)*(p.length>=3?1:.5);
 }
+/* การจับคู่ชื่อในไฟล์กับสาขา เก็บ 3 ที่ รวมกันตอนใช้
+   ในฐานกลาง (am_get_aliases) ใช้ร่วมกันทุกคนทุกเครื่อง เป็นหลัก
+   ในผังโซน (cfg.aliases) ของเดิมที่แอดมินเคยบันทึกไว้
+   ในเครื่อง เป็นสำเนาเผื่อออฟไลน์ หรือฐานยังไม่ได้ติดตั้งฟังก์ชันใหม่ */
 const KEY_ALIAS='jd_am_branch_alias';
+let SRV_ALIAS={}, ALIAS_SRV=null;          // null ยังไม่รู้ · true ฐานพร้อม · false ฐานยังไม่มีฟังก์ชัน
+async function pullAliases(){
+  if(!SB||!CODE) return;
+  try{
+    const {data,error}=await SB.rpc('am_get_aliases',{p_code:CODE});
+    if(error){ ALIAS_SRV=false; return; }
+    ALIAS_SRV=true; SRV_ALIAS=data||{};
+  }catch(e){ ALIAS_SRV=false; }
+}
 function xlAliases(){
   let local={}; try{ local=JSON.parse(localStorage.getItem(KEY_ALIAS)||'{}')||{}; }catch(e){}
-  return Object.assign({},local,(cfg&&cfg.aliases)||{});
+  return Object.assign({},local,(cfg&&cfg.aliases)||{},SRV_ALIAS);
 }
 function xlNum(v){
   if(v==null||v==='') return '';
@@ -1411,7 +1453,7 @@ function xlShow(blocks){
             `<div class="map-s ${x.guess?'':'none'}">${x.guess?`ชื่อคล้ายกัน ${Math.round(x.score*100)}%`:'ไม่พบชื่อที่คล้าย เลือกเองหรือข้าม'}</div></td></tr>`; }).join('')+
         `</tbody></table>`+
         `<label class="map-remember"><input type="checkbox" id="impRemember" checked> จำการจับคู่นี้ไว้ เดือนหน้าไม่ต้องเลือกซ้ำ`+
-          (role&&role.type==='admin'?' (ใช้ร่วมกันทุกคน)':' (เฉพาะเครื่องนี้)')+`</label>`+
+          (ALIAS_SRV||(role&&role.type==='admin')?' (ใช้ร่วมกันทุกคน ทุกเครื่อง)':' (เฉพาะเครื่องนี้)')+`</label>`+
       `</div>`:'')+
     (prev?`<div class="row"><b>เดือนก่อนหน้า</b><span>${prev.rows.length} สาขาในไฟล์ · เติมเฉพาะช่องที่ยังว่าง</span></div>`:'')+
     `<div class="row" style="border:0"><b></b><span class="hint">ช่องที่ว่างในไฟล์จะไม่ไปลบข้อมูลเดิมในเว็บ</span></div>`;
@@ -1441,15 +1483,19 @@ function xlApply(){
     return;
   }
   if(!Object.keys(map).length){ alert('ยังไม่ได้จับคู่สาขาเลย'); return; }
-  // จำการจับคู่ไว้ แอดมินเก็บในผังกลางให้ทุกคนใช้ คนอื่นเก็บในเครื่อง
+  // จำการจับคู่ไว้: เก็บในเครื่องเสมอ แล้วส่งขึ้นฐานกลางให้ทุกคนทุกเครื่องใช้ด้วย
   const rem=document.getElementById('impRemember');
   if(chosen.length&&rem&&rem.checked){
-    if(role&&role.type==='admin'){
-      cfg.aliases=Object.assign({},cfg.aliases||{}); chosen.forEach(([k,id])=>cfg.aliases[k]=id); saveCfg();
-    }else{
-      let local={}; try{ local=JSON.parse(localStorage.getItem(KEY_ALIAS)||'{}')||{}; }catch(e){}
-      chosen.forEach(([k,id])=>local[k]=id);
-      try{ localStorage.setItem(KEY_ALIAS,JSON.stringify(local)); }catch(e){}
+    const add={}; chosen.forEach(([k,id])=>add[k]=id);
+    let local={}; try{ local=JSON.parse(localStorage.getItem(KEY_ALIAS)||'{}')||{}; }catch(e){}
+    try{ localStorage.setItem(KEY_ALIAS,JSON.stringify(Object.assign(local,add))); }catch(e){}
+    if(CLOUD&&SB){
+      SB.rpc('am_save_aliases',{p_code:CODE,p_aliases:add}).then(({data,error})=>{
+        if(!error){ ALIAS_SRV=true; SRV_ALIAS=data||Object.assign({},SRV_ALIAS,add); return; }
+        ALIAS_SRV=false;
+        // ฐานยังไม่ได้ติดตั้งฟังก์ชันใหม่ แอดมินยังเก็บในผังโซนแบบเดิมได้
+        if(role&&role.type==='admin'){ cfg.aliases=Object.assign({},cfg.aliases||{},add); saveCfg(); }
+      }).catch(()=>{});
     }
   }
   let cells=0, nb=0;
@@ -1480,7 +1526,7 @@ function xlRead(file){
   if(!window.XLSX){ alert('ตัวอ่านไฟล์ Excel ยังโหลดไม่เสร็จ ลองใหม่อีกครั้ง'); return; }
   flash('กำลังอ่านไฟล์…');
   const rd=new FileReader();
-  rd.onload=()=>{ try{ xlShow(xlParse(XLSX.read(rd.result,{type:'array'}))); }
+  rd.onload=async ()=>{ try{ if(CLOUD) await pullAliases(); xlShow(xlParse(XLSX.read(rd.result,{type:'array'}))); }
     catch(e){ console.error(e); alert('อ่านไฟล์ไม่สำเร็จ: '+((e&&e.message)||'ไฟล์อาจเสียหรือไม่ใช่ไฟล์ Excel')); } };
   rd.onerror=()=>alert('อ่านไฟล์ไม่สำเร็จ');
   rd.readAsArrayBuffer(file);
