@@ -698,7 +698,7 @@ body.present .rank{font-size:16px;width:40px}
         <tr><th>จำนวนบิล <span>Trans</span></th><td>จำนวนครั้งที่มีการขาย = จำนวนลูกค้าโดยประมาณ</td></tr>
         <tr><th>ยอดต่อบิล <span>Ticket</span></th><td>ยอดขายเฉลี่ยต่อ 1 บิล ยิ่งสูงแปลว่าลูกค้าสั่งต่อครั้งมากขึ้น</td></tr>
         <tr><th>ข้อร้องเรียน <span>Complaint</span></th><td>จำนวนครั้งที่ลูกค้าร้องเรียน — <b>ยิ่งเพิ่มยิ่งแย่</b></td></tr>
-        <tr><th>คะแนนบริการ <span>OSC %</span></th><td>คะแนนตรวจมาตรฐานการบริการ — ยิ่งสูงยิ่งดี</td></tr>
+        <tr><th>คะแนนบริการ <span>OSS %</span></th><td>คะแนนตรวจมาตรฐานการบริการ — ยิ่งสูงยิ่งดี</td></tr>
         <tr><th>เทียบปีก่อน <span>YoY</span></th><td>เทียบกับ<b>เดือนเดียวกัน</b>ของปีที่แล้ว ใช้ดูการเติบโตจริงโดยไม่ติดเรื่องฤดูกาล</td></tr>
         <tr><th>เทียบเดือนก่อน <span>MoM</span></th><td>เทียบกับเดือนที่ผ่านมา ใช้ดูว่าเดือนนี้ดีขึ้นหรือแย่ลงจากเดือนที่แล้ว</td></tr>
         <tr><th>จุด <span>pt</span></th><td>หน่วยของผลต่างระหว่าง % สองตัว เช่น จาก 18% เป็น 20% คือเพิ่มขึ้น 2 จุด</td></tr>
@@ -737,7 +737,7 @@ const DEFAULT_CFG={vpCode:'VP2026',adminCode:'ADMIN2026',zones:[
 (function(){let n=1;DEFAULT_CFG.zones.forEach(z=>{z.branches=z.branches.map(name=>({id:'b'+(n++),name}));});DEFAULT_CFG.nextId=n;})();
 let cfg=null; const AMS=[]; const BRANCHES=[];
 function rebuild(){ AMS.length=0; BRANCHES.length=0; cfg.zones.forEach(z=>{AMS.push(z); z.branches.forEach(b=>BRANCHES.push({id:b.id,name:b.name,am:z.id}));}); }
-// input fields in Excel order (Sales, EBIT, Trans DI, Ticket DI, Trans Del, Ticket Del, COGs, COL) x (2025,2026) then OT, OSC, Complaint, note
+// input fields in Excel order (Sales, EBIT, Trans DI, Ticket DI, Trans Del, Ticket Del, COGs, COL) x (2025,2026) then OT, OSS, Complaint, note
 const GROUPS=[['s','ยอดขาย<span>Sales · ฿</span>'],['e','กำไร<span>EBIT · ฿</span>'],['tdi','บิลหน้าร้าน<span>Trans Dine In</span>'],['kdi','ยอดต่อบิลหน้าร้าน<span>Ticket Dine In · ฿</span>'],['td','บิลเดลิเวอรี<span>Trans Del</span>'],['kd','ยอดต่อบิลเดลิเวอรี<span>Ticket Del · ฿</span>'],['c','ต้นทุนวัตถุดิบ<span>COGs · ฿</span>'],['l','ค่าแรง<span>COL · ฿</span>']];
 const FIELDS=[]; GROUPS.forEach(([k])=>{FIELDS.push(k+'25',k+'26')}); FIELDS.push('ot','osc','cp');
 
@@ -1130,7 +1130,7 @@ function renderInput(){
   const m=sel.m, bs=scopeBranches();
   document.getElementById('inputTitle').textContent=`กรอกข้อมูล ${MONTHS[m]} ${YEAR} — ${scopeLabel()}`;
   document.getElementById('storageNote').textContent=storageText();
-  const head1=`<tr><th rowspan="2" style="text-align:left">สาขา</th>${GROUPS.map(([k,t],i)=>`<th class="grp ${i%2?'alt':''}" colspan="3">${t}</th>`).join('')}<th class="grp" colspan="2">ค่าแรง % ของยอดขาย<span>COL % to Sales</span></th><th class="grp alt" rowspan="2">ค่าล่วงเวลา<span>OT · ฿</span></th><th class="grp" rowspan="2">คะแนนบริการ<span>OSC %</span></th><th class="grp alt" rowspan="2">ข้อร้องเรียน<span>Complaint</span></th><th class="grp" rowspan="2">OSS Failure / Complaint Explanation</th></tr>`;
+  const head1=`<tr><th rowspan="2" style="text-align:left">สาขา</th>${GROUPS.map(([k,t],i)=>`<th class="grp ${i%2?'alt':''}" colspan="3">${t}</th>`).join('')}<th class="grp" colspan="2">ค่าแรง % ของยอดขาย<span>COL % to Sales</span></th><th class="grp alt" rowspan="2">ค่าล่วงเวลา<span>OT · ฿</span></th><th class="grp" rowspan="2">คะแนนบริการ<span>OSS %</span></th><th class="grp alt" rowspan="2">ข้อร้องเรียน<span>Complaint</span></th><th class="grp" rowspan="2">OSS Failure / Complaint Explanation</th></tr>`;
   const head2=`<tr>${GROUPS.map(()=>`<th>${PREV}</th><th>${YEAR}</th><th>YoY</th>`).join('')}<th>${PREV}</th><th>${YEAR}</th></tr>`;
   const rows=bs.map((b,ri)=>{const r=rec(m,b.id); const inp=(f,ci)=>`<td><input inputmode="decimal" data-r="${ri}" data-c="${ci}" data-id="${b.id}" data-f="${f}" value="${r[f]??''}"></td>`;
     let ci=0; let h=`<tr><td title="${b.name}">${b.name}</td>`;
@@ -1169,7 +1169,8 @@ grid.addEventListener('paste',e=>{const el=e.target; if(!el.dataset.f)return; co
 /* ═══════════ นำเข้าจากไฟล์ Excel ═══════════
    ยึดตามแบบฟอร์ม Monthly Area Manager Performance Report (บล็อกกรอกข้อมูล แถว 107 เป็นต้นไป)
    หัวตาราง 2 ชั้น: แถวบนเป็นชื่อกลุ่ม แถวล่างเป็น 2025 / 2026 / YoY %
-   คอลัมน์ B..AB = 9 กลุ่ม กลุ่มละ 3 ช่อง (YoY เว้นไว้ให้เว็บคำนวณเอง) · AC=OT AD=OSC AE=Complaint AF=หมายเหตุ */
+   คอลัมน์ B..AB = 9 กลุ่ม กลุ่มละ 3 ช่อง (YoY เว้นไว้ให้เว็บคำนวณเอง) · AC=OT AD=OSS% AE=Complaint AF=หมายเหตุ
+   แถวข้อมูลหยุดที่แถว "รวม (Total)" · หมายเหตุใน AF เป็นช่องผสาน AF:AJ ค่าอยู่ที่ AF */
 const XL_MONTHS=[
   ['มกราคม','ม.ค','jan'],['กุมภาพันธ์','ก.พ','feb'],['มีนาคม','มี.ค','mar'],['เมษายน','เม.ย','apr'],
   ['พฤษภาคม','พ.ค','may'],['มิถุนายน','มิ.ย','jun'],['กรกฎาคม','ก.ค','jul'],['สิงหาคม','ส.ค','aug'],
@@ -1198,7 +1199,12 @@ function xlNum(v){
 const XL_MAIN=[['s25',1],['s26',2],['e25',4],['e26',5],['tdi25',7],['tdi26',8],['kdi25',10],['kdi26',11],
   ['td25',13],['td26',14],['kd25',16],['kd26',17],['c25',19],['c26',20],['l25',22],['l26',23],
   ['ot',28],['osc',29],['cp',30]];
-const XL_PREV=[['s26',1],['e26',2],['c26',3],['l26',4],['ot',6],['cp',7]];
+/* บล็อกเดือนก่อนหน้า (แบบฟอร์มรุ่น 11.9.69):
+   A=สาขา B=Sales C=EBIT D=COGs E=COL F=COL%(ข้าม คำนวณเอง) G=OT H=Complaint
+   I=Trans Dine In J=Ticket Dine In K=Trans Del L=Ticket Del M=OSS %
+   ไฟล์รุ่นเก่ามีแค่ถึง H — คอลัมน์ I-M จะว่าง ระบบข้ามให้เอง ใช้ได้ทั้งสองรุ่น */
+const XL_PREV=[['s26',1],['e26',2],['c26',3],['l26',4],['ot',6],['cp',7],
+  ['tdi26',8],['kdi26',9],['td26',10],['kd26',11],['osc',12]];
 
 function xlParse(wb){
   const found=[];
@@ -1230,7 +1236,7 @@ function xlParse(wb){
       if(rowsOut.length) found.push({sheet:sn,startRow:i+2,month:mo,rows:rowsOut,kind:'main'});
       i=i+rowsOut.length;
     }
-    // บล็อกเดือนก่อนหน้า: หัวตารางชั้นเดียว สาขา | Sales | EBIT | COGs | COL | COL% | OT | Complaint
+    // บล็อกเดือนก่อนหน้า: หัวตาราง สาขา | Sales | EBIT | COGs | COL | COL% | OT | Complaint | Trans/Ticket ... | OSS %
     for(let i=0;i<rows.length;i++){
       if(!/สาขา|branch/i.test(txt(i,0))) continue;
       if(!/^sales/i.test(txt(i,1).trim())||!/ebit/i.test(txt(i,2))) continue;
