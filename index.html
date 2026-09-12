@@ -662,7 +662,7 @@ body.present .rank{font-size:16px;width:40px}
 
       <div class="two" style="margin-top:20px">
         <div class="card"><h3>สาขาที่ต้องให้ความช่วยเหลือ</h3><div id="topWorst"></div></div>
-        <div class="card"><h3>สาขาผลงานโดดเด่น <span class="h3sub">ยอดขายโตเทียบปีก่อนสูงสุด</span></h3><div id="topBest"></div></div>
+        <div class="card"><h3 id="bestH">สาขาผลงานโดดเด่น <span class="h3sub" id="bestSub">ยอดขายโตเทียบปีก่อนสูงสุด</span></h3><div id="topBest"></div></div>
       </div>
 
       <div class="sec"><h2>ผลการดำเนินงานรายสาขา</h2>
@@ -1174,9 +1174,16 @@ function renderDash(){
     <tr>${sortable('สาขา','name')}${sortable('เทียบปีก่อน','yoy.s','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เทียบเดือนก่อน','mom.s','title="เทียบเดือนก่อนหน้า"')}${sortable('เทียบปีก่อน','yoy.e','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เทียบเดือนก่อน','mom.e','title="เทียบเดือนก่อนหน้า"')}${sortable('เทียบปีก่อน','yoy.c','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เดือนนี้','col26')}${sortable('ต่างจากปีก่อน','colD','title="ต่างจากปีก่อนกี่จุด"')}${sortable('เดือนนี้','cp')}${sortable('ต่างจากเดือนก่อน','mom.cp','title="ต่างจากเดือนก่อนกี่ครั้ง"')}${sortable('สถานะ / ประเด็นที่พบ','score','style="text-align:left"')}</tr></thead><tbody>${rows}</tbody></table>`;
 
   // top / worst
-  const best=[...withData].filter(x=>x.r.yoy.s!=null).sort((a,b)=>b.r.yoy.s-a.r.yoy.s).slice(0,5);
+  const ranked=[...withData].filter(x=>x.r.yoy.s!=null).sort((a,b)=>b.r.yoy.s-a.r.yoy.s);
+  const grew=ranked.filter(x=>x.r.yoy.s>0);
+  const best=(grew.length?grew:ranked).slice(0,5);
+  const bestH=document.getElementById('bestH'), bestSub=document.getElementById('bestSub');
+  bestH.childNodes[0].nodeValue=grew.length?'สาขาผลงานโดดเด่น ':'สาขาที่ยอดขายลดน้อยที่สุด ';
+  bestSub.textContent=grew.length
+    ? (grew.length<5?`ยอดขายโตเทียบปีก่อน ${grew.length} สาขา`:'ยอดขายโตเทียบปีก่อนสูงสุด')
+    : 'เดือนนี้ยังไม่มีสาขาไหนโตขึ้นเลย';
   const worst=[...withData].sort((a,b)=>(b.r.score-a.r.score)||((a.r.yoy.s??0)-(b.r.yoy.s??0))).slice(0,5);
-  document.getElementById('topBest').innerHTML=best.length?`<table class="list"><tbody>${best.map((x,i)=>`<tr><td class="rank">${i+1}</td><td style="text-align:left" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</td><td class="pos">${fmtPct(x.r.yoy.s)}</td><td class="mute">${fmt(x.r.s26)} ฿</td></tr>`).join('')}</tbody></table>`:'<p class="hint">ต้องกรอกยอดขายทั้ง 2025 และ 2026</p>';
+  document.getElementById('topBest').innerHTML=best.length?`<table class="list"><tbody>${best.map((x,i)=>`<tr><td class="rank">${i+1}</td><td style="text-align:left" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</td><td class="${cls(x.r.yoy.s)}">${fmtPct(x.r.yoy.s)}</td><td class="mute">${fmt(x.r.s26)} ฿</td></tr>`).join('')}</tbody></table>`:'<p class="hint">ต้องกรอกยอดขายทั้ง 2025 และ 2026</p>';
   document.getElementById('topWorst').innerHTML=`<table class="list"><tbody>${worst.map((x,i)=>`<tr><td class="rank">${i+1}</td><td style="text-align:left" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</td><td class="status ${x.r.score?'warn':'ok'}">${x.r.score?x.r.issues.join(', '):'ไม่พบประเด็น'}</td></tr>`).join('')}</tbody></table>`;
 
   // AM summary when all
