@@ -352,6 +352,7 @@ th.sortable.on{color:var(--brand)}
 .dm-cell.no{background:var(--red-soft);color:var(--red)}
 .dm-cell.off{background:var(--line-2);color:var(--ink-3);cursor:default}
 .dm-legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 0;font-size:11.5px;color:var(--ink-2);align-items:center}
+.rank-note{margin:11px 14px 2px;font-size:11.5px;color:var(--ink-3);line-height:1.5}
 .help-btn.hi{border-color:var(--brand);color:var(--brand);background:var(--brand-soft)}
 .help-btn.hi:hover{background:#F7DEDC}
 
@@ -1185,6 +1186,9 @@ function renderDash(){
   const worst=[...withData].sort((a,b)=>(b.r.score-a.r.score)||((a.r.yoy.s??0)-(b.r.yoy.s??0))).slice(0,5);
   document.getElementById('topBest').innerHTML=best.length?`<table class="list"><tbody>${best.map((x,i)=>`<tr><td class="rank">${i+1}</td><td style="text-align:left" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</td><td class="${cls(x.r.yoy.s)}">${fmtPct(x.r.yoy.s)}</td><td class="mute">${fmt(x.r.s26)} ฿</td></tr>`).join('')}</tbody></table>`:'<p class="hint">ต้องกรอกยอดขายทั้ง 2025 และ 2026</p>';
   document.getElementById('topWorst').innerHTML=`<table class="list"><tbody>${worst.map((x,i)=>`<tr><td class="rank">${i+1}</td><td style="text-align:left" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</td><td class="status ${x.r.score?'warn':'ok'}">${x.r.score?x.r.issues.join(', '):'ไม่พบประเด็น'}</td></tr>`).join('')}</tbody></table>`;
+  const rankNote=`<p class="rank-note">นับจาก ${withData.length} สาขาที่มีข้อมูลเดือนนี้ · ${esc(scopeLabel())}</p>`;
+  document.getElementById('topBest').insertAdjacentHTML('beforeend',rankNote);
+  document.getElementById('topWorst').insertAdjacentHTML('beforeend',rankNote);
 
   // AM summary when all
   const amb=document.getElementById('amBlock');
