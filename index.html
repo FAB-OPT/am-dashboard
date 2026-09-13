@@ -198,13 +198,25 @@ th,td{padding:11px 13px;border-bottom:1px solid var(--line-2);white-space:nowrap
 .tbl-wrap table:not(.grid) th:last-child,.tbl-wrap table:not(.grid) td:last-child{padding-right:14px}
 .tbl-wrap table:not(.grid) thead tr:last-child th{white-space:normal;line-height:1.3;vertical-align:bottom}
 .tbl-wrap table:not(.grid) th.grp{padding:7px}
-td.v2 b{display:block;font-weight:600;color:var(--ink)}
-td.v2 small{display:block;font-size:11px;font-weight:400;color:var(--ink-3);margin-top:1px}
-th.v2h small{display:block;font-size:10px;font-weight:500;color:var(--ink-3)}
-tr.total td.v2 small{font-weight:500}
+/* ตารางเทียบ: ตัวเลขเดือนนี้บรรทัดเดียว การเปลี่ยนแปลงเป็นชิปสี ค่าที่ใช้เทียบอยู่ใน title */
+.cmp-bar{display:flex;flex-wrap:wrap;gap:10px 14px;justify-content:space-between;align-items:center;margin:0 0 14px}
+.seg button:disabled{opacity:.38;cursor:not-allowed}
+.tbl-wrap table.cmp2 td.cv{font-weight:600;color:var(--ink);font-size:14px;border-left:1px solid var(--line-2)}
+.tbl-wrap table.cmp2 tr.total td.cv{font-weight:700}
+.tbl-wrap table.cmp2 td.cv.neg{color:var(--red)}
+.tbl-wrap table.cmp2 td.chg{white-space:nowrap}
+.tbl-wrap table.cmp2 td.chg .chip{font-size:12.5px}
+.tbl-wrap table.cmp2 th.grp{font-size:13px}
+.tbl-wrap table.cmp2 thead tr:last-child th{font-size:12px}
+body.present .tbl-wrap table.cmp2 td.cv{font-size:19px}
+body.present .tbl-wrap table.cmp2 td.chg .chip{font-size:15px}
+body.present .cmp-bar .seg button{font-size:16px;height:46px}
+/* ทั้งสองแบบมีคอลัมน์มากขึ้นครึ่งหนึ่ง บีบระยะและชิปลงให้พอดีจอ */
+.tbl-wrap table.cmp2.both th,.tbl-wrap table.cmp2.both td{padding-left:5px;padding-right:5px}
+.tbl-wrap table.cmp2.both td.chg .chip{font-size:11.5px;padding:2px 7px}
+.tbl-wrap table.cmp2.both thead tr:last-child th{font-size:11px}
+body.present .tbl-wrap table.cmp2 td:first-child{font-size:17px}
 /* โหมด "ทั้งสองแบบ" มี 31 คอลัมน์ บีบระยะอีกนิดให้ยังพอดีจอกว้าง */
-.tbl-wrap table.cmp.both th,.tbl-wrap table.cmp.both td{padding-left:5px;padding-right:5px;font-size:12.5px}
-.tbl-wrap table.cmp.both th{font-size:11px}
 th{background:var(--panel-2);color:var(--ink-3);font-weight:700;font-size:11.5px;
   position:sticky;top:0;z-index:1;border-bottom:1px solid var(--line)}
 th.grp{background:var(--brand);color:#fff;text-align:center;font-weight:700;font-size:11.5px;
@@ -1005,10 +1017,13 @@ body.present .kpi .v{font-size:46px}
   <!-- ================= COMPARE ================= -->
   <section class="view" id="view-compare">
     <div class="sec"><h2>ตารางเทียบข้อมูลรายสาขา</h2><span class="note" id="cmpSub"></span>
-      <div class="right"><div class="seg" id="cmpMode"><button aria-pressed="true" data-m="yoy">เทียบปีก่อน</button><button data-m="mom">เทียบเดือนก่อน</button><button data-m="both">ทั้งสองแบบ</button></div>
-      <button class="btn ghost" id="btnCsv">ดาวน์โหลด CSV</button></div></div>
+      <div class="right"><button class="btn ghost" id="btnCsv">ดาวน์โหลด CSV</button></div></div>
+    <div class="cmp-bar">
+      <div class="seg" id="cmpTopic" role="group" aria-label="หมวดข้อมูล"><button data-t="money" aria-pressed="true">การเงิน</button><button data-t="cust">ลูกค้า</button><button data-t="svc">บริการ</button></div>
+      <div class="seg" id="cmpMode" role="group" aria-label="เทียบกับ"><button aria-pressed="true" data-m="yoy">เทียบปีก่อน</button><button data-m="mom">เทียบเดือนก่อน</button><button data-m="both">ทั้งสองแบบ</button></div>
+    </div>
     <div class="tbl-wrap" id="cmpTable"></div>
-    <div class="legend"><span><i style="background:var(--good)"></i>ดีขึ้น</span><span><i style="background:var(--bad)"></i>แย่ลง</span><span>ตัวเลขเล็กสีเทาใต้ตัวเลขเดือนนี้ คือตัวที่ใช้เทียบ (ปีก่อน หรือ เดือนก่อน)</span><span>ต้นทุน ค่าแรง และข้อร้องเรียน: ค่าบวก = แย่ลง</span></div>
+    <div class="legend"><span><i style="background:var(--good)"></i>ดีขึ้น</span><span><i style="background:var(--bad)"></i>แย่ลง</span><span>ชี้หรือแตะค้างที่ชิปเพื่อดูตัวเลขที่ใช้เทียบ</span><span>ต้นทุน ค่าแรง ค่าล่วงเวลา และข้อร้องเรียน: เพิ่มขึ้น = แย่ลง</span></div>
   </section>
 
   <!-- ================= YEAR ================= -->
@@ -1149,7 +1164,7 @@ const FIELDS=[]; GROUPS.forEach(([k])=>{FIELDS.push(k+'25',k+'26')}); FIELDS.pus
 const KEY='jd_am_dashboard_v1', KEY_CFG='jd_am_dashboard_cfg_v1', KEY_SESS='jd_am_dashboard_sess';
 let role=null; // {type:'am'|'vp'|'admin', zone?:id}
 let store={data:{}};            // data[m][branchId] = {field:number|string}
-let sel={q:'',sk:null,sd:-1,branch:'all',am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy'};
+let sel={q:'',sk:null,sd:-1,branch:'all',am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy', cmpTopic:'money'};
 let storageOK=true;
 /* ---- ที่จัดเก็บข้อมูล: Supabase (ข้อมูลกลาง) + localStorage (สำเนาออฟไลน์) ---- */
 let SB=null, CLOUD=false, syncState='local';
@@ -1490,50 +1505,73 @@ function renderDash(){
 }
 
 /* ---------------- render: compare ---------------- */
+/* ตารางเทียบ แยกเป็น 3 หมวดดูทีละหมวด เดิมอัด 11 เรื่อง 23 คอลัมน์ในตารางเดียว
+   ช่องละตัวเลขเดียว การเปลี่ยนแปลงเป็นชิปสี และทั้งตารางใช้ฐานเทียบเดียวกัน
+   (เดิมเงินเทียบเดือนก่อน แต่บิลเทียบปีก่อน ปนกันในตารางเดียว) */
+const CMP_TOPICS={
+  money:{label:'การเงิน',items:[
+    {k:'s',t:'ยอดขาย',en:'Sales · ฿'},
+    {k:'e',t:'กำไร',en:'EBIT · ฿',signed:true},
+    {k:'c',t:'ต้นทุนวัตถุดิบ',en:'COGs · ฿',inv:true},
+    {k:'l',t:'ค่าแรง',en:'COL · ฿',inv:true},
+    {k:'col',t:'ค่าแรง % ของยอดขาย',en:'COL % to Sales',inv:true,kind:'pt'}]},
+  cust:{label:'ลูกค้า',items:[
+    {k:'tdi',t:'บิลหน้าร้าน',en:'Trans Dine In'},
+    {k:'kdi',t:'ยอดต่อบิลหน้าร้าน',en:'Ticket Dine In · ฿'},
+    {k:'td',t:'บิลเดลิเวอรี',en:'Trans Del'},
+    {k:'kd',t:'ยอดต่อบิลเดลิเวอรี',en:'Ticket Del · ฿'}]},
+  svc:{label:'บริการ',momOnly:true,items:[          // หมวดนี้ไม่มีข้อมูลปีก่อน
+    {k:'ot',t:'ค่าล่วงเวลา',en:'OT · ฿',inv:true,flat:true},
+    {k:'osc',t:'คะแนนบริการ',en:'OSS %',kind:'pt',flat:true},
+    {k:'cp',t:'ข้อร้องเรียน',en:'Complaint · ครั้ง',inv:true,kind:'n',flat:true}]}
+};
+const cmpVal=(it,r,yr)=>{ if(!r) return null; if(it.k==='col') return colPct(r,yr); if(it.flat) return yr==='26'?r[it.k]:null; return r[it.k+yr]; };
+const cmpFmt=(it,v)=>v==null?'–':(it.k==='col'||it.k==='osc')?(v*100).toFixed(1)+'%':fmt(v);
+function cmpChg(it,base,cur){
+  const none='<td class="chg"><span class="mute">–</span></td>';
+  if(base==null||cur==null) return none;
+  const ar=d=>Math.abs(d)<0.0005?'':d>0?'▲':'▼';   // ปัดแล้วเป็น 0.0 ไม่ต้องมีลูกศร
+  let txt,good;                                     // good: true ดีขึ้น, false แย่ลง, null เท่าเดิม
+  if(it.kind==='pt'){ const d=cur-base; txt=ar(d)+Math.abs(d*100).toFixed(1)+' pt'; good=Math.abs(d)<0.0005?null:(d>0)!==!!it.inv; }
+  else if(it.kind==='n'){ const d=cur-base; txt=d===0?'เท่าเดิม':ar(d)+Math.abs(d); good=d===0?null:(d>0)!==!!it.inv; }
+  else if(it.signed&&(base<=0||cur<0)){
+    // กำไรที่ข้ามศูนย์ เปอร์เซ็นต์ไม่มีความหมาย (เคยขึ้น -2771%) บอกเป็นคำแทน
+    if(base===0) return none;
+    if(base>0&&cur<0){ txt='พลิกเป็นขาดทุน'; good=false; }
+    else if(base<0&&cur>=0){ txt='พลิกเป็นกำไร'; good=true; }
+    else { good=cur===base?null:cur>base; txt=cur===base?'เท่าเดิม':cur>base?'ขาดทุนน้อยลง':'ขาดทุนมากขึ้น'; }
+  } else {
+    if(base===0) return none;
+    const q=(cur-base)/Math.abs(base);
+    txt=Math.abs(q)>9.99?(q>0?'▲ มากกว่า 999%':'▼ มากกว่า 999%'):ar(q)+Math.abs(q*100).toFixed(1)+'%';
+    good=Math.abs(q)<0.0005?null:(q>0)!==!!it.inv;
+  }
+  return `<td class="chg" title="ค่าที่ใช้เทียบ ${esc(cmpFmt(it,base))}"><span class="chip ${good==null?'flat':good?'up':'dn'}">${txt}</span></td>`;
+}
 function renderCompare(){
-  const m=sel.m, bs=scopeBranches(), mode=sel.cmp;
-  document.getElementById('cmpSub').textContent=`${MONTHS[m]} ${YEAR} · ${scopeLabel()}${m===0&&mode!=='yoy'?' · มกราคมไม่มีเดือนก่อนให้เทียบ':''}`;
+  const m=sel.m, bs=scopeBranches();
+  const topic=CMP_TOPICS[sel.cmpTopic]?sel.cmpTopic:'money', T=CMP_TOPICS[topic];
+  const mode=T.momOnly?'mom':sel.cmp;               // ไม่ทับค่าที่ผู้ใช้เลือกไว้ กลับไปหมวดอื่นจะได้เหมือนเดิม
   const y=mode!=='mom', mm=mode!=='yoy';
-  /* ตัวเลขที่ใช้เทียบ (ปีก่อน หรือ เดือนก่อน) ซ้อนอยู่ใต้ตัวเลขเดือนนี้ในช่องเดียวกัน
-     เดิมแยกเป็นคอลัมน์ของตัวเอง ตารางเลยยาว 32 คอลัมน์และล้นจอ ตอนนี้เหลือ 23 */
-  const v2=(top,base)=>`<td class="v2"><b>${top}</b><small>${base}</small></td>`;
-  const pc=x=>x==null?'–':(x*100).toFixed(1)+'%';
-  const tdP=(p,inv)=>`<td class="${cls(p,inv)}">${fmtPct(p)}</td>`;
-  const tdPt=d=>`<td class="${cls(d,true)}">${d==null?'–':(d>0?'+':'')+(d*100).toFixed(1)+' pt'}</td>`;
+  document.querySelectorAll('#cmpTopic button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===topic));
+  document.querySelectorAll('#cmpMode button').forEach(b=>{ b.setAttribute('aria-pressed',b.dataset.m===mode); b.disabled=!!T.momOnly&&b.dataset.m!=='mom'; });
+  const notes=[`${MONTHS[m]} ${YEAR}`,scopeLabel()];
+  if(T.momOnly) notes.push('หมวดนี้ไม่มีข้อมูลปีก่อน จึงเทียบกับเดือนก่อน');
+  if(m===0&&mm) notes.push('มกราคมไม่มีเดือนก่อนให้เทียบ');
+  document.getElementById('cmpSub').textContent=notes.join(' · ');
   const raw=(mo,id)=>{ const o={}; FIELDS.forEach(f=>o[f]=val(mo,id,f)); return o; };
-  const line=(first,c,p,isTotal)=>{
-    // หมวดเงิน: เทียบได้ทั้งปีก่อนและเดือนก่อน ตามโหมดที่เลือก
-    const money=(k,inv)=>v2(fmt(c[k+'26']), y?fmt(c[k+'25']):fmt(p?p[k+'26']:null))+
-      (y?tdP(pct(c[k+'25'],c[k+'26']),inv):'')+(mm?tdP(p?pct(p[k+'26'],c[k+'26']):null,inv):'');
-    // บิลและยอดต่อบิล: มีแต่ของปีก่อนให้เทียบ
-    const yo=k=>v2(fmt(c[k+'26']),fmt(c[k+'25']))+tdP(pct(c[k+'25'],c[k+'26']));
-    const c26=colPct(c,'26'), c25=colPct(c,'25'), cp0=p?colPct(p,'26'):null;
-    const col=v2(pc(c26), y?pc(c25):pc(cp0))+
-      (y?tdPt(c26!=null&&c25!=null?c26-c25:null):'')+(mm?tdPt(c26!=null&&cp0!=null?c26-cp0:null):'');
-    const cpD=p&&p.cp!=null&&c.cp!=null?c.cp-p.cp:null;
-    return `<tr${isTotal?' class="total"':''}>${first}${money('s')}${money('e')}${money('c',true)}${money('l',true)}${col}`+
-      `${yo('tdi')}${yo('kdi')}${yo('td')}${yo('kd')}`+
-      `<td>${fmt(c.ot)}</td><td>${pc(c.osc)}</td><td class="${!isTotal&&c.cp>=3?'neg':''}">${fmt(c.cp)}</td>`+
-      `<td class="${cls(cpD,true)}">${cpD==null?'–':(cpD>0?'+':'')+cpD}</td></tr>`;
-  };
-  const rows=bs.map(b=>line(`<td title="${esc(b.name)}">${esc(shortName(b.name))}</td>`, raw(m,b.id), m>0?raw(m-1,b.id):null)).join('');
+  const line=(first,c,p,isTotal)=>`<tr${isTotal?' class="total"':''}>${first}`+T.items.map(it=>{
+      const cur=cmpVal(it,c,'26');
+      return `<td class="cv${!isTotal&&it.k==='cp'&&cur>=3?' neg':''}">${cmpFmt(it,cur)}</td>`+
+        (y?cmpChg(it,cmpVal(it,c,'25'),cur):'')+(mm?cmpChg(it,p?cmpVal(it,p,'26'):null,cur):'');
+    }).join('')+'</tr>';
+  const rows=bs.map(b=>line(`<td title="${esc(b.name)}">${esc(shortName(b.name))}</td>`,raw(m,b.id),m>0?raw(m-1,b.id):null)).join('');
   const ids=bs.map(b=>b.id);
-  const total=line('<td>รวม / เฉลี่ย</td>', agg(m,ids), m>0?agg(m-1,ids):null, true);
+  const total=line('<td>รวม / เฉลี่ย</td>',agg(m,ids),m>0?agg(m-1,ids):null,true);
   const n=1+(y?1:0)+(mm?1:0);
-  const G=(t,en,alt,span)=>`<th class="grp ${alt?'alt':''}" colspan="${span}">${t}<span>${en}</span></th>`;
-  const vh=b=>`<th class="v2h">${YEAR}<small>${b}</small></th>`;
-  const subM=vh(y?PREV:'เดือนก่อน')+(y?'<th>เทียบปีก่อน</th>':'')+(mm?'<th>เทียบเดือนก่อน</th>':'');
-  const subC=vh(y?PREV:'เดือนก่อน')+(y?'<th>ต่างจากปีก่อน</th>':'')+(mm?'<th>ต่างจากเดือนก่อน</th>':'');
-  const subY=vh(PREV)+'<th>เทียบปีก่อน</th>';
-  document.getElementById('cmpTable').innerHTML=`<table class="cmp ${mode}"><thead><tr><th></th>`+
-    G('ยอดขาย','Sales · ฿',0,n)+G('กำไร','EBIT · ฿',1,n)+G('ต้นทุนวัตถุดิบ','COGs · ฿',0,n)+G('ค่าแรง','COL · ฿',1,n)+
-    G('ค่าแรง % ของยอดขาย','COL % to Sales',0,n)+
-    G('บิลหน้าร้าน','Trans Dine In',1,2)+G('ยอดต่อบิลหน้าร้าน','Ticket Dine In · ฿',0,2)+
-    G('บิลเดลิเวอรี','Trans Del',1,2)+G('ยอดต่อบิลเดลิเวอรี','Ticket Del · ฿',0,2)+
-    G('ค่าล่วงเวลา','OT · ฿',1,1)+G('คะแนนบริการ','OSS %',0,1)+G('ข้อร้องเรียน','Complaint',1,2)+
-    `</tr><tr><th>สาขา</th>${subM}${subM}${subM}${subM}${subC}${subY}${subY}${subY}${subY}`+
-    `<th>เดือนนี้</th><th>เดือนนี้</th><th>เดือนนี้</th><th>ต่างจากเดือนก่อน</th></tr></thead>`+
-    `<tbody>${rows}${total}</tbody></table>`;
+  const h1=T.items.map((it,i)=>`<th class="grp ${i%2?'alt':''}" colspan="${n}">${it.t}<span>${it.en}</span></th>`).join('');
+  const h2=T.items.map(()=>'<th>เดือนนี้</th>'+(y?'<th>เทียบปีก่อน</th>':'')+(mm?'<th>เทียบเดือนก่อน</th>':'')).join('');
+  document.getElementById('cmpTable').innerHTML=`<table class="cmp2 ${mode}"><thead><tr><th></th>${h1}</tr><tr><th>สาขา</th>${h2}</tr></thead><tbody>${rows}${total}</tbody></table>`;
 }
 function renderYear(){
   const ids=scopeBranches().map(b=>b.id);
@@ -2235,6 +2273,7 @@ document.getElementById('btnLogout').onclick=()=>{ stopPoll(); CLOUD=false; CODE
 function setTab(t){ sel.tab=t; document.getElementById('ctlBranch').hidden=(t!=='branch'); document.querySelectorAll('.tabs button[role=tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t)); document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+t)); render(); }
 document.querySelectorAll('.tabs button[role=tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 document.querySelectorAll('#cmpMode button').forEach(b=>b.onclick=()=>{sel.cmp=b.dataset.m; document.querySelectorAll('#cmpMode button').forEach(x=>x.setAttribute('aria-pressed',x===b)); renderCompare();});
+document.querySelectorAll('#cmpTopic button').forEach(b=>b.onclick=()=>{sel.cmpTopic=b.dataset.t; renderCompare();});
 const selAM=document.getElementById('selAM'), monthBar=document.getElementById('months');
 function fillAM(){ selAM.innerHTML=`<option value="all">ทุกพื้นที่ (รวมทุกโซน)</option>`+AMS.map(a=>`<option value="${a.id}">${a.brand?a.brand+' · ':''}${a.name} — ${a.branches.length} สาขา</option>`).join(''); }
 function fillMonths(){
