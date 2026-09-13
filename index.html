@@ -591,6 +591,285 @@ body.present .rank{font-size:16px;width:40px}
   .tabs button{font-size:13px;padding:10px 10px}
 }
 </style>
+<style id="theme-app">
+/* ธีมแอปมือถือ (แบบที่ 4 จากหน้าเทียบ themes/overhaul.html)
+   วางต่อท้ายสไตล์หลัก จึงทับค่าเดิมได้โดยไม่ต้องแก้ของเดิม */
+/* =====================================================================
+   mobileapp : แอปมือถือ
+   พื้นเทาอ่อนแบบแอป การ์ดขาวมุมโค้งใหญ่ ตัวเลขใหญ่ชัด ปุ่มกดง่าย
+   แท็บเป็น segmented control บนจอคอม และแถบแท็บด้านล่างบนมือถือ
+   สีแดงใช้เฉพาะ "แย่ลง" เท่านั้น ส่วนควบคุมใช้สีหมึกเข้มและเทาอมฟ้า
+   ===================================================================== */
+:root{
+  --bg:#F2F2F5;
+  --panel:#FFFFFF;
+  --panel-2:#F7F7F9;
+  --line:#E3E3E8;
+  --line-2:#EFEFF3;
+  --ink:#1C1C1E;
+  --ink-2:#5E5E66;
+  --ink-3:#8E8E96;
+  --brand:#3D6475;          /* เทาอมฟ้า เข้ากับสีกราฟ slate */
+  --brand-2:#2E4E5C;
+  --brand-soft:#E7EEF1;
+  --sel:#1C1C1E;            /* สถานะที่เลือกอยู่ */
+  --fill:#E6E6EB;           /* พื้นรางของ segmented control */
+  --r:20px; --r-sm:14px;
+  --sh:0 1px 2px rgba(20,20,30,.04),0 6px 18px rgba(20,20,30,.05);
+  --sh-md:0 2px 6px rgba(20,20,30,.06),0 10px 24px rgba(20,20,30,.07);
+  --acc:#D1D1D6;
+}
+html,body{background:var(--bg)}
+::selection{background:#D9E5EB;color:var(--ink)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:10px}
+
+/* ---------- แถบแอปด้านบน ---------- */
+.top{background:rgba(242,242,245,.86);-webkit-backdrop-filter:saturate(180%) blur(18px);
+  backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid rgba(60,60,67,.12);
+  display:flex;flex-wrap:wrap;align-items:center}
+.top::before{display:none}
+.top-in{flex:1 1 100%;max-width:none;padding:14px 28px 10px;gap:8px}
+.brand{gap:12px}
+.brand-logo{width:42px;height:42px;border-radius:12px;box-shadow:0 1px 3px rgba(20,20,30,.1)}
+.brand h1{font-size:19px;color:var(--ink)}
+.brand span{font-size:12.5px;color:var(--ink-3)}
+.who{background:var(--panel);color:var(--ink);border:1px solid var(--line);
+  padding:0 14px;height:40px;display:inline-flex;align-items:center;font-size:12.5px}
+.who::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--brand);margin-right:8px}
+.sync{height:40px;padding:0 14px;font-size:12.5px}
+.help-btn{height:40px;padding:0 16px;border:1px solid var(--line);background:var(--panel);
+  color:var(--ink);font-size:13px;font-weight:600;box-shadow:0 1px 2px rgba(20,20,30,.04);
+  display:inline-flex;align-items:center}
+.help-btn:hover{border-color:#C7C7CC;background:var(--panel);color:var(--ink)}
+.help-btn.hi{background:var(--sel);border-color:var(--sel);color:#fff}
+.help-btn.hi:hover{background:#3A3A3C;border-color:#3A3A3C;color:#fff}
+.logout{height:40px;padding:0 14px;color:var(--ink-2);font-size:13px;font-weight:600}
+.logout:hover{background:rgba(60,60,67,.08);color:var(--ink)}
+
+.topbar{flex:0 1 auto;max-width:none;margin:0;padding:4px 28px 14px;gap:12px 22px}
+.ctl .lbl{font-size:12.5px;color:var(--ink-2);font-weight:600}
+.ctl select{height:44px;border:1px solid var(--line);border-radius:var(--r-sm);padding:0 36px 0 14px;
+  font-size:14px;font-weight:600;background-color:var(--panel);box-shadow:0 1px 2px rgba(20,20,30,.04);
+  -webkit-appearance:none;appearance:none;min-width:210px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E8E96' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:right 12px center;background-size:16px}
+.ctl select:hover{border-color:#C7C7CC}
+
+/* แถบเดือนเป็นชิปแคปซูลใหญ่ */
+.month-nav{border:0;background:transparent;box-shadow:none;overflow:visible;gap:6px}
+.month-nav>button{width:44px;height:44px;padding:0;border-radius:50%;background:var(--panel);
+  border:1px solid var(--line);color:var(--ink);font-size:20px;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+.month-nav>button:hover{background:var(--panel);border-color:#C7C7CC;color:var(--ink)}
+.months{position:relative;gap:6px;padding:2px 10px;max-width:min(24vw,360px);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+.months button{height:44px;min-width:58px;padding:0 14px;border-radius:999px;background:var(--panel);
+  border:1px solid var(--line);color:var(--ink);font-size:13.5px;font-weight:600;
+  justify-content:center;gap:5px;flex:0 0 auto}
+.months button:hover{background:var(--panel);border-color:#C7C7CC}
+.months button i{width:5px;height:5px}
+.months button[aria-pressed=true]{background:var(--sel);border-color:var(--sel);color:#fff}
+#ctlBranch .month-nav{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:0}
+#ctlBranch .month-nav>button{border:0;background:transparent}
+#ctlBranch select{height:42px;box-shadow:none;border:0;background-color:transparent;padding:0 28px 0 6px;
+  background-position:right 4px center}
+
+/* แท็บแบบ segmented control (จอคอม) */
+.tabs{flex:0 1 auto;max-width:calc(100% - 56px);margin:0 28px 14px;padding:3px;gap:2px;
+  background:var(--fill);border-radius:13px;align-self:center}
+.tabs button{border:0;margin:0;border-radius:10px;padding:0 15px;height:38px;color:var(--ink);
+  font-size:13.5px;font-weight:600}
+.tabs button:hover{background:rgba(255,255,255,.55);color:var(--ink)}
+.tabs button[aria-selected=true]{background:var(--panel);color:var(--ink);font-weight:700;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 3px 8px rgba(0,0,0,.06)}
+
+@media(min-width:1480px){.tabs{margin:0 28px 14px auto}}
+/* จอคอม: แถบเดือนเดิมโชว์ได้ราว 5 เดือนและเดือนท้ายโดนตัดครึ่ง ขยายรางและย่อปุ่มลงเล็กน้อย */
+@media(min-width:761px){
+  .months{max-width:min(24vw,360px)}   /* กว้างกว่านี้แท็บจะตกลงไปอีกแถวที่จอ 1500px ใช้ปุ่มเล็กลงแทนเพื่อให้เห็นหลายเดือนขึ้น */
+  .months button{min-width:52px;padding:0 11px}
+}
+main{padding:28px 28px 80px}
+
+/* ---------- หัวข้อ ---------- */
+.sec{margin:40px 0 16px;gap:6px 12px}
+.sec h2{font-size:22px;line-height:1.3}
+.sec .note{font-size:13px;color:var(--ink-3)}
+
+/* ---------- การ์ดตัวเลข ---------- */
+.kpis{gap:14px}
+.kpi{position:relative;overflow:hidden;border:0;border-radius:var(--r);padding:21px 20px 18px;box-shadow:var(--sh)}
+.kpi::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:var(--acc)}
+/* สีขอบบนตามการเทียบหลักของการ์ด (ชิปตัวแรก คือเทียบปีก่อน) */
+.kpi:has(.chip.up){--acc:#12805A}
+.kpi:has(.chip.dn){--acc:#A81B12}
+.kpi:has(.d>.cmp:first-child+.chip.up){--acc:#12805A}
+.kpi:has(.d>.cmp:first-child+.chip.dn){--acc:#A81B12}
+.kpi .l{font-size:13px;color:var(--ink-2)}
+.kpi .l .u{font-size:11px;color:var(--ink-3);font-weight:500;margin-top:1px}
+.kpi .v{font-size:32px;font-weight:700;margin:10px 0 12px}
+.kpi .d{gap:6px 8px;font-size:12.5px;color:var(--ink-3)}
+.kpi .d .cmp{font-size:12px;color:var(--ink-3)}
+.chip{padding:3px 10px;font-size:12px}
+
+.readme-line{margin-top:14px;font-size:12.5px}
+
+/* ---------- การ์ดเนื้อหา ---------- */
+.two,.three{gap:14px}
+.card{border:0;border-radius:var(--r);padding:20px 22px 20px;box-shadow:var(--sh)}
+.card h3{font-size:15px;margin-bottom:12px;line-height:1.4}
+.card h3 .h3sub{font-size:12px;margin-left:6px}
+
+/* ---------- ตาราง ---------- */
+.tbl-wrap{border:0;border-radius:var(--r);box-shadow:var(--sh)}
+th{background:var(--panel-2);color:var(--ink-3);border-bottom:1px solid var(--line)}
+th.grp{background:#EBEBF0;color:var(--ink);border-left:2px solid var(--panel)}
+th.grp.alt{background:#E1E1E7}
+th.grp span{color:var(--ink-2);opacity:1}
+th:first-child{background:var(--panel-2)}
+tr:hover td,tr:hover td:first-child{background:#F6F6F9}
+tr.total td,tr.total td:first-child{background:var(--panel-2);border-top:1px solid var(--line)}
+th.sortable:hover{background:#EDEDF1;color:var(--ink)}
+.list td{padding:12px 8px}
+.list tr:last-child td{border-bottom:0}
+.rank{color:var(--ink-3)}
+.list td.rank{width:36px}
+.list td.rank:not(:empty){font-size:12.5px}
+.status.warn{color:#8A5E06}
+.blink{border-bottom-color:#D1D1D6}
+.blink:hover{color:var(--brand);border-bottom-color:var(--brand)}
+
+/* ---------- ปุ่มและช่องกรอก ---------- */
+.search input{height:44px;padding:0 16px;border-color:var(--line);box-shadow:0 1px 2px rgba(20,20,30,.04);font-size:14px}
+.btn{min-height:44px;border-radius:var(--r-sm);border-color:var(--line);box-shadow:0 1px 2px rgba(20,20,30,.04)}
+.btn.primary{background:var(--sel);border-color:var(--sel);box-shadow:0 2px 8px rgba(20,20,30,.18)}
+.btn.primary:hover{background:#3A3A3C;border-color:#3A3A3C}
+.btn.ghost{box-shadow:none;border-color:transparent}
+.seg{background:var(--fill);border:0;border-radius:13px;padding:3px;gap:2px;box-shadow:none}
+.seg button{background:transparent;border-radius:10px;height:38px;padding:0 14px;color:var(--ink);font-size:13px}
+.seg button:hover{background:rgba(255,255,255,.55);color:var(--ink)}
+.seg button[aria-pressed=true]{background:var(--panel);color:var(--ink);font-weight:700;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 3px 8px rgba(0,0,0,.06)}
+.empty{border-radius:var(--r);border-color:#D1D1D6}
+.drop{border-radius:var(--r);border-color:#D1D1D6}
+.zone{border:0;border-radius:var(--r)}
+.modal{background:rgba(20,20,30,.4)}
+.modal-box{border-radius:24px}
+.dm-drop{border-color:#D1D1D6}
+.dm-tbl td.now{background:#F3F7F9}
+
+/* ---------- หน้าเข้าใช้งาน ---------- */
+.login-stack::before{background:#E1E1E7}
+.login-box{border-radius:24px}
+
+/* ---------- ไอคอนแถบแท็บ (ใช้เฉพาะมือถือ) ---------- */
+.tabs button[data-tab]{--ic:none}
+.tabs button[data-tab=dash]{--ic:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linejoin='round'><rect x='3.5' y='3.5' width='7' height='7' rx='2'/><rect x='13.5' y='3.5' width='7' height='7' rx='2'/><rect x='3.5' y='13.5' width='7' height='7' rx='2'/><rect x='13.5' y='13.5' width='7' height='7' rx='2'/></svg>")}
+.tabs button[data-tab=branch]{--ic:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M4.5 10.5V20h15v-9.5'/><path d='M3 10.5L5 4h14l2 6.5z'/><path d='M10 20v-5h4v5'/></svg>")}
+.tabs button[data-tab=compare]{--ic:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='4' width='18' height='16' rx='3'/><path d='M3 9.5h18M3 14.8h18M9.5 4v16'/></svg>")}
+.tabs button[data-tab=year]{--ic:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='5' width='18' height='16' rx='3'/><path d='M3 10h18M8 3v4M16 3v4'/></svg>")}
+.tabs button[data-tab=input]{--ic:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M4 20h4L19.5 8.5l-4-4L4 16z'/><path d='M13.5 6.5l4 4'/></svg>")}
+.tabs button[data-tab=zones]{--ic:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z'/><circle cx='12' cy='9.5' r='2.5'/></svg>")}
+
+/* ---------- จอเล็ก: หน้าตาแอปมือถือ ---------- */
+@media(max-width:760px){
+  /* ให้หัวเว็บแตกเป็นชิ้น: แถบแอปติดบน ตัวเลือกเลื่อนตามหน้า แท็บลงไปอยู่ล่าง */
+  .top{display:contents}
+  .top-in{position:sticky;top:0;z-index:30;
+    background:rgba(242,242,245,.9);-webkit-backdrop-filter:saturate(180%) blur(18px);
+    backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid rgba(60,60,67,.1);
+    display:grid;grid-template-columns:repeat(6,max-content);grid-template-rows:auto auto;
+    column-gap:8px;row-gap:10px;align-items:center;padding:10px 0 10px 14px;
+    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain}
+  .top-in::-webkit-scrollbar{display:none}
+  .brand{grid-row:1;grid-column:1 / -1;position:sticky;left:0;width:calc(100vw - 28px);margin:0;gap:10px}
+  .brand-logo{width:36px;height:36px;border-radius:10px}
+  .brand h1{font-size:17px}
+  .brand span{font-size:11.5px}
+  .who,.sync,.help-btn,.logout{grid-row:2;height:44px;align-self:center}
+  .who{grid-column:1}.sync{grid-column:2}#btnData{grid-column:3}#btnPresent{grid-column:4}
+  #btnHelp{grid-column:5}.logout{grid-column:6}
+  .who{padding:0 14px;font-size:12.5px}
+  .sync{padding:0 14px;font-size:12.5px}
+  .help-btn{padding:0 16px;font-size:13px}
+  .logout{padding:0 16px;font-size:13px;background:rgba(60,60,67,.07);margin-right:44px}
+  /* เงาจางที่ขอบขวา บอกว่าเลื่อนดูต่อได้ */
+  .top-in::after{content:'';grid-row:2;grid-column:1 / -1;justify-self:end;width:44px;height:48px;
+    position:sticky;right:0;z-index:2;pointer-events:none;
+    background:linear-gradient(90deg,rgba(242,242,245,0),rgba(242,242,245,.96) 70%)}
+
+  .topbar{padding:14px 14px 4px;gap:10px;flex-direction:column;flex-wrap:nowrap;align-items:stretch}
+  .ctl{flex:0 0 auto;gap:10px}
+  .ctl .lbl{width:46px;flex:0 0 auto;font-size:12.5px}
+  .ctl select{min-width:0;height:48px;font-size:16px;padding:0 38px 0 14px;border-radius:var(--r-sm)}
+  .month-nav{gap:6px}
+  .month-nav>button{width:44px;height:48px;border-radius:14px;font-size:22px}
+  .months{max-width:none;gap:6px;padding:2px 8px}
+  .months button{height:48px;min-width:62px;font-size:14px;padding:0 14px}
+  #ctlBranch .month-nav{border-radius:var(--r-sm)}
+  #ctlBranch select{width:auto;flex:1;min-width:0;height:46px;font-size:16px}
+
+  /* แถบแท็บด้านล่าง */
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;margin:0;border-radius:0;
+    display:flex;gap:0;overflow:visible;
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+    background:rgba(249,249,251,.94);-webkit-backdrop-filter:saturate(180%) blur(20px);
+    backdrop-filter:saturate(180%) blur(20px);border-top:1px solid rgba(60,60,67,.14)}
+  .tabs button{flex:1 1 0;min-width:0;height:auto;min-height:54px;padding:4px 2px 2px;border-radius:12px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    font-size:0;color:var(--ink-3);background:transparent}
+  .tabs button:hover{background:transparent;color:var(--ink-2)}
+  .tabs button::before{content:'';width:24px;height:24px;background:currentColor;
+    -webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
+  .tabs button::after{font-size:11px;font-weight:600;line-height:1.2;white-space:nowrap}
+  .tabs button[data-tab=dash]::after{content:'ภาพรวม'}
+  .tabs button[data-tab=branch]::after{content:'สาขา'}
+  .tabs button[data-tab=compare]::after{content:'เทียบ'}
+  .tabs button[data-tab=year]::after{content:'ทั้งปี'}
+  .tabs button[data-tab=input]::after{content:'กรอก'}
+  .tabs button[data-tab=zones]::after{content:'โซน'}
+  .tabs button[aria-selected=true]{background:transparent;box-shadow:none;color:var(--ink)}
+  .tabs button[aria-selected=true]::after{font-weight:700}
+
+  main{padding:18px 14px calc(96px + env(safe-area-inset-bottom))}
+  .exit-present{bottom:calc(80px + env(safe-area-inset-bottom))}
+
+  .sec{margin:32px 0 12px}
+  .sec h2{font-size:20px}
+  .sec .note{font-size:12.5px;flex:1 1 100%}
+  .kpis{gap:10px}
+  .kpi{padding:16px 14px 14px;border-radius:18px}
+  .kpi .l{font-size:12.5px}
+  .kpi .v{font-size:24px;margin:8px 0 10px}
+  .kpi .d{display:grid;grid-template-columns:max-content max-content;gap:6px 6px;justify-content:start}
+  .two,.three{gap:12px}
+  .card{padding:16px 16px 16px;border-radius:18px}
+  .card h3{font-size:14.5px}
+  .card h3 .h3sub{display:block;margin:2px 0 0}
+  .tbl-wrap{border-radius:18px}
+  #topWorst .list td:nth-child(2),#topBest .list td:nth-child(2){min-width:108px}
+  .tbl-wrap .list td:first-child{min-width:150px}
+  .card .list td.status{min-width:0;max-width:none;font-size:12px}
+  .btn{min-height:48px}
+  .search input{height:48px}
+  .seg{display:flex;width:100%}
+  .seg button{flex:1 1 0;height:40px;padding:0 6px}
+}
+@media(max-width:430px){
+  .kpi .v{font-size:22px}
+  .kpi .l{font-size:12px}
+  .kpi .d{font-size:11.5px}
+  .chip{padding:2px 8px;font-size:11.5px}
+  .tabs button{padding:4px 1px 2px}
+}
+
+/* ---------- โหมดพรีเซนต์ ---------- */
+@media(max-width:760px){body.present .tabs button{font-size:0;padding:4px 2px 2px}}
+body.present .tabs button{height:auto;padding:12px 22px}
+body.present .months button,body.present .month-nav>button{height:52px}
+body.present .kpi .v{font-size:46px}
+</style>
 </head>
 <body>
 <div id="login" class="login">
@@ -1087,8 +1366,8 @@ function metrics(m,id){
 /* ---------------- charts ---------------- */
 if(window.Chart){
   const C=Chart.defaults;
-  C.font.family="'Noto Sans Thai Looped', 'Noto Sans', system-ui, sans-serif"; C.font.size=11.5; C.color='#6E625F';
-  C.borderColor='#EFE9E7'; C.maintainAspectRatio=false;
+  C.font.family="'Noto Sans Thai Looped', 'Noto Sans', system-ui, sans-serif"; C.font.size=11.5; C.color='#5E5E66';
+  C.borderColor='#EFEFF3'; C.maintainAspectRatio=false;
   C.plugins.legend.labels.usePointStyle=true;
   C.plugins.legend.labels.boxWidth=8; C.plugins.legend.labels.boxHeight=8;
   C.plugins.legend.labels.padding=14; C.plugins.legend.labels.font={size:12};
@@ -1135,19 +1414,19 @@ function renderDash(){
 
   // charts
   const labels=withData.map(x=>shortName(x.b.name));
-  mkChart('chSales',{type:'bar',data:{labels,datasets:[{label:PREV,data:withData.map(x=>x.r.s25),backgroundColor:'#D6CECB',borderRadius:3},{label:YEAR,data:withData.map(x=>x.r.s26),backgroundColor:'#C0605C',borderRadius:3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}}},scales:{x:{grid:{display:false},ticks:{maxRotation:45,minRotation:ids.length>12?45:0,font:{size:11}}},y:{ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFE9E7'}}}}});
-  mkChart('chEbit',{type:'bar',data:{labels,datasets:[{label:PREV,data:withData.map(x=>x.r.e25),backgroundColor:'#D6CECB',borderRadius:3},{label:YEAR,data:withData.map(x=>x.r.e26),backgroundColor:x=>'#5B7C8D',borderRadius:3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}}},scales:{x:{grid:{display:false},ticks:{font:{size:11},maxRotation:45}},y:{ticks:{callback:v=>fmt(v)},grid:{color:'#EFE9E7'}}}}});
+  mkChart('chSales',{type:'bar',data:{labels,datasets:[{label:PREV,data:withData.map(x=>x.r.s25),backgroundColor:'#D1D1D6',borderRadius:3},{label:YEAR,data:withData.map(x=>x.r.s26),backgroundColor:'#3D6475',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}}},scales:{x:{grid:{display:false},ticks:{maxRotation:45,minRotation:ids.length>12?45:0,font:{size:11}}},y:{ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFEFF3'}}}}});
+  mkChart('chEbit',{type:'bar',data:{labels,datasets:[{label:PREV,data:withData.map(x=>x.r.e25),backgroundColor:'#D1D1D6',borderRadius:3},{label:YEAR,data:withData.map(x=>x.r.e26),backgroundColor:x=>'#5B7C8D',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}}},scales:{x:{grid:{display:false},ticks:{font:{size:11},maxRotation:45}},y:{ticks:{callback:v=>fmt(v)},grid:{color:'#EFEFF3'}}}}});
   const t25=MONTHS.map((_,i)=>agg(i,ids).s25), t26=MONTHS.map((_,i)=>agg(i,ids).s26);
-  mkChart('chTrend',{type:'line',data:{labels:MSHORT,datasets:[{label:PREV,data:t25,borderColor:'#AFA5A2',backgroundColor:'#AFA5A2',borderDash:[5,4],tension:.25,pointRadius:3,spanGaps:false},{label:YEAR,data:t26,borderColor:'#C0605C',backgroundColor:'#C0605C',tension:.25,pointRadius:4,spanGaps:false}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFE9E7'}}}}});
+  mkChart('chTrend',{type:'line',data:{labels:MSHORT,datasets:[{label:PREV,data:t25,borderColor:'#AEAEB2',backgroundColor:'#AEAEB2',borderDash:[5,4],tension:.25,pointRadius:3,spanGaps:false},{label:YEAR,data:t26,borderColor:'#3D6475',backgroundColor:'#3D6475',tension:.25,pointRadius:4,spanGaps:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFEFF3'}}}}});
 
   const colAvg=colA26==null?null:colA26*100;
-  mkChart('chCol',{type:'bar',data:{labels,datasets:[{label:`COL% ${PREV}`,data:withData.map(x=>x.r.col25==null?null:+(x.r.col25*100).toFixed(1)),backgroundColor:'#D6CECB',borderRadius:3},{label:`COL% ${YEAR}`,data:withData.map(x=>x.r.col26==null?null:+(x.r.col26*100).toFixed(1)),backgroundColor:withData.map(x=>x.r.colD>0?'#C0605C':'#1E7A46'),borderRadius:3},{type:'line',label:'เฉลี่ยพื้นที่',data:withData.map(()=>colAvg),borderColor:'#C0605C',borderDash:[4,4],pointRadius:0,borderWidth:1.5}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw==null?'–':c.raw+'%'}`}}},scales:{x:{grid:{display:false},ticks:{font:{size:11},maxRotation:45}},y:{ticks:{callback:v=>v+'%'},grid:{color:'#EFE9E7'}}}}});
-  mkChart('chCp',{type:'bar',data:{labels,datasets:[{label:'Complaint (ครั้ง)',data:withData.map(x=>x.r.cp),backgroundColor:withData.map(x=>x.r.cp>=3?'#C0605C':'#E4B7B3'),borderRadius:2,yAxisID:'y'},{type:'line',label:'OT (฿)',data:withData.map(x=>x.r.ot),borderColor:'#5B7C8D',backgroundColor:'#5B7C8D',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{x:{grid:{display:false},ticks:{font:{size:11},maxRotation:45}},y:{position:'left',ticks:{stepSize:1,callback:v=>fmt(v)},grid:{color:'#EFE9E7'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>fmt(v)}}}}});
+  mkChart('chCol',{type:'bar',data:{labels,datasets:[{label:`COL% ${PREV}`,data:withData.map(x=>x.r.col25==null?null:+(x.r.col25*100).toFixed(1)),backgroundColor:'#D1D1D6',borderRadius:3},{label:`COL% ${YEAR}`,data:withData.map(x=>x.r.col26==null?null:+(x.r.col26*100).toFixed(1)),backgroundColor:withData.map(x=>x.r.colD>0?'#C0605C':'#1E7A46'),borderRadius:3},{type:'line',label:'เฉลี่ยพื้นที่',data:withData.map(()=>colAvg),borderColor:'#8E8E96',borderDash:[4,4],pointRadius:0,borderWidth:1.5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw==null?'–':c.raw+'%'}`}}},scales:{x:{grid:{display:false},ticks:{font:{size:11},maxRotation:45}},y:{ticks:{callback:v=>v+'%'},grid:{color:'#EFEFF3'}}}}});
+  mkChart('chCp',{type:'bar',data:{labels,datasets:[{label:'Complaint (ครั้ง)',data:withData.map(x=>x.r.cp),backgroundColor:withData.map(x=>x.r.cp>=3?'#C0605C':'#C7C7CC'),borderRadius:2,yAxisID:'y'},{type:'line',label:'OT (฿)',data:withData.map(x=>x.r.ot),borderColor:'#5B7C8D',backgroundColor:'#5B7C8D',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{x:{grid:{display:false},ticks:{font:{size:11},maxRotation:45}},y:{position:'left',ticks:{stepSize:1,callback:v=>fmt(v)},grid:{color:'#EFEFF3'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>fmt(v)}}}}});
 
   // performance table — ค้นหาและเรียงลำดับได้ ไม่งั้น 45 สาขาหาไม่เจอว่าใครควรดูก่อน
   const maxAbs=Math.max(.01,...withData.map(x=>Math.abs(x.r.yoy.s||0)));
@@ -1260,12 +1539,12 @@ function renderYear(){
   const ids=scopeBranches().map(b=>b.id);
   document.getElementById('yearTitle').textContent=`สรุปทั้งปี ${YEAR} — ${scopeLabel()}`;
   const M=MONTHS.map((_,i)=>agg(i,ids));
-  mkChart('chYear',{type:'bar',data:{labels:MSHORT,datasets:[{type:'bar',label:`Sales ${PREV}`,data:M.map(a=>a.s25),backgroundColor:'#D6CECB',borderRadius:2,yAxisID:'y'},{type:'bar',label:`Sales ${YEAR}`,data:M.map(a=>a.s26),backgroundColor:'#C0605C',borderRadius:2,yAxisID:'y'},{type:'line',label:`EBIT ${YEAR}`,data:M.map(a=>a.e26),borderColor:'#5B7C8D',backgroundColor:'#5B7C8D',tension:.25,pointRadius:4,yAxisID:'y2',spanGaps:false}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}}},scales:{x:{grid:{display:false}},y:{position:'left',ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFE9E7'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)}}}}});
-  const PAL=['#C0605C','#5B7C8D','#1E7A46','#B7791F','#6B4C9A','#D97757','#2A9D8F','#8E1B20','#5A5A5A','#E07A9A','#3F88C5','#7C9A3E'];
+  mkChart('chYear',{type:'bar',data:{labels:MSHORT,datasets:[{type:'bar',label:`Sales ${PREV}`,data:M.map(a=>a.s25),backgroundColor:'#D1D1D6',borderRadius:2,yAxisID:'y'},{type:'bar',label:`Sales ${YEAR}`,data:M.map(a=>a.s26),backgroundColor:'#3D6475',borderRadius:2,yAxisID:'y'},{type:'line',label:`EBIT ${YEAR}`,data:M.map(a=>a.e26),borderColor:'#1C1C1E',backgroundColor:'#1C1C1E',tension:.25,pointRadius:4,yAxisID:'y2',spanGaps:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}}},scales:{x:{grid:{display:false}},y:{position:'left',ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFEFF3'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)}}}}});
+  const PAL=['#3D6475','#D97757','#1E7A46','#B7791F','#6B4C9A','#2A9D8F','#5A5A5A','#E07A9A','#3F88C5','#7C9A3E','#9C6B3F','#8E8E96'];   // ไม่มีแดง เพราะแดงสงวนไว้บอกว่าแย่ลง
   const bsc=scopeBranches();
   mkChart('chYearBr',{type:'line',data:{labels:MSHORT,datasets:bsc.map((b,i)=>({label:shortName(b.name)+(sel.am==='all'?' · '+(AMS.find(a=>a.id===b.am)||{}).name:''),data:MONTHS.map((_,mi)=>val(mi,b.id,'s26')),borderColor:PAL[i%PAL.length],backgroundColor:PAL[i%PAL.length],borderDash:i>=PAL.length?[5,4]:[],tension:.25,pointRadius:3,borderWidth:1.6,spanGaps:false}))},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'nearest',intersect:false},plugins:{legend:{position:bsc.length>14?'bottom':'right',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFE9E7'}}}}});
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'nearest',intersect:false},plugins:{legend:{position:bsc.length>14?'bottom':'right',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFEFF3'}}}}});
   const row=(lab,a,cls2='')=>{const c26=colPct(a,'26');return `<tr class="${cls2}"><td>${lab}</td><td>${fmt(a.s25)}</td><td>${fmt(a.s26)}</td><td class="${cls(pct(a.s25,a.s26))}">${fmtPct(pct(a.s25,a.s26))}</td><td>${fmt(a.e25)}</td><td>${fmt(a.e26)}</td><td class="${cls(pct(a.e25,a.e26))}">${fmtPct(pct(a.e25,a.e26))}</td><td>${fmt(a.c26)}</td><td class="${cls(pct(a.c25,a.c26),true)}">${fmtPct(pct(a.c25,a.c26))}</td><td>${fmt(a.l26)}</td><td>${c26==null?'–':(c26*100).toFixed(1)+'%'}</td><td>${fmt(a.ot)}</td><td>${fmt(a.cp)}</td></tr>`};
   const T={}; FIELDS.forEach(f=>T[f]=sum(M.map(a=>a[f])));
   document.getElementById('yearTable').innerHTML=`<table><thead><tr><th>เดือน</th><th>Sales ${PREV}</th><th>Sales ${YEAR}</th><th>YoY</th><th>EBIT ${PREV}</th><th>EBIT ${YEAR}</th><th>YoY</th><th>COGs ${YEAR}</th><th>YoY</th><th>COL ${YEAR}</th><th>COL%</th><th>OT</th><th>Complaint</th></tr></thead><tbody>${M.map((a,i)=>row(MONTHS[i],a)).join('')}${row('รวมทั้งปี',T,'total')}</tbody></table>`;
@@ -1321,14 +1600,14 @@ function renderBranch(){
     kpi('ข้อร้องเรียนสะสม',fmt(T.cp),`OT สะสม ${fmt(T.ot)} ฿`)+
     kpi(`${MONTHS[sel.m]} — ยอดขาย`,fmt(cur.s26),`YoY ${chip(cur.yoy.s)} MoM ${chip(cur.mom.s)}`)+
     kpi('เดือนที่ยอดขายลด YoY',`${M.filter(r=>r.yoy.s<0).length} <span style="font-size:15px;color:var(--ink-3);font-weight:400">/ ${M.filter(r=>r.yoy.s!=null).length} เดือน</span>`,`เดือนที่ EBIT ลด: ${M.filter(r=>r.yoy.e<0).length}`);
-  const O=(extra={})=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFE9E7'}}},...extra});
-  mkChart('chB1',{type:'bar',data:{labels:MSHORT,datasets:[{label:PREV,data:M.map(r=>r.s25),backgroundColor:'#D6CECB',borderRadius:3},{label:YEAR,data:M.map(r=>r.s26),backgroundColor:M.map(r=>r.yoy.s<0?'#E4B7B3':'#C0605C'),borderRadius:3}]},options:O()});
-  mkChart('chB2',{type:'bar',data:{labels:MSHORT,datasets:[{label:PREV,data:M.map(r=>r.e25),backgroundColor:'#D6CECB',borderRadius:3},{label:YEAR,data:M.map(r=>r.e26),backgroundColor:M.map(r=>r.e26<0?'#C0605C':'#5B7C8D'),borderRadius:3}]},options:O()});
-  mkChart('chB3',{type:'bar',data:{labels:MSHORT,datasets:[{label:'COGs (฿)',data:M.map(r=>r.c26),backgroundColor:'#D9D4CC',borderRadius:2,yAxisID:'y'},{type:'line',label:'COL % to Sales',data:M.map(r=>r.col26==null?null:+(r.col26*100).toFixed(1)),borderColor:'#C0605C',backgroundColor:'#C0605C',tension:.25,pointRadius:4,yAxisID:'y2',spanGaps:false},{type:'line',label:`COL % ${PREV}`,data:M.map(r=>r.col25==null?null:+(r.col25*100).toFixed(1)),borderColor:'#AFA5A2',backgroundColor:'#AFA5A2',borderDash:[5,4],tension:.25,pointRadius:3,yAxisID:'y2',spanGaps:false}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.dataset.yAxisID==='y2'?(c.raw==null?'–':c.raw+'%'):fmt(c.raw)}`}}},scales:{x:{grid:{display:false}},y:{position:'left',ticks:{callback:v=>fmt(v)},grid:{color:'#EFE9E7'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}});
-  mkChart('chB4',{type:'bar',data:{labels:MSHORT,datasets:[{label:'Trans Dine In',data:M.map(r=>r.tdi26),backgroundColor:'#C0605C',borderRadius:2,stack:'t',yAxisID:'y'},{label:'Trans Delivery',data:M.map(r=>r.td26),backgroundColor:'#E4B7B3',borderRadius:2,stack:'t',yAxisID:'y'},{type:'line',label:'Ticket Dine In (฿)',data:M.map(r=>r.kdi26),borderColor:'#5B7C8D',backgroundColor:'#5B7C8D',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false},{type:'line',label:'Ticket Delivery (฿)',data:M.map(r=>r.kd26),borderColor:'#1E7A46',backgroundColor:'#1E7A46',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{x:{grid:{display:false},stacked:true},y:{stacked:true,position:'left',ticks:{callback:v=>fmt(v)},grid:{color:'#EFE9E7'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>fmt(v)}}}}});
-  mkChart('chB5',{type:'bar',data:{labels:MSHORT,datasets:[{label:'Complaint (ครั้ง)',data:M.map(r=>r.cp),backgroundColor:M.map(r=>r.cp>=3?'#C0605C':'#E4B7B3'),borderRadius:3}]},options:O({plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{ticks:{stepSize:1},grid:{color:'#EFE9E7'}}}})});
+  const O=(extra={})=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFEFF3'}}},...extra});
+  mkChart('chB1',{type:'bar',data:{labels:MSHORT,datasets:[{label:PREV,data:M.map(r=>r.s25),backgroundColor:'#D1D1D6',borderRadius:3},{label:YEAR,data:M.map(r=>r.s26),backgroundColor:M.map(r=>r.yoy.s<0?'#C0605C':'#3D6475'),borderRadius:3}]},options:O()});
+  mkChart('chB2',{type:'bar',data:{labels:MSHORT,datasets:[{label:PREV,data:M.map(r=>r.e25),backgroundColor:'#D1D1D6',borderRadius:3},{label:YEAR,data:M.map(r=>r.e26),backgroundColor:M.map(r=>r.e26<0?'#C0605C':'#3D6475'),borderRadius:3}]},options:O()});
+  mkChart('chB3',{type:'bar',data:{labels:MSHORT,datasets:[{label:'COGs (฿)',data:M.map(r=>r.c26),backgroundColor:'#D8D8DE',borderRadius:2,yAxisID:'y'},{type:'line',label:'COL % to Sales',data:M.map(r=>r.col26==null?null:+(r.col26*100).toFixed(1)),borderColor:'#3D6475',backgroundColor:'#3D6475',tension:.25,pointRadius:4,yAxisID:'y2',spanGaps:false},{type:'line',label:`COL % ${PREV}`,data:M.map(r=>r.col25==null?null:+(r.col25*100).toFixed(1)),borderColor:'#AEAEB2',backgroundColor:'#AEAEB2',borderDash:[5,4],tension:.25,pointRadius:3,yAxisID:'y2',spanGaps:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.dataset.yAxisID==='y2'?(c.raw==null?'–':c.raw+'%'):fmt(c.raw)}`}}},scales:{x:{grid:{display:false}},y:{position:'left',ticks:{callback:v=>fmt(v)},grid:{color:'#EFEFF3'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}});
+  mkChart('chB4',{type:'bar',data:{labels:MSHORT,datasets:[{label:'Trans Dine In',data:M.map(r=>r.tdi26),backgroundColor:'#3D6475',borderRadius:2,stack:'t',yAxisID:'y'},{label:'Trans Delivery',data:M.map(r=>r.td26),backgroundColor:'#A9BCC6',borderRadius:2,stack:'t',yAxisID:'y'},{type:'line',label:'Ticket Dine In (฿)',data:M.map(r=>r.kdi26),borderColor:'#1C1C1E',backgroundColor:'#1C1C1E',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false},{type:'line',label:'Ticket Delivery (฿)',data:M.map(r=>r.kd26),borderColor:'#D97757',backgroundColor:'#D97757',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{x:{grid:{display:false},stacked:true},y:{stacked:true,position:'left',ticks:{callback:v=>fmt(v)},grid:{color:'#EFEFF3'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>fmt(v)}}}}});
+  mkChart('chB5',{type:'bar',data:{labels:MSHORT,datasets:[{label:'Complaint (ครั้ง)',data:M.map(r=>r.cp),backgroundColor:M.map(r=>r.cp>=3?'#C0605C':'#C7C7CC'),borderRadius:3}]},options:O({plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{ticks:{stepSize:1},grid:{color:'#EFEFF3'}}}})});
   mkChart('chB6',{type:'bar',data:{labels:MSHORT,datasets:[{label:'OT (฿)',data:M.map(r=>r.ot),backgroundColor:'#5B7C8D',borderRadius:3}]},options:O({plugins:{legend:{display:false}}})});
   const pc=(v,inv)=>`<td class="${cls(v,inv)}">${fmtPct(v)}</td>`;
   const rows=M.map((r,i)=>`<tr style="${i===sel.m?'background:var(--red-lt)':''}"><td>${MONTHS[i]}</td><td>${fmt(r.s25)}</td><td>${fmt(r.s26)}</td>${pc(r.yoy.s)}${pc(r.mom.s)}<td>${fmt(r.e25)}</td><td>${fmt(r.e26)}</td>${pc(r.yoy.e)}<td>${fmt(r.c26)}</td>${pc(r.yoy.c,true)}<td>${fmt(r.l26)}</td><td>${r.col26==null?'–':(r.col26*100).toFixed(1)+'%'}</td><td class="${cls(r.colD,true)}">${r.colD==null?'–':(r.colD>0?'+':'')+(r.colD*100).toFixed(1)+' pt'}</td><td>${fmt(r.tdi26)}</td>${pc(r.yoy.tdi)}<td>${fmt(r.kdi26)}</td><td>${fmt(r.td26)}</td>${pc(r.yoy.td)}<td>${fmt(r.kd26)}</td><td>${fmt(r.ot)}</td><td>${r.osc==null?'–':(r.osc*100).toFixed(1)+'%'}</td><td class="${r.cp>=3?'neg':''}">${fmt(r.cp)}</td><td class="status ${r.score?'warn':'ok'}">${r.has?(r.score?'⚠ '+r.issues.join(', '):'✔ ปกติ'):''}${r.note?`<div class="mute" style="font-size:12px">${r.note}</div>`:''}</td></tr>`).join('');
@@ -1350,7 +1629,7 @@ function renderInput(){
   const head1=`<tr><th rowspan="2" style="text-align:left">สาขา</th>${GROUPS.map(([k,t],i)=>`<th class="grp ${i%2?'alt':''}" colspan="3">${t}</th>`).join('')}<th class="grp" colspan="2">ค่าแรง % ของยอดขาย<span>COL % to Sales</span></th><th class="grp alt" rowspan="2">ค่าล่วงเวลา<span>OT · ฿</span></th><th class="grp" rowspan="2">คะแนนบริการ<span>OSS %</span></th><th class="grp alt" rowspan="2">ข้อร้องเรียน<span>Complaint</span></th><th class="grp" rowspan="2">OSS Failure / Complaint Explanation</th></tr>`;
   const head2=`<tr>${GROUPS.map(()=>`<th>${PREV}</th><th>${YEAR}</th><th>YoY</th>`).join('')}<th>${PREV}</th><th>${YEAR}</th></tr>`;
   const rows=bs.map((b,ri)=>{const r=rec(m,b.id); const inp=(f,ci)=>`<td><input class="${/^(s|e|c|l)2[56]$/.test(f)?'w-m':/^(tdi|kdi|td|kd)2[56]$/.test(f)?'w-n':f==='ot'?'w-ot':f==='cp'?'w-cp':'w-p'}" inputmode="decimal" data-r="${ri}" data-c="${ci}" data-id="${b.id}" data-f="${f}" value="${r[f]??''}"></td>`;
-    let ci=0; let h=`<tr><td title="${b.name}">${b.name}</td>`;
+    let ci=0; let h=`<tr><td title="${esc(b.name)}">${esc(shortName(b.name))}</td>`;   // ตัด "ร้านส้มตำเจ๊แดง" ที่ซ้ำทุกแถว มือถือจะได้เห็นชื่อสาขาเต็ม
     GROUPS.forEach(([k])=>{h+=inp(k+'25',ci++)+inp(k+'26',ci++)+`<td class="calc" data-calc="${k}" data-id="${b.id}"></td>`;});
     h+=`<td class="calc" data-calc="col25" data-id="${b.id}"></td><td class="calc" data-calc="col26" data-id="${b.id}"></td>`;
     h+=inp('ot',ci++)+inp('osc',ci++)+inp('cp',ci++);
