@@ -1,0 +1,211 @@
+/* darkops : ห้องประชุมโหมดมืด
+   พื้นน้ำเงินดำ แผงยกขึ้นด้วยเส้นขอบบาง ตัวเลขขาวคมชัด
+   สีมีความหมายเท่านั้น: เขียวมิ้นต์ = ดีขึ้น, แดงปะการัง = แย่ลง, อำพัน = ต้องระวัง
+   เปลือกของหน้าใช้ฟ้าเทาเย็น ไม่มีแดงเป็นของตกแต่ง */
+
+:root{
+  color-scheme:dark;
+  --bg:#0F1216;
+  --panel:#171B21;
+  --panel-2:#1D222A;
+  --panel-3:#232932;
+  --line:#272D36;
+  --line-2:#20252D;
+  --ink:#E8EAED;
+  --ink-2:#AEB6C0;
+  --ink-3:#8A939E;
+  --brand:#8FB3F0;
+  --brand-2:#B4CCF6;
+  --brand-soft:rgba(143,179,240,.13);
+  --green:#34D399;   --green-soft:rgba(52,211,153,.14);
+  --red:#F87171;     --red-soft:rgba(248,113,113,.15);
+  --amber:#FBBF24;   --amber-soft:rgba(251,191,36,.12);
+  --red-lt:rgba(143,179,240,.10);
+  --hilite:#221F16;
+  --r:12px; --r-sm:9px;
+  --sh:none;
+  --sh-md:none;
+  --sh-lg:0 24px 70px rgba(0,0,0,.55);
+}
+html,body{background:var(--bg);color:var(--ink)}
+html{scrollbar-color:#39414C var(--bg)}
+::selection{background:rgba(143,179,240,.3);color:#fff}
+option,optgroup{background:var(--panel-2);color:var(--ink)}
+input::placeholder{color:var(--ink-3)}
+
+/* ─── หัวเว็บ ─── */
+.top{background:rgba(15,18,22,.94);border-bottom:1px solid var(--line);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.top::before{height:0;display:none}
+.brand-logo{background:#fff;box-shadow:0 0 0 1px var(--line)}
+.brand h1{color:var(--ink)}
+.brand span{color:var(--ink-3)}
+.who{background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+.help-btn{background:transparent;border-color:var(--line);color:var(--ink-2)}
+.help-btn:hover{background:var(--panel-2);border-color:#3A424D;color:var(--ink)}
+.help-btn.hi{background:var(--ink);border-color:var(--ink);color:#0F1216}
+.help-btn.hi:hover{background:#fff;border-color:#fff;color:#0F1216}
+.logout{color:var(--ink-3)}
+.logout:hover{color:var(--ink);background:var(--panel-2)}
+.sync{background:var(--panel-2);color:var(--ink-2);border-color:var(--line)}
+.sync.on,.sync.off,.sync.err{border-color:transparent}
+
+.ctl .lbl{color:var(--ink-3)}
+.ctl select{background:var(--panel);border-color:var(--line);color:var(--ink)}
+.ctl select:hover{border-color:#3A424D}
+.ctl select:focus{outline:none;border-color:var(--brand)}
+#ctlBranch select{background:transparent;color:var(--ink)}
+
+.month-nav{background:var(--panel);border-color:var(--line)}
+.month-nav>button{color:var(--ink-3)}
+.month-nav>button:hover{background:var(--panel-2);color:var(--ink)}
+.months button{color:var(--ink-2)}
+.months button:hover{background:var(--panel-2);color:var(--ink)}
+.months button[aria-pressed=true]{background:var(--ink);color:#0F1216;font-weight:700}
+.months button[aria-pressed=true] i{background:#0F1216}
+.months button[aria-pressed=true]:not(.has) i{background:rgba(15,18,22,.3)}
+
+/* ─── แท็บ ─── */
+.tabs button{color:var(--ink-3);border-radius:0;border-bottom:2px solid transparent}
+.tabs button:hover{color:var(--ink);background:transparent}
+.tabs button[aria-selected=true]{color:var(--ink);background:transparent;border-bottom-color:var(--brand)}
+
+/* ─── หัวข้อ ─── */
+.sec h2{color:var(--ink)}
+.sec .note{color:var(--ink-3)}
+
+/* ─── KPI ─── */
+.kpi{background:var(--panel);border-color:var(--line)}
+.kpi .l{color:var(--ink-2)}
+.kpi .l .u{color:var(--ink-3)}
+.kpi .v{color:#F4F6F8;font-size:32px;margin:9px 0 10px}
+.kpi .d,.kpi .d .cmp{color:var(--ink-3)}
+.chip{border:0}
+.flat{color:var(--ink-2);background:var(--panel-3)}
+.readme-line{color:var(--ink-2)}
+.readme-line b{color:var(--ink)}
+
+/* ─── การ์ด ─── */
+.card{background:var(--panel);border-color:var(--line)}
+.card h3{color:var(--ink)}
+.card h3 .h3sub{color:var(--ink-3)}
+.empty{background:var(--panel);border-color:#333B46;color:var(--ink-2)}
+.empty b{color:var(--ink)}
+
+/* กราฟ: สีแกนและเส้นกริดถูกกำหนดใน JS ไว้สำหรับพื้นขาว (#6E625F, #EFE9E7)
+   บนพื้นมืดตัวหนังสือแกนจะจางและเส้นกริดจะสว่างจ้า จึงกลับค่าความสว่างของ canvas
+   บางส่วนแล้วหมุนเฉดกลับ ให้สีแดง/เทาฟ้ายังเป็นเฉดเดิม แต่ตัวหนังสือสว่าง กริดจาง */
+.chart-wrap canvas{filter:invert(.86) hue-rotate(180deg) brightness(1.2) saturate(1.05)}
+
+/* ─── ตาราง ─── */
+.tbl-wrap{background:var(--panel);border-color:var(--line)}
+th,td{border-bottom-color:var(--line-2)}
+th{background:var(--panel-2);color:var(--ink-3);border-bottom-color:var(--line)}
+th.grp{background:var(--panel-3);color:var(--ink);border-left:1px solid var(--line);
+  border-bottom:1px solid var(--line)}
+th.grp.alt{background:#2C343F}
+th.grp:not(.alt){background:#21272F}
+th.grp span{color:var(--ink-2);opacity:1}
+td:first-child{background:var(--panel)}
+th:first-child{background:var(--panel-2)}
+td{color:var(--ink)}
+tr:hover td,tr:hover td:first-child{background:#1C2129}
+tr.total td,tr.total td:first-child{background:var(--panel-2);border-top:1px solid #333B46;color:#F4F6F8}
+td.v2 b,.num{color:var(--ink)}
+td.v2 small,th.v2h small{color:var(--ink-3)}
+.mute{color:var(--ink-3)}
+.rank{color:var(--ink-3)}
+.status.ok{color:var(--green)}
+.status.warn{color:var(--amber)}
+th.sortable:hover{background:var(--panel-3);color:var(--ink)}
+th.sortable .ar{color:var(--brand)}
+th.sortable.on{color:var(--ink)}
+.search input{background:var(--panel);border-color:var(--line);color:var(--ink)}
+.search input:hover{border-color:#3A424D}
+.search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.blink{border-bottom-color:#3A424D}
+.blink:hover{color:var(--brand-2);border-bottom-color:var(--brand)}
+.legend{color:var(--ink-2)}
+
+/* ตารางกรอกข้อมูล */
+.grid td,.grid th{border-right-color:var(--line-2)}
+.grid input{background:var(--hilite);color:var(--ink)}
+.grid input:focus{background:var(--panel-2);box-shadow:inset 0 0 0 2px var(--brand)}
+.grid td.calc{background:var(--panel-2);color:var(--ink-3)}
+
+/* ─── ปุ่ม ─── */
+.btn{background:var(--panel-2);border-color:var(--line);color:var(--ink)}
+.btn:hover{background:var(--panel-3);border-color:#3A424D}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#0F1216;box-shadow:none}
+.btn.primary:hover{background:#fff;border-color:#fff;color:#0F1216}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--ink-2)}
+.btn.ghost:hover{background:var(--panel-2);border-color:var(--line);color:var(--ink)}
+.hint{color:var(--ink-3)}
+.seg{border-color:var(--line)}
+.seg button{background:var(--panel);color:var(--ink-2)}
+.seg button:hover{background:var(--panel-2);color:var(--ink)}
+.seg button[aria-pressed=true]{background:var(--ink);color:#0F1216}
+
+/* ─── หน้าต่าง ─── */
+.modal{background:rgba(5,7,10,.72)}
+.modal-box{background:var(--panel);border:1px solid var(--line);color:var(--ink)}
+.modal-body select,.map-sel,.zone-b select{background:var(--panel-2);border-color:var(--line);color:var(--ink)}
+.modal-foot{background:var(--panel-2);border-top-color:var(--line)}
+.modal-body ul{color:var(--ink-2)}
+.gloss th{color:var(--ink);background:transparent}
+.gloss td{color:var(--ink-2)}
+.map{background:var(--amber-soft);border-color:rgba(251,191,36,.3)}
+.map-t td{border-top-color:rgba(251,191,36,.14)}
+.dm-card{background:var(--panel-2);border-color:var(--line)}
+.dm-card.warn{background:var(--amber-soft);border-color:rgba(251,191,36,.3)}
+.dm-drop{background:var(--panel-2);border-color:#3A424D}
+.dm-drop:hover,.dm-drop.over{border-color:var(--brand);background:var(--brand-soft)}
+.dm-miss .h{background:var(--panel-2)}
+.dm-tbl{background:
+    linear-gradient(90deg,var(--panel) 30%,rgba(23,27,33,0)),
+    linear-gradient(90deg,rgba(23,27,33,0),var(--panel) 70%) 100% 0,
+    radial-gradient(farthest-side at 0 50%,rgba(0,0,0,.5),transparent),
+    radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.5),transparent) 100% 0;
+  background-repeat:no-repeat;background-size:34px 100%,34px 100%,14px 100%,14px 100%;
+  background-attachment:local,local,scroll,scroll}
+.dm-tbl th.now{background:var(--brand-soft);color:var(--brand-2)}
+.dm-tbl td.now{background:rgba(143,179,240,.06)}
+.dm-tbl td:first-child{background:var(--panel)}
+.dm-tbl th:first-child{background:var(--panel-2)}
+.dm-bar{background:var(--panel-3)}
+.dm-cell.off{background:var(--panel-3)}
+
+/* ─── นำเข้าไฟล์ / โซน ─── */
+.drop{background:var(--panel);border-color:#333B46}
+.drop.over{border-color:var(--brand);background:var(--brand-soft)}
+.drop-txt span{color:var(--ink-2)}
+.zone{background:var(--panel);border-color:var(--line)}
+.zone-h{background:var(--panel-2);border-bottom-color:var(--line)}
+.zone-h input,.zone-add input,.codes input{background:var(--panel-2);border-color:var(--line);color:var(--ink)}
+.zone-b:hover{background:var(--panel-2)}
+.zone-b input:hover,.zone-b input:focus{background:var(--panel-2);border-color:var(--line)}
+
+/* ─── หน้าเข้าใช้งาน ─── */
+.login{background:var(--bg)}
+.login-stack::before{background:var(--panel-2);border:1px solid var(--line)}
+.login-box{background:var(--panel);border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.login-logo{background:#fff}
+.login-box input{background:var(--bg);border-color:var(--line);color:var(--ink)}
+.login-box input:hover{border-color:#3A424D}
+.login-box input:focus{background:var(--bg);border-color:var(--brand)}
+.peek:hover{background:var(--panel-2);color:var(--ink)}
+.login-box .hint{border-top-color:var(--line)}
+
+/* ─── โหมดพรีเซนต์ ─── */
+.exit-present{background:var(--panel-3);color:var(--ink);border:1px solid #3A424D;opacity:.4}
+.exit-present:hover{opacity:1}
+body.present .kpi .v{font-size:52px}
+body.present .top{background:var(--bg)}
+
+@media(max-width:760px){
+  .kpi .v{font-size:25px}
+  .zone-b input{background:var(--panel-2)}
+}
+@media(max-width:430px){
+  .kpi .v{font-size:22px}
+}

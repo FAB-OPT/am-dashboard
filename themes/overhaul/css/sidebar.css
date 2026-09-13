@@ -1,0 +1,243 @@
+/* sidebar : แถบเมนูข้างซ้าย
+   เปลือกของแอปเป็นถ่านอุ่น เนื้อหาอยู่บนพื้นสว่างนุ่มตา
+   สีแดงและเขียวสงวนไว้ให้ตัวเลขที่แย่ลงและดีขึ้นเท่านั้น */
+
+:root{
+  --bg:#F3F1EE;
+  --panel:#FFFFFF;
+  --panel-2:#FAF8F6;
+  --line:#E6E1DD;
+  --line-2:#F0ECE9;
+  --ink:#1F1B1A;
+  --ink-2:#645A57;
+  --ink-3:#978C88;
+  --brand:#2B2625;
+  --brand-2:#3B3432;
+  --brand-soft:#ECE8E5;
+  --acc:#5B7C8D;
+  --acc-soft:#E6EEF2;
+  --r:12px; --r-sm:9px;
+  --sh:0 1px 2px rgba(31,27,26,.04),0 1px 1px rgba(31,27,26,.03);
+  --sh-md:0 4px 14px rgba(31,27,26,.06);
+  /* แถบข้าง */
+  --sb:#1F1B1A;
+  --sb-2:#2A2524;
+  --sb-3:#352F2D;
+  --sb-line:rgba(255,255,255,.08);
+  --sb-ink:#F4EFEC;
+  --sb-ink-2:rgba(244,239,236,.66);
+  --sb-ink-3:rgba(244,239,236,.42);
+  --sb-acc:#9CC0D0;
+  --sb-w:252px;
+}
+
+:focus-visible{outline:2px solid var(--acc)}
+::selection{background:var(--acc-soft);color:var(--ink)}
+
+/* ----------- เปลือกสีถ่าน (ทุกขนาดจอ) ----------- */
+.top{background:var(--sb);border-bottom:0;color:var(--sb-ink)}
+.top::before{display:none}
+.brand h1{color:var(--sb-ink);font-size:16px}
+.brand-txt>span{color:var(--sb-ink-3);font-size:12px}
+.brand-logo{border-radius:9px;box-shadow:0 0 0 1px rgba(255,255,255,.1)}
+
+.who{background:rgba(255,255,255,.07);color:var(--sb-ink-2);font-weight:600}
+.sync{background:rgba(255,255,255,.07);color:var(--sb-ink-2)}
+.sync.on{background:rgba(76,195,138,.12);color:#79D6A6}.sync.on i{background:#4CC38A}
+.sync.off{background:rgba(231,184,105,.12);color:#E7B869}.sync.off i{background:#E7B869}
+.sync.err{background:rgba(232,110,98,.14);color:#F09A90}.sync.err i{background:#E86E62}
+.sync.saving i{background:var(--sb-acc)}
+
+.help-btn{background:transparent;border:1px solid var(--sb-line);color:var(--sb-ink-2)}
+.help-btn:hover{background:var(--sb-2);border-color:rgba(255,255,255,.16);color:var(--sb-ink)}
+.help-btn.hi{background:var(--sb-ink);border-color:var(--sb-ink);color:var(--sb)}
+.help-btn.hi:hover{background:#fff;border-color:#fff;color:var(--sb)}
+.logout{color:var(--sb-ink-3)}
+.logout:hover{background:var(--sb-2);color:var(--sb-ink)}
+
+.ctl{color:var(--sb-ink-2)}
+.ctl .lbl{color:var(--sb-ink-3);font-weight:600}
+.ctl select{background-color:var(--sb-2);border-color:var(--sb-line);color:var(--sb-ink);box-shadow:none}
+.ctl select:hover{border-color:rgba(255,255,255,.2)}
+.ctl select option{background:#fff;color:var(--ink)}
+.month-nav{background:var(--sb-2);border-color:var(--sb-line);box-shadow:none}
+.month-nav>button{color:var(--sb-ink-3)}
+.month-nav>button:hover{background:var(--sb-3);color:var(--sb-ink)}
+#ctlBranch select{color:var(--sb-ink)}
+.months button{color:var(--sb-ink-2)}
+.months button:hover{background:var(--sb-3);color:var(--sb-ink)}
+.months button.has i{background:#4CC38A}
+.months button[aria-pressed=true]{background:var(--sb-ink);color:var(--sb);font-weight:700}
+.months button[aria-pressed=true] i,
+.months button[aria-pressed=true].has i{background:#12805A}
+.months button[aria-pressed=true]:not(.has) i{background:rgba(31,27,26,.22)}
+
+.tabs button{color:var(--sb-ink-2)}
+.tabs button:hover{background:var(--sb-2);color:var(--sb-ink)}
+.tabs button[aria-selected=true]{background:rgba(255,255,255,.08);color:#fff;border-bottom-color:var(--sb-acc)}
+
+/* ไอคอนเมนู วาดด้วย mask ใช้สีตามตัวอักษร */
+.tabs button::before{content:'';display:block;flex:0 0 auto;width:18px;height:18px;background:currentColor;
+  opacity:.8;-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}
+.tabs button[aria-selected=true]::before{opacity:1;background:var(--sb-acc)}
+.tabs button[data-tab=dash]{--ico:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><rect x='3.5' y='3.5' width='7' height='7' rx='1.5'/><rect x='13.5' y='3.5' width='7' height='7' rx='1.5'/><rect x='3.5' y='13.5' width='7' height='7' rx='1.5'/><rect x='13.5' y='13.5' width='7' height='7' rx='1.5'/></svg>")}
+.tabs button[data-tab=branch]{--ico:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'><path d='M4 10v10h16V10'/><path d='M3.5 4h17l-1.2 6H4.7z'/><path d='M10 20v-5h4v5'/></svg>")}
+.tabs button[data-tab=compare]{--ico:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><rect x='3.5' y='4' width='17' height='16' rx='2'/><path d='M3.5 9.5h17M9.5 9.5V20M15 9.5V20'/></svg>")}
+.tabs button[data-tab=year]{--ico:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'><rect x='3.5' y='5' width='17' height='15.5' rx='2'/><path d='M3.5 10h17M8 3v4M16 3v4'/></svg>")}
+.tabs button[data-tab=input]{--ico:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'><path d='M4 20h4L19.5 8.5l-4-4L4 16z'/><path d='M13.5 6.5l4 4'/></svg>")}
+.tabs button[data-tab=zones]{--ico:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'><path d='M12 3.5l8.5 4.5-8.5 4.5L3.5 8z'/><path d='M3.5 12.5l8.5 4.5 8.5-4.5'/></svg>")}
+.tabs button{display:inline-flex;align-items:center;gap:8px}
+
+/* ----------- เนื้อหา ----------- */
+.sec h2{font-size:19px;color:var(--ink)}
+.sec .note{color:var(--ink-3)}
+.kpi,.card,.tbl-wrap,.zone{border-color:var(--line);box-shadow:var(--sh)}
+.kpi{padding:18px 20px 16px;position:relative}
+.kpi .l{color:var(--ink-2);font-size:13px}
+.kpi .l .u{font-size:10.5px;font-weight:500;margin-top:1px}
+.kpi .v{font-size:31px;margin:12px 0 10px;color:var(--ink)}
+.kpi .d{padding-top:10px;border-top:1px solid var(--line-2)}
+.card{padding:18px 20px 20px}
+.card h3{font-size:14px;margin-bottom:12px}
+
+th{background:var(--panel-2);color:var(--ink-3)}
+th.grp{background:#2B2625;color:#F4EFEC;border-left:1px solid rgba(255,255,255,.12)}
+th.grp.alt{background:#433B39}
+th.grp span{opacity:.62}
+tr:hover td,tr:hover td:first-child{background:#F7F5F2}
+tr.total td,tr.total td:first-child{background:#F4F1EE}
+th.sortable:hover{background:var(--acc-soft);color:var(--acc)}
+th.sortable .ar,th.sortable.on{color:var(--acc)}
+.search input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.blink:hover{color:var(--acc);border-bottom-color:var(--acc)}
+
+.btn.primary{background:var(--brand);border-color:var(--brand);box-shadow:0 1px 2px rgba(31,27,26,.2)}
+.btn.primary:hover{background:#3B3432;border-color:#3B3432}
+.seg button[aria-pressed=true]{background:var(--brand);color:#fff}
+.grid input:focus{box-shadow:inset 0 0 0 2px var(--acc)}
+.drop.over,.dm-drop:hover,.dm-drop.over{border-color:var(--acc);background:var(--acc-soft)}
+.dm-tbl th.now{background:var(--acc-soft);color:var(--acc)}
+.dm-tbl td.now{background:#F5F8F9}
+.login-stack::before{background:#E4DEDA}
+.login-box input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.peek:hover{background:var(--brand-soft);color:var(--ink)}
+
+/* ----------- จอคอม: แถบข้างซ้าย ----------- */
+@media(min-width:1100px){
+  body{padding-left:var(--sb-w)}
+  .top{position:fixed;top:0;left:0;bottom:0;width:var(--sb-w);z-index:40;
+    display:grid;grid-template-columns:1fr 1fr;
+    grid-template-rows:auto auto auto 1fr auto auto auto auto;
+    grid-template-areas:"brand brand" "nav nav" "ctl ctl" "sp sp" "sync sync" "data data" "pres help" "who out";
+    column-gap:8px;padding:0 14px 14px;overflow-y:auto;scrollbar-width:thin;
+    scrollbar-color:var(--sb-3) transparent;border-right:1px solid #000}
+  .top::after{content:'';grid-area:sp;align-self:end;border-top:1px solid var(--sb-line);margin:18px 2px 14px}
+  .top-in{display:contents}
+  .brand{grid-area:brand;margin:0;padding:20px 6px 18px;gap:11px;
+    border-bottom:1px solid var(--sb-line)}
+  .brand-logo{width:38px;height:38px}
+  .brand h1{font-size:14.5px;line-height:1.25;letter-spacing:-.01em}
+  .brand-txt>span{font-size:11.5px;margin-top:2px}
+
+  .tabs{grid-area:nav;flex-direction:column;gap:2px;padding:16px 0 4px;margin:0;max-width:none;overflow:visible}
+  .tabs::before,.topbar::before{display:block;font-size:11px;font-weight:600;color:var(--sb-ink-3);padding:0 10px 8px}
+  .tabs::before{content:'เมนู'}
+  .topbar::before{content:'ตัวกรอง'}
+  .tabs button{width:100%;padding:9px 10px;border-radius:8px;border-bottom:0;margin:0;
+    font-size:13.5px;font-weight:500;text-align:left;gap:11px}
+  .tabs button[aria-selected=true]{font-weight:600;box-shadow:inset 3px 0 0 var(--sb-acc)}
+
+  .topbar{grid-area:ctl;flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:14px;
+    padding:18px 0 0;margin:16px 0 0;max-width:none;border-top:1px solid var(--sb-line)}
+  .topbar::before{padding-bottom:0;margin-bottom:-4px}
+  .ctl{flex-direction:column;align-items:stretch;gap:6px;padding:0 2px}
+  .ctl .lbl{font-size:11.5px;padding:0 8px}
+  .ctl select{min-width:0;width:100%;font-size:13px;padding:8px 10px}
+  #ctlBranch .month-nav{display:flex}
+  #ctlBranch select{width:auto;flex:1 1 0;min-width:0;font-size:13px;padding:8px 2px}
+  #ctlBranch .month-nav>button{padding:8px 9px}
+
+  /* เดือนเรียงเป็นตาราง 4 x 3 เห็นครบทั้งปี ไม่ต้องเลื่อน */
+  .ctl:not(#ctlBranch) .month-nav{display:grid;grid-template-columns:1fr 1fr}
+  .ctl:not(#ctlBranch) .months{grid-column:1/-1;grid-row:1;display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;max-width:none;overflow:visible;padding:5px}
+  .months button{padding:7px 0 6px;font-size:12.5px;border-radius:6px}
+  .ctl:not(#ctlBranch) .month-nav>button{grid-row:2;padding:6px 0;border-top:1px solid var(--sb-line);font-size:14px}
+  #prevM{border-right:1px solid var(--sb-line)!important}
+
+  .sync{grid-area:sync;justify-self:stretch;justify-content:center;margin-bottom:8px;padding:6px 12px}
+  #btnData{grid-area:data;margin-bottom:8px;padding:9px 12px;border-radius:9px;font-size:13px}
+  #btnPresent{grid-area:pres}
+  #btnHelp{grid-area:help}
+  #btnPresent,#btnHelp{padding:7px 8px;border-radius:9px;font-size:12.5px}
+  .who{grid-area:who;justify-self:start;align-self:center;margin-top:12px}
+  .logout{grid-area:out;justify-self:end;align-self:center;margin-top:12px}
+
+  main{max-width:1640px;padding:34px 40px 80px}
+  .sec{margin:40px 0 16px}
+  .sec:first-child{margin-top:0}
+  .sec h2{font-size:20px}
+  .kpis{gap:16px}
+  .two{gap:18px}
+
+  body.present{--sb-w:280px}
+  body.present .top{grid-template-areas:"brand brand" "nav nav" "ctl ctl" "sp sp" "who who"}
+  body.present .brand h1{font-size:18px}
+  body.present .brand-txt>span{font-size:13px}
+  body.present .tabs{padding:18px 0 4px;gap:4px}
+  body.present .tabs button{font-size:16px;padding:12px 12px}
+  body.present .topbar{padding:18px 0 0}
+  body.present .months button{font-size:14px;padding:9px 0 7px}
+  body.present .ctl select{font-size:15px;padding:10px 12px}
+  body.present .who{margin-top:0}
+}
+
+/* ----------- แท็บเล็ต: หัวบนแบบกระชับ ----------- */
+@media(min-width:761px) and (max-width:1099px){
+  .top-in{padding:12px 20px 10px}
+  .topbar{padding:0 20px 12px}
+  .tabs{padding:0 14px;border-top:1px solid var(--sb-line)}
+  .tabs button{border-radius:0;padding:12px 12px 10px}
+  .tabs button[aria-selected=true]{background:transparent}
+  main{padding:24px 20px 64px}
+}
+
+/* ----------- มือถือ: แถบแท็บด้านล่าง ----------- */
+@media(max-width:760px){
+  .top{position:static}
+  .top-in{padding:12px 14px 10px;gap:8px 6px}
+  .brand{order:0;flex:1 1 calc(100% - 110px);margin-right:0}
+  .brand-txt>span{display:none}
+  .brand h1{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand-logo{width:32px;height:32px;border-radius:8px}
+  .logout{order:1;padding:5px 4px 5px 8px}
+  .who{order:2}
+  .sync{order:3;margin-right:auto}
+  #btnData{order:4}
+  #btnPresent{display:none}
+  #btnHelp{order:5}
+  .top-in{padding-bottom:12px;border-bottom:1px solid var(--sb-line);margin-bottom:12px}
+  .topbar{padding:2px 14px 14px;gap:8px}
+  .ctl .lbl{min-width:40px}
+  .ctl select{font-size:15px;padding:8px 10px}
+
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;margin:0;max-width:none;
+    display:flex;gap:2px;padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+    background:rgba(31,27,26,.97);border-top:1px solid rgba(255,255,255,.06);
+    box-shadow:0 -6px 20px rgba(31,27,26,.18);overflow:visible}
+  .tabs button{flex:1 1 0;min-width:0;min-height:60px;flex-direction:column;justify-content:flex-start;
+    gap:5px;padding:9px 2px 6px;border-radius:10px;border-bottom:0;margin:0;
+    font-size:10.5px;font-weight:500;line-height:1.2;white-space:normal;text-align:center}
+  .tabs button::before{width:20px;height:20px}
+  .tabs button[aria-selected=true]{background:rgba(255,255,255,.08);font-weight:600}
+  main{padding:20px 14px calc(96px + env(safe-area-inset-bottom))}
+  .kpi{padding:14px 14px 12px}
+  .kpi .v{margin:8px 0 8px}
+  .kpi .d{padding-top:8px}
+  .card{padding:15px 15px 16px}
+  .exit-present{bottom:88px}
+}
+@media(max-width:430px){
+  .tabs button{font-size:10px;padding:9px 1px 6px}
+  .kpi .v{font-size:22px}
+}

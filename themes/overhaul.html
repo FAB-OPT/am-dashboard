@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ยกเครื่องแดชบอร์ด 6 แนวทาง</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#F3F1EE;--panel:#fff;--ink:#1E1B19;--ink-2:#55504C;--ink-3:#86807B;--line:#E3E0DC}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Noto Sans Thai Looped','Noto Sans',system-ui,sans-serif;line-height:1.6}
+  .wrap{max-width:1640px;margin:0 auto;padding:28px 18px 70px}
+  h1{font-size:26px;margin:0 0 6px}
+  .lead{color:var(--ink-2);margin:0 0 18px;max-width:780px}
+  .rules{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px}
+  .rules span{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--ink-2)}
+  .jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px}
+  .jump a{background:#1E1B19;color:#fff;text-decoration:none;border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:600}
+  .jump a.ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+  .item{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:26px;scroll-margin-top:16px}
+  .item.now{border-style:dashed}
+  .head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+  .head h2{font-size:21px;margin:0}
+  .num{font-size:13px;font-weight:700;color:var(--ink-3)}
+  .pitch{margin:4px 0 8px;color:var(--ink-2);max-width:900px}
+  ul{margin:0 0 14px;padding-left:20px;color:var(--ink-2);font-size:14px}
+  .pair{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+  .shot{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .shot img{display:block;width:100%;height:auto}
+  .cap{font-size:12px;color:var(--ink-3);margin:6px 2px 0}
+  @media (max-width:900px){
+    .pair{grid-template-columns:1fr}
+    .pair .m{max-width:320px;margin:0 auto}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ยกเครื่องแดชบอร์ด 6 แนวทาง</h1>
+  <p class="lead">ทุกภาพคือหน้าภาพรวมจริงของแดชบอร์ด ใช้ข้อมูลจำลองชุดเดียวกัน ซ้ายเป็นจอคอม ขวาเป็นมือถือ แต่ละแบบเปลี่ยนทั้งโครงหน้า ไม่ใช่แค่สี ตอบกลับเป็นหมายเลขได้เลย หรือผสมกันก็ได้ เช่น "1 แต่ตารางแบบ 3"</p>
+  <div class="rules">
+    <span>แดงใช้บอกตัวเลขที่แย่ลงอย่างเดียว</span>
+    <span>เขียวใช้บอกตัวเลขที่ดีขึ้น</span>
+    <span>ฟอนต์ Noto Sans Thai Looped ตัวเดิม</span>
+    <span>มือถือไม่ต้องเลื่อนซ้ายขวา</span>
+  </div>
+  <nav class="jump">
+    <a href="#d1">1 แถบเมนูข้างซ้าย</a>
+    <a href="#d2">2 แถบคำสั่งสีเข้ม</a>
+    <a href="#d3">3 รายงานผู้บริหาร</a>
+    <a href="#d4">4 แอปมือถือ</a>
+    <a href="#d5">5 สเปรดชีตน้ำเงิน</a>
+    <a href="#d6">6 ห้องประชุมโหมดมืด</a>
+    <a class="ghost" href="#now">ตอนนี้</a>
+  </nav>
+
+  <section class="item" id="d1">
+    <div class="head"><span class="num">แบบที่ 1</span><h2>แถบเมนูข้างซ้าย</h2></div>
+    <p class="pitch">เมนูและตัวกรองทั้งหมดอยู่ในแถบสีถ่านด้านซ้าย พื้นที่ทางขวาเหลือให้ตัวเลขล้วนๆ</p>
+    <ul>
+      <li>จอคอม: แถบซ้ายมีเมนูพร้อมไอคอน ตัวเลือกผู้ดูแล และเดือนทั้งปีแบบตาราง 4 x 3 เห็นครบไม่ต้องเลื่อน</li>
+      <li>มือถือ: เมนูย้ายไปเป็นแถบล่างจอพร้อมไอคอน กดด้วยนิ้วโป้งได้</li>
+      <li>หัวตาราง ปุ่ม และเดือนที่เลือก เปลี่ยนเป็นสีถ่านทั้งหมด</li>
+    </ul>
+    <div class="pair">
+      <div><div class="shot"><img src="overhaul/sidebar.png" alt="แบบที่ 1 แถบเมนูข้างซ้าย บนจอคอม"></div><p class="cap">จอคอม 1500px</p></div>
+      <div class="m"><div class="shot"><img src="overhaul/sidebar-m.png" alt="แบบที่ 1 แถบเมนูข้างซ้าย บนมือถือ"></div><p class="cap">มือถือ 390px</p></div>
+    </div>
+  </section>
+
+  <section class="item" id="d2">
+    <div class="head"><span class="num">แบบที่ 2</span><h2>แถบคำสั่งสีเข้ม</h2></div>
+    <p class="pitch">หัวเว็บทั้งแถบเป็นสีกราไฟต์ พื้นที่ทำงานด้านล่างสว่าง ตัวเลขสรุปต่อกันเป็นแถบเดียว</p>
+    <ul>
+      <li>โลโก้ ตัวเลือก และแท็บ รวมอยู่ในแถบเข้มแถบเดียว</li>
+      <li>การ์ดตัวเลขต่อกันเป็นแถบ มีเส้นคั่นบางๆ แทนกล่องลอยแยกกัน</li>
+      <li>หัวตารางเป็นสีกราไฟต์</li>
+    </ul>
+    <div class="pair">
+      <div><div class="shot"><img src="overhaul/command.png" alt="แบบที่ 2 แถบคำสั่งสีเข้ม บนจอคอม"></div><p class="cap">จอคอม 1500px</p></div>
+      <div class="m"><div class="shot"><img src="overhaul/command-m.png" alt="แบบที่ 2 แถบคำสั่งสีเข้ม บนมือถือ"></div><p class="cap">มือถือ 390px</p></div>
+    </div>
+  </section>
+
+  <section class="item" id="d3">
+    <div class="head"><span class="num">แบบที่ 3</span><h2>รายงานผู้บริหาร</h2></div>
+    <p class="pitch">หน้าตาเหมือนรายงานประจำปีที่พิมพ์บนกระดาษอุ่น ตัวเลขใหญ่ชัด ใช้เส้นแบ่งแทนกล่อง</p>
+    <ul>
+      <li>ไม่มีกล่องการ์ด ไม่มีเงา แต่ละหัวข้อเริ่มด้วยเส้นหนาสีหมึก</li>
+      <li>ตัวเลขสรุปเรียงเป็นแถวตัวใหญ่ คั่นด้วยเส้นตั้งบางๆ</li>
+      <li>ตารางไม่มีพื้นสี หัวกลุ่มเป็นตัวหนาบนเส้น แถวสูงอ่านสบาย</li>
+    </ul>
+    <div class="pair">
+      <div><div class="shot"><img src="overhaul/report.png" alt="แบบที่ 3 รายงานผู้บริหาร บนจอคอม"></div><p class="cap">จอคอม 1500px</p></div>
+      <div class="m"><div class="shot"><img src="overhaul/report-m.png" alt="แบบที่ 3 รายงานผู้บริหาร บนมือถือ"></div><p class="cap">มือถือ 390px</p></div>
+    </div>
+  </section>
+
+  <section class="item" id="d4">
+    <div class="head"><span class="num">แบบที่ 4</span><h2>แอปมือถือ</h2></div>
+    <p class="pitch">ออกแบบให้รู้สึกเหมือนแอปในมือถือก่อน แล้วขยายขึ้นจอคอมได้สวย</p>
+    <ul>
+      <li>การ์ดมุมมนใหญ่ ปุ่มกดง่าย ตัวเลขตัวโต</li>
+      <li>มือถือ: เมนูอยู่แถบล่างจอ เดือนเป็นปุ่มเม็ดยาใหญ่</li>
+      <li>จอคอม: แท็บเป็นปุ่มสลับแบบ iOS</li>
+    </ul>
+    <div class="pair">
+      <div><div class="shot"><img src="overhaul/mobileapp.png" alt="แบบที่ 4 แอปมือถือ บนจอคอม"></div><p class="cap">จอคอม 1500px</p></div>
+      <div class="m"><div class="shot"><img src="overhaul/mobileapp-m.png" alt="แบบที่ 4 แอปมือถือ บนมือถือ"></div><p class="cap">มือถือ 390px</p></div>
+    </div>
+  </section>
+
+  <section class="item" id="d5">
+    <div class="head"><span class="num">แบบที่ 5</span><h2>สเปรดชีตน้ำเงิน</h2></div>
+    <p class="pitch">หน้าตาคล้ายแดชบอร์ดในไฟล์ Excel ที่ทีมอ่านอยู่ทุกเดือน แต่เรียบร้อยกว่า</p>
+    <ul>
+      <li>แถบหัวสีน้ำเงินเข้ม การ์ดตัวเลขมีแถบชื่อสีน้ำเงินด้านบน</li>
+      <li>ตารางมีเส้นตาราง แถวสลับสี หัวกลุ่มน้ำเงิน</li>
+      <li>มุมเหลี่ยม แน่น เป็นระเบียบแบบงานธุรกิจ</li>
+    </ul>
+    <div class="pair">
+      <div><div class="shot"><img src="overhaul/excelnavy.png" alt="แบบที่ 5 สเปรดชีตน้ำเงิน บนจอคอม"></div><p class="cap">จอคอม 1500px</p></div>
+      <div class="m"><div class="shot"><img src="overhaul/excelnavy-m.png" alt="แบบที่ 5 สเปรดชีตน้ำเงิน บนมือถือ"></div><p class="cap">มือถือ 390px</p></div>
+    </div>
+  </section>
+
+  <section class="item" id="d6">
+    <div class="head"><span class="num">แบบที่ 6</span><h2>ห้องประชุมโหมดมืด</h2></div>
+    <p class="pitch">พื้นมืดสำหรับฉายโปรเจกเตอร์หรือทีวีในห้องประชุม ตัวเลขสว่างชัด</p>
+    <ul>
+      <li>พื้นน้ำเงินเกือบดำ แผงยกขึ้นเล็กน้อย ตัวหนังสือเกือบขาว</li>
+      <li>ดีขึ้นเป็นเขียวมิ้นต์ แย่ลงเป็นแดงปะการัง สว่างพอบนพื้นมืด</li>
+      <li>ช่องเลือก เมนู และหน้าต่างทั้งหมดเป็นโหมดมืด ไม่มีกล่องขาวโผล่</li>
+    </ul>
+    <div class="pair">
+      <div><div class="shot"><img src="overhaul/darkops.png" alt="แบบที่ 6 ห้องประชุมโหมดมืด บนจอคอม"></div><p class="cap">จอคอม 1500px</p></div>
+      <div class="m"><div class="shot"><img src="overhaul/darkops-m.png" alt="แบบที่ 6 ห้องประชุมโหมดมืด บนมือถือ"></div><p class="cap">มือถือ 390px</p></div>
+    </div>
+  </section>
+
+  <section class="item now" id="now">
+    <div class="head"><span class="num">ไว้เทียบ</span><h2>ตอนนี้</h2></div>
+    <p class="pitch">หน้าตาปัจจุบัน หัวตาราง แท็บ และปุ่มเดือนเป็นแดงอ่อน ปนกับตัวเลขติดลบสีแดง</p>
+    <div class="pair">
+      <div><div class="shot"><img src="overhaul/now.png" alt="หน้าตาปัจจุบัน บนจอคอม"></div><p class="cap">จอคอม 1500px</p></div>
+      <div class="m"><div class="shot"><img src="overhaul/now-m.png" alt="หน้าตาปัจจุบัน บนมือถือ"></div><p class="cap">มือถือ 390px</p></div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

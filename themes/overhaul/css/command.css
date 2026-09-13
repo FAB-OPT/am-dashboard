@@ -1,0 +1,226 @@
+/* command : แถบคำสั่งสีเข้ม
+   หัวเว็บทั้งก้อนเป็นแถบกราไฟต์เข้ม พื้นที่ทำงานด้านล่างสว่างโทนเย็น
+   แดงและเขียวสงวนไว้ให้ตัวเลขที่แย่ลง / ดีขึ้นเท่านั้น */
+
+:root{
+  --bg:#EEF1F4;
+  --panel:#FFFFFF;
+  --panel-2:#F6F8FA;
+  --line:#DFE3E8;
+  --line-2:#ECEFF2;
+  --ink:#15181C;
+  --ink-2:#4F5661;
+  --ink-3:#848B96;
+  --brand:#23272D;          /* ตัวควบคุมบนพื้นสว่างเป็นกราไฟต์ ไม่ใช่แดง */
+  --brand-2:#15181C;
+  --brand-soft:#E7EAEE;
+  --cmd:#191B1F;            /* แถบคำสั่ง */
+  --cmd-2:#23262B;          /* ช่องกรอกบนแถบ */
+  --cmd-line:rgba(255,255,255,.10);
+  --cmd-ink:#EEF0F3;
+  --cmd-ink-2:#A9AFB8;
+  --cmd-ink-3:#7C838D;
+  --r:12px; --r-sm:8px;
+  --sh:0 0 0 1px rgba(16,22,30,.06),0 1px 2px rgba(16,22,30,.05);
+  --sh-md:0 0 0 1px rgba(16,22,30,.05),0 1px 2px rgba(16,22,30,.04),0 10px 24px -14px rgba(16,22,30,.18);
+  --sh-lg:0 24px 60px -12px rgba(16,22,30,.35);
+}
+::selection{background:#D7DCE3;color:var(--ink)}
+:focus-visible{outline:2px solid #5B7C8D;outline-offset:2px}
+
+/* ─────────── แถบคำสั่ง ─────────── */
+.top{background:var(--cmd);border-bottom:0;color:var(--cmd-ink);color-scheme:dark;
+  box-shadow:0 1px 0 rgba(0,0,0,.4),0 6px 18px -10px rgba(10,12,16,.5)}
+.top::before{display:none}
+.top-in{padding:12px 24px 10px;gap:8px}
+.brand{gap:12px}
+.brand-logo{width:36px;height:36px;border-radius:9px;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+.brand h1{color:#fff;font-size:17px;letter-spacing:normal}
+.brand span{color:var(--cmd-ink-3);font-size:12px}
+
+.who{background:rgba(255,255,255,.06);color:var(--cmd-ink);border:1px solid var(--cmd-line);
+  padding:4px 11px;font-weight:600}
+.sync{background:rgba(255,255,255,.04);color:var(--cmd-ink-2);border:1px solid var(--cmd-line);padding:4px 11px}
+.sync i{background:var(--cmd-ink-3)}
+.sync.on{background:rgba(63,191,138,.10);color:#7ED6AE;border-color:rgba(63,191,138,.22)}
+.sync.on i{background:#3FBF8A}
+.sync.off{background:rgba(233,185,73,.10);color:#E6C06A;border-color:rgba(233,185,73,.22)}
+.sync.off i{background:#E0AE3C}
+.sync.err{background:rgba(240,120,110,.12);color:#F2A29B;border-color:rgba(240,120,110,.26)}
+.sync.err i{background:#EE7F75}
+.sync.saving i{background:#fff}
+
+.help-btn{background:transparent;border:1px solid var(--cmd-line);color:var(--cmd-ink-2);
+  border-radius:8px;padding:5px 12px;font-weight:600}
+.help-btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2);color:#fff}
+.help-btn.hi{background:#F2F4F7;border-color:#F2F4F7;color:var(--ink)}
+.help-btn.hi:hover{background:#fff;border-color:#fff;color:var(--ink)}
+.logout{color:var(--cmd-ink-3);border-radius:8px}
+.logout:hover{color:#fff;background:rgba(255,255,255,.07)}
+
+.topbar{padding:2px 24px 12px;gap:10px 20px}
+.ctl{color:var(--cmd-ink-2)}
+.ctl .lbl{color:var(--cmd-ink-3);font-weight:600;font-size:12px}
+.ctl select{background-color:var(--cmd-2);border:1px solid var(--cmd-line);color:var(--cmd-ink);
+  border-radius:8px;padding:7px 12px;box-shadow:none;font-size:13.5px}
+.ctl select:hover{border-color:rgba(255,255,255,.22)}
+.ctl select:focus{outline:none;border-color:rgba(255,255,255,.4);box-shadow:0 0 0 3px rgba(255,255,255,.08)}
+.ctl select option{background:var(--cmd-2);color:var(--cmd-ink)}
+#ctlBranch select{background:transparent;border:0;box-shadow:none}
+
+.month-nav{background:var(--cmd-2);border:1px solid var(--cmd-line);border-radius:8px;box-shadow:none}
+.month-nav>button{color:var(--cmd-ink-3);padding:6px 10px}
+.month-nav>button:hover{background:rgba(255,255,255,.06);color:#fff}
+.months{padding:3px;gap:1px}
+.months button{color:var(--cmd-ink-2);border-radius:6px;padding:5px 10px}
+.months button:hover{background:rgba(255,255,255,.07);color:#fff}
+.months button.has i{background:#3FBF8A}
+.months button[aria-pressed=true]{background:#F2F4F7;color:var(--ink);font-weight:700;
+  box-shadow:0 1px 2px rgba(0,0,0,.35)}
+.months button[aria-pressed=true] i{background:var(--ink)}
+.months button[aria-pressed=true].has i{background:#12805A}
+.months button[aria-pressed=true]:not(.has) i{background:rgba(21,24,28,.25)}
+
+/* แท็บเป็นเม็ดยาในแถบ คั่นจากแถวควบคุมด้วยเส้นบาง */
+.tabs{max-width:none;padding:7px max(24px,calc((100% - var(--w))/2 + 24px));gap:2px;
+  border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.14)}
+.tabs button{border-radius:7px;border:0;margin:0;padding:6px 13px;color:var(--cmd-ink-3);
+  font-size:13px;font-weight:600}
+.tabs button:hover{background:rgba(255,255,255,.06);color:var(--cmd-ink)}
+.tabs button[aria-selected=true]{background:rgba(255,255,255,.11);color:#fff;font-weight:700;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+
+/* ─────────── พื้นที่ทำงาน ─────────── */
+main{padding-top:24px}
+.sec{margin:34px 0 12px}
+.sec h2{font-size:17px;color:var(--ink);letter-spacing:0}
+.sec .note{color:var(--ink-3);font-size:12.5px}
+
+/* แถบตัวเลขสรุป: การ์ดติดกันเป็นแถว คั่นด้วยเส้นตั้งบาง */
+.kpis{column-gap:0;row-gap:12px}
+.kpi{border:0;border-radius:0;background:var(--panel);padding:15px 18px 14px;
+  box-shadow:0 0 0 1px rgba(16,22,30,.07),0 10px 22px -18px rgba(16,22,30,.35)}
+.kpis .kpi:nth-child(2n+1){border-radius:12px 0 0 12px}
+.kpis .kpi:nth-child(2n){border-radius:0 12px 12px 0}
+.kpis .kpi:nth-child(2n+1):last-child{border-radius:12px}
+@media(min-width:760px){
+  #kpis .kpi,#bKpis .kpi{border-radius:0}
+  #kpis .kpi:nth-child(3n+1),#bKpis .kpi:nth-child(3n+1){border-radius:12px 0 0 12px}
+  #kpis .kpi:nth-child(3n),#bKpis .kpi:nth-child(3n),
+  #kpis .kpi:last-child,#bKpis .kpi:last-child{border-radius:0 12px 12px 0}
+  #kpis .kpi:nth-child(3n+1):last-child,#bKpis .kpi:nth-child(3n+1):last-child{border-radius:12px}
+}
+@media(min-width:1080px){
+  #kpis .kpi{border-radius:0}
+  #kpis .kpi:nth-child(4n+1){border-radius:12px 0 0 12px}
+  #kpis .kpi:nth-child(4n),#kpis .kpi:last-child{border-radius:0 12px 12px 0}
+  #kpis .kpi:nth-child(4n+1):last-child{border-radius:12px}
+}
+@media(min-width:1600px){
+  body.present #bKpis .kpi{border-radius:0}
+  body.present #bKpis .kpi:nth-child(4n+1){border-radius:12px 0 0 12px}
+  body.present #bKpis .kpi:nth-child(4n),body.present #bKpis .kpi:last-child{border-radius:0 12px 12px 0}
+  body.present #bKpis .kpi:nth-child(4n+1):last-child{border-radius:12px}
+}
+.kpi .l{font-size:12.5px;color:var(--ink-2)}
+.kpi .l .u{color:var(--ink-3);font-weight:500;font-size:10.5px}
+.kpi .v{font-size:28px;color:var(--ink);margin:8px 0 9px}
+.kpi .d{gap:6px}
+.kpi .d .cmp{color:var(--ink-3);font-weight:500}
+.chip{border-radius:5px;padding:1px 7px}
+.flat{background:var(--line-2)}
+
+.readme-line{color:var(--ink-3)}
+.readme-line b{color:var(--ink-2)}
+.readme-line .sw,.legend i{border-radius:2px}
+
+/* การ์ดไร้ขอบ เงาซ้อนสองชั้น */
+.card{border:0;border-radius:var(--r);box-shadow:var(--sh-md);padding:16px 18px 16px}
+.card h3{font-size:13.5px;color:var(--ink);margin-bottom:8px;padding-bottom:10px;
+  border-bottom:1px solid var(--line-2)}
+.card h3 .h3sub{color:var(--ink-3)}
+.two,.three{gap:14px}
+
+/* ─────────── ตาราง ─────────── */
+.tbl-wrap{border:0;border-radius:var(--r);box-shadow:var(--sh-md)}
+.card .tbl-wrap{box-shadow:0 0 0 1px var(--line-2)}
+th{background:var(--panel-2);color:var(--ink-3);border-bottom:1px solid var(--line)}
+th:first-child{background:var(--panel-2)}
+th.grp{background:#2A2E34;color:#F2F4F7;border-left:1px solid rgba(255,255,255,.14);border-bottom:0}
+th.grp.alt{background:#3B4048}
+th.grp span{opacity:.7}
+td{border-bottom-color:var(--line-2)}
+tr:hover td,tr:hover td:first-child{background:#F2F5F8}
+tr.total td,tr.total td:first-child{background:var(--panel-2);border-top:1px solid var(--line)}
+th.sortable:hover{background:#E9EDF1;color:var(--ink)}
+th.sortable .ar{color:var(--ink-2)}
+th.sortable.on{color:var(--ink)}
+.list td{border-bottom-color:var(--line-2)}
+.list tr:last-child td{border-bottom:0}
+.rank{color:var(--ink-3)}
+.blink{border-bottom:1px solid #CBD2DA}
+.blink:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+.search input{border:1px solid var(--line);border-radius:8px;box-shadow:none;background:var(--panel)}
+.search input:focus{border-color:var(--ink-2);box-shadow:0 0 0 3px rgba(35,39,45,.10)}
+
+/* ─────────── ปุ่ม ─────────── */
+.btn{border-radius:8px;border-color:var(--line);box-shadow:0 1px 1px rgba(16,22,30,.04)}
+.btn.primary{background:var(--brand);border-color:var(--brand);box-shadow:0 1px 2px rgba(16,22,30,.25)}
+.btn.primary:hover{background:#000;border-color:#000}
+.seg{border-radius:8px;box-shadow:none;border-color:var(--line);background:var(--panel)}
+.seg button[aria-pressed=true]{background:var(--brand);color:#fff}
+.empty{border-color:#C9D0D8}
+.drop{border-color:#C9D0D8}
+.zone{border:0;box-shadow:var(--sh-md)}
+.modal{background:rgba(14,17,21,.55)}
+.login-stack::before{background:#D9DEE5}
+.exit-present{background:var(--cmd)}
+
+/* ─────────── โหมดพรีเซนต์ ─────────── */
+body.present .top-in{padding:14px 28px 10px}
+body.present .brand-logo{width:46px;height:46px}
+body.present .brand h1{font-size:24px}
+body.present .topbar{padding:2px 28px 14px}
+body.present .months button{padding:8px 14px}
+body.present .month-nav>button{padding:8px 14px}
+body.present .tabs{padding:8px 28px}
+body.present .tabs button{padding:9px 18px;font-size:16px}
+body.present .kpis{gap:0;row-gap:16px}
+
+/* ─────────── จอเล็ก ─────────── */
+@media(max-width:760px){
+  .top-in{padding:10px 14px 8px;gap:6px}
+  .brand-logo{width:32px;height:32px;border-radius:8px}
+  .brand h1{font-size:16px}
+  .help-btn{padding:4px 9px;font-size:11.5px}
+  .sync,.who{padding:3px 9px}
+  .logout{padding:4px 7px;font-size:11.5px}
+  .topbar{padding:2px 14px 10px;gap:8px}
+  .ctl .lbl{min-width:36px}
+  .ctl select{padding:8px 11px}
+  .month-nav>button{padding:8px 11px}
+  .tabs{padding:6px 14px;gap:2px}
+  .tabs button{padding:6px 11px;font-size:13px}
+  /* ปุ่มออกจากระบบย่อเป็นคำสั้นแล้วขึ้นไปอยู่แถวโลโก้ แถวปุ่มจะได้ไม่ล้นเป็นสามแถว */
+  .brand{order:-2;flex:1 1 190px;margin-right:0;gap:9px}
+  .brand-txt{flex:1 1 auto}
+  .brand h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15.5px}
+  .brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .who,.logout{order:-1}
+  .logout{font-size:0;padding:4px 9px;border:1px solid var(--cmd-line)}
+  .logout::after{content:'ออก';font-size:11.5px;font-weight:600}
+  .tabs{-webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);
+    mask-image:linear-gradient(90deg,#000 82%,transparent)}
+  main{padding-top:16px}
+  .kpis{row-gap:10px}
+  .kpi{padding:12px 13px}
+  /* คู่ "ปีก่อน / เดือนก่อน" อยู่คนละบรรทัด ตรงแนวกัน */
+  .kpi .d{display:grid;grid-template-columns:auto 1fr;gap:5px 6px;align-items:center}
+  .kpi .d .chip{justify-self:start}
+  .card{padding:14px 14px 14px}
+}
+@media(max-width:430px){
+  .tabs button{padding:6px 10px;font-size:12.5px}
+  .kpi .v{font-size:21px}
+}
