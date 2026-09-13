@@ -238,6 +238,42 @@ tr.total td,tr.total td:first-child{background:var(--panel-2);font-weight:700;
 .status{text-align:left;white-space:normal;max-width:330px;min-width:170px;font-size:12.5px;line-height:1.55}
 .status.ok{color:var(--green)}
 .status.warn{color:var(--amber)}
+/* ตารางผลการดำเนินงานรายสาขา: เดิมตัวเลขทุกช่องเป็นตัวหนังสือแดง/เขียวล้วน ตัวเล็ก ลายตา
+   ตอนนี้การเปลี่ยนแปลงเป็นชิปมีพื้นสี ตัวใหญ่ขึ้น แถวสลับสี และแถบซ้ายบอกความหนักของปัญหา */
+.tbl-wrap table.perf2 td{font-size:14px;padding-top:11px;padding-bottom:11px}
+.tbl-wrap table.perf2 td:first-child{font-size:14.5px}
+.tbl-wrap table.perf2 td.cv{font-weight:600;color:var(--ink)}
+.tbl-wrap table.perf2 td.cv.neg{color:var(--red)}
+.tbl-wrap table.perf2 td.chg{white-space:nowrap}
+.tbl-wrap table.perf2 td.chg .chip{font-size:12.5px}
+.tbl-wrap table.perf2 tbody tr:nth-child(even) td{background:#FAFAFC}
+.tbl-wrap table.perf2 tbody tr:hover td{background:#F1F1F5}
+.tbl-wrap table.perf2 tr.sev3 td:first-child{box-shadow:inset 4px 0 0 var(--red)}
+.tbl-wrap table.perf2 tr.sev2 td:first-child{box-shadow:inset 4px 0 0 #E0A526}
+.tbl-wrap table.perf2 th.grp{font-size:13px}
+.tbl-wrap table.perf2 thead tr:last-child th{font-size:12px}
+.tbl-wrap table.perf2 td.issues{text-align:left;white-space:normal;min-width:230px}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;line-height:1.6}
+.tag.bad{background:var(--red-soft);color:var(--red)}
+.tag.good{background:var(--green-soft);color:var(--green)}
+.issues .nt{display:block;margin-top:5px;font-size:12px;color:var(--ink-3);line-height:1.45}
+.perf-key{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--ink-2);margin:10px 0 0}
+.perf-key i{display:inline-block;width:4px;height:14px;border-radius:2px;vertical-align:-2px;margin-right:6px}
+body.present .tbl-wrap table.perf2 td{font-size:17px}
+body.present .tbl-wrap table.perf2 td.chg .chip{font-size:15px}
+body.present .tag{font-size:14px}
+/* จอกว้างมาก (1800px ขึ้นไป) ตารางกว้างเต็มจอแต่ตัวหนังสือเท่าเดิมจะดูเล็ก ขยายตามจอ */
+@media(min-width:1800px){
+  .tbl-wrap table.perf2 td,.tbl-wrap table.cmp2 td.cv{font-size:16px}
+  .tbl-wrap table.perf2 td:first-child{font-size:16.5px}
+  .tbl-wrap table.perf2 td{padding-top:13px;padding-bottom:13px}
+  .tbl-wrap table.perf2 td.chg .chip,.tbl-wrap table.cmp2 td.chg .chip{font-size:14px;padding:3px 11px}
+  .tbl-wrap table.perf2 thead tr:last-child th,.tbl-wrap table.cmp2 thead tr:last-child th{font-size:13.5px}
+  .tbl-wrap table.perf2 th.grp,.tbl-wrap table.cmp2 th.grp{font-size:14.5px}
+  .tag{font-size:13.5px;padding:3px 11px}
+  .issues .nt{font-size:13.5px}
+}
 .rank{width:32px;color:var(--ink-3);text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
 .list td{border-bottom:1px solid var(--line-2);white-space:normal;padding:10px 8px}
 .list td.rank,.list td.pos,.list td.neg,.list td.mute{white-space:nowrap}
@@ -1545,16 +1581,25 @@ function renderDash(){
   const bc=document.getElementById('btnClearSort');
   if(bc) bc.style.display=sel.sk?'':'none';
   const sortable=(t,k,extra='')=>`<th class="sortable ${sel.sk===k?'on':''}" data-sk="${k}" ${extra}>${t}<span class="ar">${sel.sk===k?(sel.sd<0?'▼':'▲'):''}</span></th>`;
-  const bar=p=>p==null?'<span class="mute">–</span>':`<span class="bar ${p<0?'neg':''}"><span class="${cls(p)}">${fmtPct(p)}</span><i style="width:${Math.min(60,Math.abs(p)/maxAbs*60).toFixed(0)}px"></i></span>`;
-  const rows=shown.map(x=>{const r=x.r;return `<tr><td><a href="#" class="blink" data-b="${x.b.id}" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</a>${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${(AMS.find(a=>a.id===x.b.am)||{}).name}</span>`:''}</td>
-    <td>${bar(r.yoy.s)}</td><td class="${cls(r.mom.s)}">${fmtPct(r.mom.s)}</td>
-    <td class="${cls(r.yoy.e)}">${fmtPct(r.yoy.e)}</td><td class="${cls(r.mom.e)}">${fmtPct(r.mom.e)}</td>
-    <td class="${cls(r.yoy.c,true)}">${fmtPct(r.yoy.c)}</td>
-    <td>${r.col26==null?'–':(r.col26*100).toFixed(1)+'%'}</td><td class="${cls(r.colD,true)}">${r.colD==null?'–':(r.colD>0?'+':'')+(r.colD*100).toFixed(1)+' pt'}</td>
-    <td class="${r.cp>=3?'neg':''}">${fmt(r.cp)}</td><td class="${cls(r.mom.cp,true)}">${r.mom.cp==null?'–':(r.mom.cp>0?'+':'')+r.mom.cp}</td>
-    <td class="status ${r.score?'warn':'ok'}">${r.score?'⚠ '+r.issues.join(', '):'✔ ปกติ'}${r.note?`<div class="mute" style="font-size:12px">${r.note}</div>`:''}</td></tr>`;}).join('');
-  document.getElementById('perfTable').innerHTML=`<table><thead><tr><th></th><th class="grp" colspan="2">ยอดขาย</th><th class="grp alt" colspan="2">กำไร (EBIT)</th><th class="grp">ต้นทุนวัตถุดิบ</th><th class="grp alt" colspan="2">ค่าแรง % ของยอดขาย</th><th class="grp" colspan="2">ข้อร้องเรียน</th><th></th></tr>
-    <tr>${sortable('สาขา','name')}${sortable('เทียบปีก่อน','yoy.s','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เทียบเดือนก่อน','mom.s','title="เทียบเดือนก่อนหน้า"')}${sortable('เทียบปีก่อน','yoy.e','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เทียบเดือนก่อน','mom.e','title="เทียบเดือนก่อนหน้า"')}${sortable('เทียบปีก่อน','yoy.c','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เดือนนี้','col26')}${sortable('ต่างจากปีก่อน','colD','title="ต่างจากปีก่อนกี่จุด"')}${sortable('เดือนนี้','cp')}${sortable('ต่างจากเดือนก่อน','mom.cp','title="ต่างจากเดือนก่อนกี่ครั้ง"')}${sortable('สถานะ / ประเด็นที่พบ','score','style="text-align:left"')}</tr></thead><tbody>${rows}</tbody></table>`;
+  // ใช้ตัวช่วยเดียวกับตารางเทียบข้อมูล: ชิปมีพื้นสีพร้อมลูกศร กำไรที่ข้ามศูนย์บอกเป็นคำแทน % ที่ไม่มีความหมาย
+  const ISSUE_SHORT={'ยอดขายลด':'ยอดขายลด','กำไรลด':'กำไรลด','ต้นทุนแรงงานสูงขึ้น':'ค่าแรงสูงขึ้น','ร้องเรียนสูง':'ร้องเรียนสูง'};
+  const rows=shown.map(x=>{ const r=x.r, p=r.prev||null;
+    const sev=r.score>=3?'sev3':r.score===2?'sev2':'';
+    const tags=r.score?r.issues.map(t=>`<span class="tag bad">${ISSUE_SHORT[t]||t}</span>`).join(''):'<span class="tag good">ปกติ</span>';
+    return `<tr class="${sev}"><td><a href="#" class="blink" data-b="${x.b.id}" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</a>`+
+      `${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${(AMS.find(a=>a.id===x.b.am)||{}).name}</span>`:''}</td>`+
+      cmpChg({k:'s'},r.s25,r.s26)+cmpChg({k:'s'},p&&p.s26,r.s26)+
+      cmpChg({k:'e',signed:true},r.e25,r.e26)+cmpChg({k:'e',signed:true},p&&p.e26,r.e26)+
+      cmpChg({k:'c',inv:true},r.c25,r.c26)+
+      `<td class="cv">${r.col26==null?'–':(r.col26*100).toFixed(1)+'%'}</td>`+
+      cmpChg({k:'col',inv:true,kind:'pt'},r.col25,r.col26)+
+      `<td class="cv${r.cp>=3?' neg':''}">${fmt(r.cp)}</td>`+
+      cmpChg({k:'cp',inv:true,kind:'n',flat:true},p?p.cp:null,r.cp)+
+      `<td class="issues"><div class="tags">${tags}</div>${r.note?`<span class="nt">${esc(r.note)}</span>`:''}</td></tr>`;
+  }).join('');
+  document.getElementById('perfTable').innerHTML=`<table class="perf2"><thead><tr><th></th><th class="grp" colspan="2">ยอดขาย</th><th class="grp alt" colspan="2">กำไร (EBIT)</th><th class="grp">ต้นทุนวัตถุดิบ</th><th class="grp alt" colspan="2">ค่าแรง % ของยอดขาย</th><th class="grp" colspan="2">ข้อร้องเรียน</th><th></th></tr>
+    <tr>${sortable('สาขา','name')}${sortable('เทียบปีก่อน','yoy.s','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เทียบเดือนก่อน','mom.s','title="เทียบเดือนก่อนหน้า"')}${sortable('เทียบปีก่อน','yoy.e','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เทียบเดือนก่อน','mom.e','title="เทียบเดือนก่อนหน้า"')}${sortable('เทียบปีก่อน','yoy.c','title="เทียบเดือนเดียวกันปีก่อน"')}${sortable('เดือนนี้','col26')}${sortable('ต่างจากปีก่อน','colD','title="ต่างจากปีก่อนกี่จุด"')}${sortable('เดือนนี้','cp')}${sortable('ต่างจากเดือนก่อน','mom.cp','title="ต่างจากเดือนก่อนกี่ครั้ง"')}${sortable('สถานะ / ประเด็นที่พบ','score','style="text-align:left"')}</tr></thead><tbody>${rows}</tbody></table>`+
+    `<div class="perf-key"><span><i style="background:var(--red)"></i>แถบแดง = มีประเด็น 3 ข้อขึ้นไป</span><span><i style="background:#E0A526"></i>แถบเหลือง = มี 2 ข้อ</span><span>ชี้หรือแตะค้างที่ชิปเพื่อดูตัวเลขที่ใช้เทียบ</span></div>`;
 
   // top / worst
   const ranked=[...withData].filter(x=>x.r.yoy.s!=null).sort((a,b)=>b.r.yoy.s-a.r.yoy.s);
