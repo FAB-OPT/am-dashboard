@@ -63,6 +63,8 @@
   --good:var(--green); --bad:var(--red);   /* ชื่อเดิมที่ยังมีอ้างถึงอยู่ */
 }
 *{box-sizing:border-box}
+/* คลาสที่ตั้ง display เอง (.ctl .modal ฯลฯ) จะทับ hidden ของเบราว์เซอร์ บังคับให้ซ่อนจริงทุกที่ */
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
   font-size:14px;line-height:1.55}
