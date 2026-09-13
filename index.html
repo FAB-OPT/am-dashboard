@@ -704,6 +704,7 @@ body.present .rank{font-size:16px;width:40px}
     <div class="sec"><h2>รายสาขา แยกรายเดือน</h2>
       <span class="note">เลือกสาขาได้ที่แถบด้านบน</span></div>
     <div class="kpis" id="bKpis" style="margin-bottom:18px"></div>
+    <div id="bPick"></div>
     <div class="two">
       <div class="card"><h3>ยอดขายรายเดือน — 2025 เทียบ 2026 <span class="h3sub">บาท</span></h3><div class="chart-wrap"><canvas id="chB1"></canvas></div></div>
       <div class="card"><h3>กำไรจากการดำเนินงาน (EBIT) รายเดือน <span class="h3sub">บาท</span></h3><div class="chart-wrap"><canvas id="chB2"></canvas></div></div>
@@ -867,7 +868,7 @@ const FIELDS=[]; GROUPS.forEach(([k])=>{FIELDS.push(k+'25',k+'26')}); FIELDS.pus
 const KEY='jd_am_dashboard_v1', KEY_CFG='jd_am_dashboard_cfg_v1', KEY_SESS='jd_am_dashboard_sess';
 let role=null; // {type:'am'|'vp'|'admin', zone?:id}
 let store={data:{}};            // data[m][branchId] = {field:number|string}
-let sel={q:'',sk:null,sd:-1,branch:null,am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy'};
+let sel={q:'',sk:null,sd:-1,branch:'all',am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy'};
 let storageOK=true;
 /* ---- ที่จัดเก็บข้อมูล: Supabase (ข้อมูลกลาง) + localStorage (สำเนาออฟไลน์) ---- */
 let SB=null, CLOUD=false, syncState='local';
@@ -1065,11 +1066,13 @@ function agg(m,ids){ const o={}; FIELDS.forEach(f=>{ if(f==='osc'){const v=ids.m
 function colPct(r,y){ return (r['l'+y]!=null&&r['s'+y])?r['l'+y]/r['s'+y]:null; }
 // per-branch computed metrics for month m (with MoM vs m-1)
 function metrics(m,id){
-  const r={}; FIELDS.forEach(f=>r[f]=val(m,id,f)); r.note=rec(m,id).note||'';
+  const many=Array.isArray(id);
+  const r=many?agg(m,id):{}; if(!many) FIELDS.forEach(f=>r[f]=val(m,id,f));
+  r.note=many?'':(rec(m,id).note||'');
   r.yoy={}; GROUPS.forEach(([k])=>r.yoy[k]=pct(r[k+'25'],r[k+'26']));
   r.col25=colPct(r,'25'); r.col26=colPct(r,'26'); r.colD=(r.col25!=null&&r.col26!=null)?r.col26-r.col25:null;
   const pm=m>0?m-1:null; r.mom={};
-  if(pm!=null){ const p={}; FIELDS.forEach(f=>p[f]=val(pm,id,f)); r.prev=p;
+  if(pm!=null){ const p=many?agg(pm,id):{}; if(!many) FIELDS.forEach(f=>p[f]=val(pm,id,f)); r.prev=p;
     ['s','e','c','l'].forEach(k=>r.mom[k]=pct(p[k+'26'],r[k+'26']));
     const pc=colPct(p,'26'); r.mom.colD=(pc!=null&&r.col26!=null)?r.col26-pc:null;
     r.mom.cp=(p.cp!=null&&r.cp!=null)?r.cp-p.cp:null; r.mom.ot=pct(p.ot,r.ot);
@@ -1271,13 +1274,41 @@ function renderYear(){
 }
 
 /* ---------------- render: branch by month ---------------- */
+/* ตอนดูภาพรวม แสดงรายชื่อสาขาพร้อมตัวเลขสะสม กดแถวไหนก็เจาะเข้าสาขานั้น */
+function renderBranchPick(all,bs){
+  const box=document.getElementById('bPick');
+  if(!all){ box.innerHTML=''; return; }
+  const rows=bs.map(b=>{
+    const M=MONTHS.map((_,i)=>metrics(i,b.id));
+    const T={}; FIELDS.forEach(f=>T[f]=sum(M.map(r=>r[f])));
+    return {b,T,n:M.filter(r=>r.has).length,c26:colPct(T,'26'),yoy:pct(T.s25,T.s26),eyoy:pct(T.e25,T.e26)};
+  }).sort((x,y)=>(y.T.s26||0)-(x.T.s26||0));
+  const tr=rows.map(x=>`<tr><td><a href="#" class="blink" data-b="${x.b.id}" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</a>`+
+    `${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${(AMS.find(a=>a.id===x.b.am)||{}).name}</span>`:''}</td>`+
+    `<td class="mute">${x.n} / 12</td><td>${fmt(x.T.s26)}</td><td class="${cls(x.yoy)}">${fmtPct(x.yoy)}</td>`+
+    `<td>${fmt(x.T.e26)}</td><td class="${cls(x.eyoy)}">${fmtPct(x.eyoy)}</td>`+
+    `<td>${x.c26==null?'–':(x.c26*100).toFixed(1)+'%'}</td><td class="${x.T.cp>=3?'neg':''}">${fmt(x.T.cp)}</td></tr>`).join('');
+  box.innerHTML=`<div class="card" style="margin-bottom:18px"><h3>เลือกสาขาเพื่อดูรายละเอียด `+
+    `<span class="h3sub">ตัวเลขสะสมทั้งปี ${YEAR} · เรียงตามยอดขาย · กดชื่อสาขาเพื่อเจาะดู</span></h3>`+
+    `<div class="tbl-wrap"><table class="list"><thead><tr><th style="text-align:left">สาขา</th><th>เดือนที่กรอก</th>`+
+    `<th>ยอดขายสะสม (฿)</th><th>เทียบปีก่อน</th><th>EBIT สะสม (฿)</th><th>เทียบปีก่อน</th>`+
+    `<th>ค่าแรง % ของยอดขาย</th><th>ข้อร้องเรียน</th></tr></thead><tbody>${tr}</tbody></table></div></div>`;
+}
 function renderBranch(){
   const bs=scopeBranches(), selB=document.getElementById('selBranch');
-  if(!bs.find(b=>b.id===sel.branch)) sel.branch=bs[0].id;
-  selB.innerHTML=bs.map(b=>`<option value="${b.id}">${b.name}${sel.am==='all'?' · '+(AMS.find(a=>a.id===b.am)||{}).name:''}</option>`).join(''); selB.value=sel.branch;
-  const id=sel.branch, b=BRANCHES.find(x=>x.id===id), am=AMS.find(a=>a.id===b.am)||{name:'-'};
+  if(sel.branch!=='all'&&!bs.find(b=>b.id===sel.branch)) sel.branch='all';
+  selB.innerHTML=`<option value="all">ทุกสาขาในขอบเขตนี้ (ภาพรวม) · ${bs.length} สาขา</option>`+
+    bs.map(b=>`<option value="${b.id}">${b.name}${sel.am==='all'?' · '+(AMS.find(a=>a.id===b.am)||{}).name:''}</option>`).join('');
+  selB.value=sel.branch;
+  const all=sel.branch==='all';
+  const id=all?bs.map(x=>x.id):sel.branch;
+  const b=all?null:BRANCHES.find(x=>x.id===sel.branch);
+  const am=all?null:(AMS.find(a=>a.id===b.am)||{name:'-'});
   const M=MONTHS.map((_,i)=>metrics(i,id)); const filled=M.filter(r=>r.has);
-  document.getElementById('bSub').textContent=`${b.name} · ผู้ดูแล ${am.name} · กรอกแล้ว ${filled.length} / 12 เดือน`;
+  document.getElementById('bSub').textContent=all
+    ?`รวมทุกสาขา · ${scopeLabel()} · มีข้อมูล ${filled.length} / 12 เดือน`
+    :`${b.name} · ผู้ดูแล ${am.name} · กรอกแล้ว ${filled.length} / 12 เดือน`;
+  renderBranchPick(all,bs);
   const T={}; FIELDS.forEach(f=>T[f]=sum(M.map(r=>r[f]))); const tc25=colPct(T,'25'), tc26=colPct(T,'26');
   const kpi=(l,v,d='')=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
   const cur=M[sel.m];
@@ -1304,8 +1335,10 @@ function renderBranch(){
     <tr><th>เดือน</th><th>${PREV}</th><th>${YEAR}</th><th>YoY</th><th>MoM</th><th>${PREV}</th><th>${YEAR}</th><th>YoY</th><th>${YEAR}</th><th>YoY</th><th>${YEAR} (฿)</th><th>%</th><th>Δ YoY</th><th>Trans</th><th>YoY</th><th>Ticket</th><th>Trans</th><th>YoY</th><th>Ticket</th><th>฿</th><th>%</th><th>ครั้ง</th><th style="text-align:left">สถานะ</th></tr></thead><tbody>${rows}${total}</tbody></table>`;
 }
 document.getElementById('selBranch').onchange=e=>{sel.branch=e.target.value;renderBranch();};
-document.getElementById('prevB').onclick=()=>{const bs=scopeBranches();const i=bs.findIndex(b=>b.id===sel.branch);sel.branch=bs[(i-1+bs.length)%bs.length].id;renderBranch();};
-document.getElementById('nextB').onclick=()=>{const bs=scopeBranches();const i=bs.findIndex(b=>b.id===sel.branch);sel.branch=bs[(i+1)%bs.length].id;renderBranch();};
+const bRing=()=>['all',...scopeBranches().map(b=>b.id)];   // ให้ภาพรวมอยู่หัวแถวด้วย
+const bStep=d=>{const r=bRing(),i=Math.max(0,r.indexOf(sel.branch));sel.branch=r[(i+d+r.length)%r.length];renderBranch();};
+document.getElementById('prevB').onclick=()=>bStep(-1);
+document.getElementById('nextB').onclick=()=>bStep(1);
 
 /* ---------------- render: input grid ---------------- */
 function renderInput(){
