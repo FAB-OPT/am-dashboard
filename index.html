@@ -334,6 +334,32 @@ th.sortable.on{color:var(--brand)}
 .dm-miss .r b{font-weight:600}
 .dm-miss .r span{margin-left:auto;color:var(--ink-3);font-size:11.5px;white-space:nowrap}
 .dm-miss .none{padding:16px 14px;font-size:12.5px;color:var(--green);font-weight:600}
+/* ลบข้อมูล และประวัติไฟล์ที่นำเข้า */
+.dm-del{margin-top:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
+.dm-del .h{padding:12px 14px;font-weight:700;font-size:13px;border-bottom:1px solid var(--line-2);
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.dm-del .h span{font-weight:500;font-size:11.5px;color:var(--ink-3)}
+.dm-del .b{padding:12px 14px 14px;display:grid;gap:10px}
+.dm-del label{display:grid;gap:4px;font-size:12px;color:var(--ink-2);font-weight:600}
+.dm-del select{width:100%;min-width:0;height:40px;border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:0 10px;background:var(--panel);font:inherit;font-size:13.5px;color:var(--ink)}
+.dm-del .what{font-size:12.5px;color:var(--ink-2)}
+.dm-del .confirm{background:var(--red-soft);color:var(--red);border-radius:var(--r-sm);padding:10px 12px;
+  font-size:12.5px;display:grid;gap:6px}
+.dm-del .confirm span{color:var(--ink-2)}
+.dm-del .act{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.dm-done{background:var(--green-soft);color:var(--green);border-radius:var(--r-sm);padding:8px 8px 8px 12px;
+  font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:8px;justify-content:space-between}
+.btn.danger{background:var(--red);border-color:var(--red);color:#fff}
+.btn.danger:hover{background:#8F150E;border-color:#8F150E;color:#fff}
+.btn.danger-ghost{color:var(--red);border-color:#E7B9B4;background:var(--panel)}
+.btn.danger-ghost:hover{background:var(--red-soft);color:var(--red)}
+.btn.sm{min-height:34px;padding:0 12px;font-size:12px}
+.dm-hist .r{display:flex;gap:8px;align-items:center;padding:10px 14px;border-top:1px solid var(--line-2);font-size:12.5px}
+.dm-hist .h+.r{border-top:0}
+.dm-hist .r .t{flex:1;min-width:0}
+.dm-hist .r .t b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dm-hist .r .t span{display:block;color:var(--ink-3);font-size:11.5px}
 .dm-tbl{border:1px solid var(--line);border-radius:var(--r);overflow:auto;
   -webkit-overflow-scrolling:touch;
   background:linear-gradient(90deg,var(--panel) 30%,rgba(255,255,255,0)),
@@ -1059,10 +1085,10 @@ body.present .kpi .v{font-size:46px}
       <div class="drop-in">
         <div class="drop-txt">
           <b>นำเข้าจากไฟล์ Excel</b>
-          <span>ลากไฟล์รายงานประจำเดือนมาวางตรงนี้ หรือกดเลือกไฟล์ — ระบบอ่านตารางกรอกข้อมูลให้เอง ไม่ต้องพิมพ์ทีละช่อง</span>
+          <span>ลากไฟล์รายงานประจำเดือนมาวางตรงนี้ได้ทีละหลายไฟล์ หรือกดเลือกไฟล์ ระบบอ่านตารางกรอกข้อมูลให้เอง ไม่ต้องพิมพ์ทีละช่อง</span>
         </div>
         <button class="btn primary" type="button" id="btnPickFile">เลือกไฟล์</button>
-        <input type="file" id="fileXlsx" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+        <input type="file" id="fileXlsx" accept=".xlsx,.xlsm,.xls,.csv" multiple hidden>
       </div>
     </div>
     <div class="toolbar">
@@ -1094,7 +1120,7 @@ body.present .kpi .v{font-size:46px}
     <div class="dm-head">
       <div>
         <h3>นำเข้าข้อมูล</h3>
-        <p>ลากไฟล์รายงานประจำเดือนมาวาง ระบบอ่านให้เอง และบอกด้านล่างว่าเดือนไหนยังขาดอะไร</p>
+        <p>ลากไฟล์รายงานมาวางได้ทีละหลายไฟล์ ระบบอ่านให้เอง บอกว่าเดือนไหนยังขาดอะไร และลบข้อมูลที่ผิดได้</p>
       </div>
       <button class="btn ghost" type="button" id="dataClose">ปิด</button>
     </div>
@@ -1865,17 +1891,39 @@ function xlResolve(blocks){
   return {pool,items};
 }
 
+/* คิวนำเข้าหลายไฟล์: ตรวจทีละไฟล์ตามลำดับ ข้ามได้ ยกเลิกที่เหลือได้ */
+let xlQueue=[], xlDone=[], xlTotal=0, xlAuto=false;
+function xlStart(list){
+  const files=[...(list||[])].filter(f=>/\.(xlsx|xlsm|xls|csv)$/i.test(f.name));
+  if(!files.length){ alert('เลือกได้เฉพาะไฟล์ Excel (.xlsx .xlsm .xls .csv)'); return; }
+  if(impPending||xlQueue.length){ xlQueue.push(...files); xlTotal+=files.length; flash(`เพิ่มเข้าคิวอีก ${files.length} ไฟล์`); return; }
+  xlQueue=files; xlTotal=files.length; xlDone=[]; xlAuto=false;
+  xlNext();
+}
+function xlNext(){ const f=xlQueue.shift(); if(f) xlRead(f); else xlFinish(); }
+function xlSkip(){ document.getElementById('impModal').hidden=true; impPending=null; xlNext(); }
+function xlStop(){ xlQueue=[]; document.getElementById('impModal').hidden=true; impPending=null; xlFinish(); }
+function xlFinish(){
+  const done=xlDone; xlDone=[]; xlTotal=0; xlAuto=false;
+  if(!done.length) return;
+  const last=done[done.length-1];
+  sel.m=last.m; setTab('input');
+  const c=done.reduce((a,x)=>a+x.cells+x.pcells,0);
+  flash(done.length>1?`นำเข้าแล้ว ${done.length} ไฟล์ (${c} ช่อง)`
+    :`นำเข้าแล้ว ${last.nb} สาขา (${last.cells} ช่อง)`+(last.pcells?` · เดือนก่อนหน้าอีก ${last.pcells} ช่อง`:''));
+  setTimeout(()=>dmOpenFresh(),120);          // เปิดสถานะข้อมูลให้ดูว่ายังขาดอะไรอีก
+}
 let impPending=null;
-function xlShow(blocks){
+function xlShow(blocks,fname){
   const main=blocks.filter(b=>b.kind==='main');
   if(!main.length){
-    alert('อ่านไฟล์ไม่เจอตารางกรอกข้อมูล\n\nไฟล์ต้องเป็นแบบฟอร์ม Monthly Area Manager Performance Report ที่มีหัวตาราง 2025 / 2026 / YoY %');
-    return;
+    alert((fname?fname+'\n\n':'')+'อ่านไฟล์ไม่เจอตารางกรอกข้อมูล\n\nไฟล์ต้องเป็นแบบฟอร์ม Monthly Area Manager Performance Report ที่มีหัวตาราง 2025 / 2026 / YoY %');
+    xlNext(); return;
   }
   const blk=main[0], prev=blocks.find(b=>b.kind==='prev');
   const m=blk.month!=null?blk.month:sel.m;
   const {pool,items}=xlResolve(prev?[blk,prev]:[blk]);
-  impPending={blk,prev,items};
+  impPending={blk,prev,items,file:fname||blk.sheet};
   const auto=items.filter(x=>x.b), ask=items.filter(x=>!x.b);
   const claimed={}; auto.forEach(x=>claimed[x.b.id]=true);
   // สาขาที่ยังไม่มีแถวในไฟล์นี้ขึ้นก่อน เลือกได้เร็ว เพราะชื่อที่หาไม่เจอมักเป็นหนึ่งในนั้น
@@ -1889,9 +1937,9 @@ function xlShow(blocks){
   const opts=MONTHS.map((n,i)=>`<option value="${i}" ${i===m?'selected':''}>${n} ${YEAR}</option>`).join('');
   const nAlias=auto.filter(x=>x.how==='alias').length;
   document.getElementById('impBody').innerHTML=
-    `<div class="row"><b>ไฟล์</b><span>${esc(blk.sheet)} · เริ่มอ่านแถวที่ ${blk.startRow}</span></div>`+
+    `<div class="row"><b>ไฟล์</b><span>${esc(fname||blk.sheet)} · ชีต ${esc(blk.sheet)} · เริ่มอ่านแถวที่ ${blk.startRow}</span></div>`+
     `<div class="row"><b>ลงเดือน</b><select id="impMonth">${opts}</select>`+
-      (blk.month==null?' <span class="miss">ไฟล์ไม่ได้ระบุเดือน เลือกเอง</span>':'')+`</div>`+
+      (blk.month==null?' <span class="miss">ไฟล์ไม่ได้ระบุเดือน เลือกเอง</span>':'')+(xlDone.some(x=>x.m===m)?' <span class="miss">ไฟล์ก่อนหน้าในรอบนี้ลงเดือนนี้แล้ว ช่องที่ซ้ำจะถูกทับ</span>':'')+`</div>`+
     `<div class="row"><b>ตรงกันแน่นอน</b><span class="ok">${auto.length} สาขา`+
       (nAlias?` <span class="hint">(${nAlias} สาขาจากที่เคยจับคู่ไว้)</span>`:'')+`</span></div>`+
     (ask.length?
@@ -1907,8 +1955,14 @@ function xlShow(blocks){
           (ALIAS_SRV||(role&&role.type==='admin')?' (ใช้ร่วมกันทุกคน ทุกเครื่อง)':' (เฉพาะเครื่องนี้)')+`</label>`+
       `</div>`:'')+
     (prev?`<div class="row"><b>เดือนก่อนหน้า</b><span>${prev.rows.length} สาขาในไฟล์ · เติมเฉพาะช่องที่ยังว่าง</span></div>`:'')+
-    `<div class="row" style="border:0"><b></b><span class="hint">ช่องที่ว่างในไฟล์จะไม่ไปลบข้อมูลเดิมในเว็บ</span></div>`;
+    `<div class="row" style="border:0"><b></b><span class="hint">ช่องที่ว่างในไฟล์จะไม่ไปลบข้อมูลเดิมในเว็บ</span></div>`+(xlQueue.length?`<label class="map-remember" style="margin-top:10px"><input type="checkbox" id="impAuto"> ไฟล์ที่เหลืออีก ${xlQueue.length} ไฟล์: ถ้าชื่อสาขาตรงหมดและไฟล์ระบุเดือนไว้ นำเข้าเลยไม่ต้องถามทีละไฟล์</label>`:'');
   document.getElementById('impOk').disabled=!items.length;
+  const idx=xlTotal-xlQueue.length;
+  document.getElementById('impTitle').textContent=xlTotal>1?`ตรวจก่อนนำเข้า · ไฟล์ ${idx} จาก ${xlTotal}`:'ตรวจก่อนนำเข้า';
+  document.getElementById('impCancel').textContent=xlQueue.length?'ข้ามไฟล์นี้':'ยกเลิก';
+  document.getElementById('impOk').textContent=xlQueue.length?'นำเข้า แล้วไปไฟล์ถัดไป':'นำเข้าข้อมูล';
+  // เลือกไว้ว่าไฟล์ที่เหลือไม่ต้องถาม: ข้ามหน้าต่างเฉพาะไฟล์ที่ไม่มีอะไรต้องตัดสินใจ
+  if(xlAuto&&!ask.length&&blk.month!=null&&items.length){ xlApply(); return; }
   document.getElementById('impModal').hidden=false;
 }
 function xlApply(){
@@ -1949,48 +2003,46 @@ function xlApply(){
       }).catch(()=>{});
     }
   }
-  let cells=0, nb=0;
+  let cells=0, nb=0; const wrote=[];          // จดไว้ว่าเขียนช่องไหนบ้าง ใช้ตอนลบข้อมูลของไฟล์นี้
   blk.rows.forEach(r=>{ const b=map[xlKey(r.name)]; if(!b) return;
-    Object.keys(r.fields).forEach(f=>{ setField(b.id,f,r.fields[f],m); cells++; });
-    markDirty(m,b.id); nb++;
+    const fs=Object.keys(r.fields);
+    fs.forEach(f=>{ setField(b.id,f,r.fields[f],m); cells++; });
+    markDirty(m,b.id); nb++; wrote.push([m,b.id,fs]);
   });
   let pcells=0;
   if(prev&&m>0){
     const pm=m-1;
     prev.rows.forEach(r=>{ const b=map[xlKey(r.name)]; if(!b) return;
-      let touched=false;
+      const pf=[];
       Object.keys(r.fields).forEach(f=>{
         if(val(pm,b.id,f)!=null) return;                 // มีข้อมูลอยู่แล้ว ไม่ทับ
-        setField(b.id,f,r.fields[f],pm); pcells++; touched=true;
+        setField(b.id,f,r.fields[f],pm); pcells++; pf.push(f);
       });
-      if(touched) markDirty(pm,b.id);
+      if(pf.length){ markDirty(pm,b.id); wrote.push([pm,b.id,pf]); }
     });
   }
   save();
-  sel.m=m; sel.tab='input';
+  const file=impPending.file;
+  const au=document.getElementById('impAuto'); if(au&&au.checked) xlAuto=true;
   document.getElementById('impModal').hidden=true; impPending=null;
-  render();
-  try{
-    const d=new Date(), p=n=>(n<10?'0':'')+n;
-    localStorage.setItem(KEY_IMPLOG,JSON.stringify({
-      when:`${d.getDate()} ${MSHORT[d.getMonth()]} ${d.getFullYear()+543} ${p(d.getHours())}:${p(d.getMinutes())} น.`,
-      what:`${MONTHS[m]} ${YEAR} · ${nb} สาขา (${cells} ช่อง)`+(pcells?` · เดือนก่อนหน้าอีก ${pcells} ช่อง`:'')}));
-  }catch(e){}
-  flash(`นำเข้าแล้ว ${nb} สาขา (${cells} ช่อง)`+(pcells?` · เดือนก่อนหน้าอีก ${pcells} ช่อง`:''));
-  setTimeout(()=>{ if(role) dmOpen(); },120);   // เปิดสถานะข้อมูลให้ดูว่ายังขาดอะไรอีก
+  xlLogAdd({file,month:m,rows:wrote,
+    what:`${MONTHS[m]} ${YEAR} · ${nb} สาขา (${cells} ช่อง)`+(pcells?` · เดือนก่อนหน้าอีก ${pcells} ช่อง`:'')});
+  xlDone.push({file,m,nb,cells,pcells});
+  if(xlQueue.length){ flash(`นำเข้า ${file} แล้ว เหลืออีก ${xlQueue.length} ไฟล์`); xlNext(); }
+  else xlFinish();
 }
 function xlRead(file){
-  if(!file) return;
-  if(!window.XLSX){ alert('ตัวอ่านไฟล์ Excel ยังโหลดไม่เสร็จ ลองใหม่อีกครั้ง'); return; }
-  flash('กำลังอ่านไฟล์…');
+  if(!file) return xlNext();
+  if(!window.XLSX){ alert('ตัวอ่านไฟล์ Excel ยังโหลดไม่เสร็จ ลองใหม่อีกครั้ง'); xlQueue=[]; return xlFinish(); }
+  flash(`กำลังอ่าน ${file.name}…`);
   const rd=new FileReader();
-  rd.onload=async ()=>{ try{ if(CLOUD) await pullAliases(); xlShow(xlParse(XLSX.read(rd.result,{type:'array'}))); }
-    catch(e){ console.error(e); alert('อ่านไฟล์ไม่สำเร็จ: '+((e&&e.message)||'ไฟล์อาจเสียหรือไม่ใช่ไฟล์ Excel')); } };
-  rd.onerror=()=>alert('อ่านไฟล์ไม่สำเร็จ');
+  rd.onload=async ()=>{ try{ if(CLOUD) await pullAliases(); xlShow(xlParse(XLSX.read(rd.result,{type:'array'})),file.name); }
+    catch(e){ console.error(e); alert(file.name+'\n\nอ่านไฟล์ไม่สำเร็จ: '+((e&&e.message)||'ไฟล์อาจเสียหรือไม่ใช่ไฟล์ Excel')); xlNext(); } };
+  rd.onerror=()=>{ alert(file.name+'\n\nอ่านไฟล์ไม่สำเร็จ'); xlNext(); };
   rd.readAsArrayBuffer(file);
 }
 document.getElementById('btnPickFile').onclick=()=>document.getElementById('fileXlsx').click();
-document.getElementById('fileXlsx').onchange=e=>{ xlRead(e.target.files[0]); e.target.value=''; };
+document.getElementById('fileXlsx').onchange=e=>{ xlStart(e.target.files); e.target.value=''; };
 /* โหมดพรีเซนต์: ขอเต็มจอกับเบราว์เซอร์ด้วย ถ้าไม่ได้ก็ยังใช้ได้แค่ไม่เต็มจอ */
 (function(){
   const body=document.body;
@@ -2022,21 +2074,21 @@ document.getElementById('fileXlsx').onchange=e=>{ xlRead(e.target.files[0]); e.t
   hm.onclick=e=>{ if(e.target===hm) close(); };
   document.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
 })();
-document.getElementById('impCancel').onclick=()=>{ document.getElementById('impModal').hidden=true; impPending=null; };
+document.getElementById('impCancel').onclick=xlSkip;
 document.getElementById('impOk').onclick=xlApply;
-document.getElementById('impModal').onclick=e=>{ if(e.target.id==='impModal'){ document.getElementById('impModal').hidden=true; impPending=null; } };
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!document.getElementById('impModal').hidden){ document.getElementById('impModal').hidden=true; impPending=null; } });
+document.getElementById('impModal').onclick=e=>{ if(e.target.id==='impModal') xlStop(); };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!document.getElementById('impModal').hidden) xlStop(); });
 (function(){
   const d=document.getElementById('drop');
   ['dragenter','dragover'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.add('over');}));
   ['dragleave','drop'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();if(ev==='dragleave'&&d.contains(e.relatedTarget))return;d.classList.remove('over');}));
-  d.addEventListener('drop',e=>{ const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]; if(f)xlRead(f); });
+  d.addEventListener('drop',e=>{ const fs=e.dataTransfer&&e.dataTransfer.files; if(fs&&fs.length) xlStart(fs); });
   // กันเบราว์เซอร์เปิดไฟล์ทับหน้าเว็บถ้าวางพลาดนอกกรอบ
   ['dragover','drop'].forEach(ev=>window.addEventListener(ev,e=>{ if(!d.contains(e.target)) e.preventDefault(); }));
 })();
 
 document.getElementById('btnCopyPrev').onclick=()=>{ if(sel.m===0)return flash('มกราคมไม่มีเดือนก่อนในปีนี้'); const bs=scopeBranches(); let n=0; bs.forEach(b=>{const p=rec(sel.m-1,b.id); GROUPS.forEach(([k])=>{ if(p[k+'26']!=null){rec(sel.m,b.id,true)[k+'25']=p[k+'26'];n++;} }); markDirty(sel.m,b.id);}); save(); renderInput(); flash(n?`คัดลอกมา ${n} ช่อง (ใช้ชั่วคราวเท่านั้น — ตัวเลข 2025 จริงควรมาจากปีก่อน)`:'เดือนก่อนยังไม่มีข้อมูล'); };
-document.getElementById('btnClearMonth').onclick=()=>{ if(!confirm(`ล้างข้อมูล ${MONTHS[sel.m]} ของ ${scopeLabel()} ทั้งหมด?`))return; scopeBranches().forEach(b=>{ if(store.data[sel.m])delete store.data[sel.m][b.id]; markDirty(sel.m,b.id); }); save(); renderInput(); flash('ล้างแล้ว'); };
+document.getElementById('btnClearMonth').onclick=()=>{ dmOpenFresh({m:sel.m,b:'all'}); setTimeout(()=>{ const d=document.getElementById('dmDel'); if(d) d.scrollIntoView({block:'center'}); },60); };
 document.getElementById('btnExport').onclick=()=>{ const json=JSON.stringify({version:2,year:YEAR,exported:new Date().toISOString(),cfg:(role&&role.type==='admin')?cfg:undefined,...store},null,1); offerFile(`AM_dashboard_backup_${YEAR}_${new Date().toISOString().slice(0,10)}.json`,json,'application/json'); };
 document.getElementById('btnPushCloud').onclick=()=>{ if(!confirm('อัปโหลดข้อมูลและการตั้งค่าของเครื่องนี้ทับข้อมูลกลางทั้งหมด?'))return; pushAll(); };
 document.getElementById('btnImport').onclick=()=>document.getElementById('fileImport').click();
@@ -2132,6 +2184,97 @@ const DM_ROWS=[
   ['c25',`ต้นทุนวัตถุดิบ ${PREV}`,'COGs'],['l25',`ค่าแรง ${PREV}`,'COL'],
 ];
 const KEY_IMPLOG='jd_am_import_log';
+/* ประวัติไฟล์ที่นำเข้าจากเครื่องนี้ (ล่าสุดอยู่บน) เดิมเก็บแค่ครั้งล่าสุดเป็นออบเจกต์เดียว */
+function xlLog(){ let v=null; try{ v=JSON.parse(localStorage.getItem(KEY_IMPLOG)||'null'); }catch(e){} return !v?[]:Array.isArray(v)?v:[v]; }
+function xlLogSave(a){ try{ localStorage.setItem(KEY_IMPLOG,JSON.stringify(a.slice(0,15))); }catch(e){} }
+function xlLogAdd(e){
+  const d=new Date(), p=n=>(n<10?'0':'')+n;
+  e.id=String(Date.now())+Math.random().toString(36).slice(2,6);
+  e.when=`${d.getDate()} ${MSHORT[d.getMonth()]} ${d.getFullYear()+543} ${p(d.getHours())}:${p(d.getMinutes())} น.`;
+  const a=xlLog(); a.unshift(e); xlLogSave(a);
+}
+let dmDelSel=null, dmDelArm=false, dmFileArm=null, dmUndo=null;
+function dmDelTargets(){
+  const bs=scopeBranches(), s=dmDelSel||{m:sel.m,b:'all'};
+  const ids=(s.b==='all'?bs.map(b=>b.id):[s.b]).filter(id=>bs.some(b=>b.id===id)&&Object.keys(rec(s.m,id)).length);
+  const cells=ids.reduce((a,id)=>a+Object.keys(rec(s.m,id)).length,0);
+  return {s,bs,ids,cells};
+}
+function dmDelHtml(){
+  const {s,bs,ids,cells}=dmDelTargets();
+  const mo=MONTHS.map((n,i)=>{ const k=bs.filter(b=>Object.keys(rec(i,b.id)).length).length;
+    return `<option value="${i}" ${i===s.m?'selected':''}>${n} ${YEAR}${k?` · มีข้อมูล ${k} สาขา`:' · ไม่มีข้อมูล'}</option>`; }).join('');
+  const bo=`<option value="all" ${s.b==='all'?'selected':''}>ทุกสาขาในขอบเขตนี้ (${bs.length})</option>`+
+    bs.map(b=>`<option value="${b.id}" ${s.b===b.id?'selected':''}>${esc(shortName(b.name))}</option>`).join('');
+  const who=s.b==='all'?`${ids.length} สาขา`:esc(shortName((BRANCHES.find(b=>b.id===s.b)||{}).name||''));
+  const label=`${MONTHS[s.m]} ${YEAR} · ${who}`;
+  return `<div class="dm-del" id="dmDel"><div class="h">ลบข้อมูล<span>ลบแล้วทุกคนเห็นพร้อมกัน</span></div><div class="b">`+
+    (dmUndo?`<div class="dm-done"><span>${esc(dmUndo.label)}</span><button class="btn ghost sm" type="button" id="delUndo">เรียกคืน</button></div>`:'')+
+    `<label>เดือน<select id="delMonth">${mo}</select></label>`+
+    `<label>สาขา<select id="delBranch">${bo}</select></label>`+
+    (!ids.length?`<div class="what mute">เดือนและสาขาที่เลือกไม่มีข้อมูลให้ลบ</div>`
+      :dmDelArm?`<div class="confirm"><b>ลบข้อมูล ${label} (${cells} ช่อง) ใช่ไหม</b>`+
+          `<span>ตัวเลขทุกช่องของเดือนนี้ในสาขาที่เลือกจะหายไป ยังกดเรียกคืนได้ก่อนปิดหน้าต่างนี้</span>`+
+          `<div class="act"><button class="btn danger sm" type="button" id="delYes">ยืนยันลบ</button>`+
+          `<button class="btn ghost sm" type="button" id="delNo">ไม่ลบ</button></div></div>`
+      :`<div class="what">จะลบ ${label} รวม ${cells} ช่อง</div>`+
+        `<div><button class="btn danger-ghost sm" type="button" id="delGo">ลบข้อมูลชุดนี้</button></div>`)+
+    `</div></div>`;
+}
+function dmHistHtml(hist){
+  const list=hist.filter(e=>e.rows&&e.rows.length);
+  if(!list.length) return '';
+  return `<div class="dm-del dm-hist"><div class="h">ไฟล์ที่นำเข้าจากเครื่องนี้<span>${list.length} ครั้งล่าสุด</span></div>`+
+    list.map(e=>`<div class="r"><div class="t"><b title="${esc(e.file||'')}">${esc(e.file||'ไฟล์ไม่มีชื่อ')}</b>`+
+      `<span>${esc(e.when||'')} · ${esc(e.what||'')}</span></div>`+
+      (e.removed?`<span class="mute">ลบแล้ว</span>`
+        :dmFileArm===e.id?`<button class="btn danger sm" type="button" data-delfileyes="${e.id}">ยืนยันลบ</button>`+
+            `<button class="btn ghost sm" type="button" data-delno="1">ไม่ลบ</button>`
+        :`<button class="btn danger-ghost sm" type="button" data-delfile="${e.id}" title="ลบเฉพาะช่องที่นำเข้าจากไฟล์นี้">ลบ</button>`)+
+    `</div>`).join('')+`</div>`;
+}
+function dmSnap(pairs){
+  const seen={}, out=[];
+  pairs.forEach(([m,id])=>{ const k=m+'|'+id; if(seen[k]) return; seen[k]=1;
+    const r=store.data[m]&&store.data[m][id]; out.push([m,id,r?JSON.parse(JSON.stringify(r)):null]); });
+  return out;
+}
+function dmDoDelete(){
+  const {s,ids,cells}=dmDelTargets(); if(!ids.length) return;
+  const snap=dmSnap(ids.map(id=>[s.m,id]));
+  ids.forEach(id=>{ if(store.data[s.m]) delete store.data[s.m][id]; markDirty(s.m,id); });
+  save(); dmDelArm=false;
+  dmUndo={label:`ลบ ${MONTHS[s.m]} ${YEAR} ${ids.length} สาขา (${cells} ช่อง) แล้ว`,snap};
+  render(); dmOpen();
+}
+function dmDoDeleteFile(eid){
+  const hist=xlLog(), e=hist.find(x=>x.id===eid); if(!e||!e.rows) return;
+  const scope=new Set(scopeBranches().map(b=>b.id));
+  const rows=e.rows.filter(r=>scope.has(r[1]));
+  const snap=dmSnap(rows);
+  let n=0;
+  rows.forEach(([m,id,fs])=>{ const r=store.data[m]&&store.data[m][id]; if(!r) return;
+    fs.forEach(f=>{ if(f in r){ delete r[f]; n++; } });
+    if(!Object.keys(r).length) delete store.data[m][id];
+    markDirty(m,id); });
+  save(); e.removed=true; xlLogSave(hist); dmFileArm=null;
+  dmUndo={label:`ลบข้อมูลจาก ${e.file||'ไฟล์'} แล้ว (${n} ช่อง)`,snap,fileId:eid};
+  render(); dmOpen();
+}
+function dmDoUndo(){
+  if(!dmUndo) return;
+  dmUndo.snap.forEach(([m,id,obj])=>{ store.data[m]=store.data[m]||{};
+    if(obj) store.data[m][id]=obj; else delete store.data[m][id]; markDirty(m,id); });
+  if(dmUndo.fileId){ const h=xlLog(), e=h.find(x=>x.id===dmUndo.fileId); if(e){ delete e.removed; xlLogSave(h); } }
+  save(); dmUndo=null; render(); dmOpen();
+}
+function dmOpenFresh(preset){
+  if(!role) return;
+  dmDelSel=preset||null; dmDelArm=false; dmFileArm=null; dmUndo=null;
+  dmOpen();
+  const body=document.getElementById('dataBody'), box=body.closest('.modal-box');
+  body.scrollTop=0; if(box) box.scrollTop=0;
+}
 function dmDue(){   // เดือนที่ควรมีข้อมูลแล้ว
   const now=new Date();
   return now.getFullYear()>YEAR?12:(now.getFullYear()<YEAR?0:now.getMonth());
@@ -2152,12 +2295,14 @@ function dmStat(){
   return {bs,ids,tot,due,cells,filled,expect,monthFill,monthCells};
 }
 function dmOpen(){
+  const dBody=document.getElementById('dataBody'), dBox=dBody.closest('.modal-box');
+  const keepA=dBody.scrollTop, keepB=dBox?dBox.scrollTop:0;
   const st=dmStat(), {tot,due,cells}=st;
   const pctAll=st.expect?Math.round(st.filled/st.expect*100):100;
   const m=sel.m;
   const missNow=DM_ROWS.filter(r=>r[0]!=='sec').map(r=>({f:r[0],t:r[1],n:cells[r[0]+'|'+m]}))
     .filter(x=>x.n<tot);
-  let log=null; try{ log=JSON.parse(localStorage.getItem(KEY_IMPLOG)||'null'); }catch(e){}
+  const hist=xlLog(), log=hist[0]||null;
   const cell=(f,mo)=>{
     const n=cells[f+'|'+mo];
     if(mo>=due&&n===0) return `<span class="dm-cell off" title="${MONTHS[mo]} ยังมาไม่ถึง">·</span>`;
@@ -2198,11 +2343,11 @@ function dmOpen(){
         `<div class="v" style="font-size:17px">${tot} สาขา</div><div class="s">${esc(scopeLabel())}</div></div>`+
     `</div>`+
     `<div class="dm-grid">`+
-      `<div><div class="dm-drop" id="dmDrop"><b>ลากไฟล์ .xlsx มาวางตรงนี้</b>`+
+      `<div><div class="dm-drop" id="dmDrop"><b>ลากไฟล์ .xlsx มาวางตรงนี้ ได้ทีละหลายไฟล์</b>`+
         `<span>หรือกดเพื่อเลือกไฟล์ · แบบฟอร์มรายงานประจำเดือน</span></div>`+
         `<div class="dm-miss"><div class="h">${MONTHS[m]} ${YEAR} ยังขาด<span>${missNow.length} รายการ</span></div>`+
         (missNow.length?missNow.map(x=>`<div class="r"><b>${x.t}</b><span>${x.n?`มี ${x.n} จาก ${tot} สาขา`:'ยังไม่มีข้อมูล'}</span></div>`).join('')
-          :`<div class="none">ครบทุกรายการแล้ว</div>`)+`</div></div>`+
+          :`<div class="none">ครบทุกรายการแล้ว</div>`)+`</div>`+dmDelHtml()+dmHistHtml(hist)+`</div>`+
       `<div><p class="dm-hint">เลื่อนตารางไปทางซ้ายขวาเพื่อดูเดือนอื่น</p>`+
       `<div class="dm-tbl"><table><thead><tr><th>รายการข้อมูล</th>`+
         MSHORT.map((n,i)=>`<th class="${i===m?'now':''}">${n}<br><i style="font-style:normal;font-weight:500;color:var(--ink-3)">${st.monthCells[i]?Math.round(st.monthFill[i]/st.monthCells[i]*100)+'%':'ยังไม่ถึง'}</i></th>`).join('')+
@@ -2214,28 +2359,41 @@ function dmOpen(){
         `<span class="mute">กดที่ช่องเพื่อไปกรอกเดือนนั้น</span></div></div>`+
     `</div>`;
   document.getElementById('dataModal').hidden=false;
+  dBody.scrollTop=keepA; if(dBox) dBox.scrollTop=keepB;
 }
 (function(){
   const dm=document.getElementById('dataModal');
   const close=()=>{ dm.hidden=true; };
-  document.getElementById('btnData').onclick=()=>{ if(role) dmOpen(); };
+  document.getElementById('btnData').onclick=()=>dmOpenFresh();
   document.getElementById('dataClose').onclick=close;
   dm.onclick=e=>{
     if(e.target===dm) return close();
+    if(e.target.closest('#delGo')){ dmDelArm=true; dmOpen(); return; }
+    if(e.target.closest('#delNo')){ dmDelArm=false; dmOpen(); return; }
+    if(e.target.closest('#delYes')){ dmDoDelete(); return; }
+    if(e.target.closest('#delUndo')){ dmDoUndo(); return; }
+    const df=e.target.closest('[data-delfile]'); if(df){ dmFileArm=df.dataset.delfile; dmOpen(); return; }
+    const dy=e.target.closest('[data-delfileyes]'); if(dy){ dmDoDeleteFile(dy.dataset.delfileyes); return; }
+    if(e.target.closest('[data-delno]')){ dmFileArm=null; dmOpen(); return; }
     const c=e.target.closest('.dm-cell[data-m]');
     if(c){ sel.m=+c.dataset.m; close(); setTab('input'); return; }
     const d=e.target.closest('#dmDrop');
     if(d) document.getElementById('fileXlsx').click();
   };
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!dm.hidden) close(); });
+  dm.addEventListener('change',e=>{
+    if(e.target.id!=='delMonth'&&e.target.id!=='delBranch') return;
+    dmDelSel={m:+document.getElementById('delMonth').value,b:document.getElementById('delBranch').value};
+    dmDelArm=false; dmOpen();
+  });
   ['dragenter','dragover'].forEach(ev=>dm.addEventListener(ev,e=>{
     const d=e.target.closest('#dmDrop'); if(!d)return; e.preventDefault(); d.classList.add('over'); }));
   ['dragleave','drop'].forEach(ev=>dm.addEventListener(ev,e=>{
     const d=document.getElementById('dmDrop'); if(d)d.classList.remove('over'); }));
   dm.addEventListener('drop',e=>{
     if(!e.target.closest('#dmDrop'))return; e.preventDefault();
-    const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
-    if(f){ close(); xlRead(f); }
+    const fs=e.dataTransfer&&e.dataTransfer.files;
+    if(fs&&fs.length){ close(); xlStart(fs); }
   });
 })();
 
