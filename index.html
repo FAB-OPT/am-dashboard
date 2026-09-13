@@ -101,6 +101,7 @@ h1,h2,h3{margin:0;font-weight:700}
 .ctl select:hover{border-color:var(--ink-3)}
 
 /* แถบเดือน */
+#ctlBranch select{min-width:0;width:clamp(180px,26vw,320px);border:0;background:transparent;font:inherit;color:inherit;padding:0 4px}
 .month-nav{display:flex;align-items:center;border:1px solid var(--line);border-radius:var(--r-sm);
   background:var(--panel);overflow:hidden;box-shadow:var(--sh)}
 .month-nav>button{background:transparent;border:0;color:var(--ink-3);padding:8px 11px;
@@ -629,6 +630,11 @@ body.present .rank{font-size:16px;width:40px}
   </div>
   <div class="topbar">
     <label class="ctl" id="ctlAM"><span class="lbl">ผู้ดูแล</span><select id="selAM"></select></label>
+    <div class="ctl" id="ctlBranch" hidden><span class="lbl">สาขา</span>
+      <div class="month-nav"><button id="prevB" title="สาขาก่อนหน้า" aria-label="สาขาก่อนหน้า">‹</button>
+        <select id="selBranch"></select>
+        <button id="nextB" title="สาขาถัดไป" aria-label="สาขาถัดไป">›</button></div>
+    </div>
     <div class="ctl"><span class="lbl">เดือน</span>
       <div class="month-nav">
         <button id="prevM" title="เดือนก่อน" aria-label="เดือนก่อน">‹</button>
@@ -696,7 +702,7 @@ body.present .rank{font-size:16px;width:40px}
   <!-- ================= BRANCH ================= -->
   <section class="view" id="view-branch">
     <div class="sec"><h2>รายสาขา แยกรายเดือน</h2>
-      <div class="right"><div class="month-nav"><button id="prevB">‹</button><select id="selBranch" style="min-width:320px"></select><button id="nextB">›</button></div></div></div>
+      <span class="note">เลือกสาขาได้ที่แถบด้านบน</span></div>
     <div class="kpis" id="bKpis" style="margin-bottom:18px"></div>
     <div class="two">
       <div class="card"><h3>ยอดขายรายเดือน — 2025 เทียบ 2026 <span class="h3sub">บาท</span></h3><div class="chart-wrap"><canvas id="chB1"></canvas></div></div>
@@ -1912,7 +1918,7 @@ document.getElementById('btnLogout').onclick=()=>{ stopPoll(); CLOUD=false; CODE
   applyRole(); setSync('local'); document.getElementById('loginCode').focus(); };
 
 /* ---------------- shell ---------------- */
-function setTab(t){ sel.tab=t; document.querySelectorAll('.tabs button[role=tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t)); document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+t)); render(); }
+function setTab(t){ sel.tab=t; document.getElementById('ctlBranch').hidden=(t!=='branch'); document.querySelectorAll('.tabs button[role=tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t)); document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+t)); render(); }
 document.querySelectorAll('.tabs button[role=tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 document.querySelectorAll('#cmpMode button').forEach(b=>b.onclick=()=>{sel.cmp=b.dataset.m; document.querySelectorAll('#cmpMode button').forEach(x=>x.setAttribute('aria-pressed',x===b)); renderCompare();});
 const selAM=document.getElementById('selAM'), monthBar=document.getElementById('months');
