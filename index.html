@@ -258,6 +258,37 @@ tr.total td,tr.total td:first-child{background:var(--panel-2);font-weight:700;
 .tag.bad{background:var(--red-soft);color:var(--red)}
 .tag.good{background:var(--green-soft);color:var(--green)}
 .issues .nt{display:block;margin-top:5px;font-size:12px;color:var(--ink-3);line-height:1.45}
+/* หน้ารายสาขา */
+.bhead{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:space-between;align-items:flex-start;
+  background:var(--panel);border-radius:var(--r);box-shadow:var(--sh);padding:18px 22px;margin:4px 0 14px}
+.bhead h2{font-size:27px;line-height:1.25;margin:2px 0 4px}
+.bh-k{font-size:12px;font-weight:700;color:var(--ink-3)}
+.bh-s{font-size:13.5px;color:var(--ink-2)}
+.bh-r{display:grid;gap:6px;justify-items:end;text-align:right;max-width:620px}
+.bh-r .tags{justify-content:flex-end}
+.bh-n{font-size:13px;color:var(--ink-2)}
+#bKpis{margin-bottom:6px}
+@media(min-width:1080px){#bKpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tbl-wrap table.bm tbody tr[data-m]{cursor:pointer}
+.tbl-wrap table.bm tbody tr.on td{background:#E6EEF2 !important}
+.tbl-wrap table.bm tbody tr.on td:first-child{box-shadow:inset 4px 0 0 var(--brand)}
+.bmore{margin-top:18px;background:var(--panel);border-radius:var(--r);box-shadow:var(--sh)}
+.bmore>summary{cursor:pointer;padding:15px 18px;font-weight:700;font-size:14.5px;list-style:none;display:flex;
+  align-items:baseline;gap:10px;flex-wrap:wrap}
+.bmore>summary::-webkit-details-marker{display:none}
+.bmore>summary::before{content:'▸';color:var(--ink-3);display:inline-block;transition:transform .15s}
+.bmore[open]>summary::before{transform:rotate(90deg)}
+.bmore>summary span{font-weight:500;font-size:12.5px;color:var(--ink-3)}
+.bmore>.two,.bmore>.tbl-wrap{margin:0 14px 14px}
+.bmore .card{box-shadow:none;border:1px solid var(--line-2)}
+.bpick-more{display:flex;justify-content:center;padding:12px}
+@media(max-width:760px){
+  .bhead{padding:14px 16px}
+  .bhead h2{font-size:22px}
+  .bh-r{justify-items:start;text-align:left}
+  .bh-r .tags{justify-content:flex-start}
+}
+body.present .bhead h2{font-size:36px}
 .perf-key{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--ink-2);margin:10px 0 0}
 .perf-key i{display:inline-block;width:4px;height:14px;border-radius:2px;vertical-align:-2px;margin-right:6px}
 body.present .tbl-wrap table.perf2 td{font-size:17px}
@@ -1094,24 +1125,30 @@ body.present .kpi .v{font-size:46px}
 
   <!-- ================= BRANCH ================= -->
   <section class="view" id="view-branch">
-    <div class="sec"><h2>รายสาขา แยกรายเดือน</h2>
-      <span class="note">เลือกสาขาได้ที่แถบด้านบน</span></div>
-    <div class="kpis" id="bKpis" style="margin-bottom:18px"></div>
+    <div class="bhead" id="bHead"></div>
+    <div class="kpis" id="bKpis"></div>
     <div id="bPick"></div>
-    <div class="two">
-      <div class="card"><h3>ยอดขายรายเดือน — 2025 เทียบ 2026 <span class="h3sub">บาท</span></h3><div class="chart-wrap"><canvas id="chB1"></canvas></div></div>
-      <div class="card"><h3>กำไรจากการดำเนินงาน (EBIT) รายเดือน <span class="h3sub">บาท</span></h3><div class="chart-wrap"><canvas id="chB2"></canvas></div></div>
-    </div>
+    <div class="sec"><h2>ทั้งปี ไล่ดูทีละเดือน</h2><span class="note" id="bSub"></span></div>
+    <div class="tbl-wrap" id="bMonths"></div>
     <div class="two" style="margin-top:18px">
-      <div class="card"><h3>ต้นทุนวัตถุดิบและค่าแรง คิดเป็น % ของยอดขาย <span class="h3sub">รายเดือน 2026</span></h3><div class="chart-wrap"><canvas id="chB3"></canvas></div></div>
-      <div class="card"><h3>จำนวนบิลและยอดขายเฉลี่ยต่อบิล <span class="h3sub">รายเดือน 2026</span></h3><div class="chart-wrap"><canvas id="chB4"></canvas></div></div>
+      <div class="card"><h3>ยอดขายรายเดือน <span class="h3sub">ปีนี้เทียบปีก่อน · บาท · แท่งแดง = ยอดขายลด</span></h3><div class="chart-wrap"><canvas id="chB1"></canvas></div></div>
+      <div class="card"><h3>กำไรรายเดือน (EBIT) <span class="h3sub">บาท · แท่งแดง = ขาดทุน</span></h3><div class="chart-wrap"><canvas id="chB2"></canvas></div></div>
     </div>
-    <div class="two" style="margin-top:18px">
-      <div class="card"><h3>ข้อร้องเรียนรายเดือน</h3><div class="chart-wrap" style="height:220px"><canvas id="chB5"></canvas></div></div>
-      <div class="card"><h3>ค่าล่วงเวลา (OT) รายเดือน <span class="h3sub">บาท</span></h3><div class="chart-wrap" style="height:220px"><canvas id="chB6"></canvas></div></div>
-    </div>
-    <div class="sec"><h2>ตารางรายเดือน</h2><span class="note" id="bSub"></span></div>
-    <div class="tbl-wrap" id="bTable"></div>
+    <details class="bmore" id="bMoreCharts">
+      <summary>กราฟเพิ่มเติม <span>ต้นทุนและค่าแรง · จำนวนบิล · ข้อร้องเรียน · ค่าล่วงเวลา</span></summary>
+      <div class="two">
+        <div class="card"><h3>ต้นทุนวัตถุดิบ และค่าแรงเป็น % ของยอดขาย <span class="h3sub">รายเดือน</span></h3><div class="chart-wrap"><canvas id="chB3"></canvas></div></div>
+        <div class="card"><h3>จำนวนบิลและยอดขายต่อบิล <span class="h3sub">รายเดือน</span></h3><div class="chart-wrap"><canvas id="chB4"></canvas></div></div>
+      </div>
+      <div class="two" style="margin-top:14px">
+        <div class="card"><h3>ข้อร้องเรียนรายเดือน <span class="h3sub">แท่งแดง = 3 ครั้งขึ้นไป</span></h3><div class="chart-wrap" style="height:220px"><canvas id="chB5"></canvas></div></div>
+        <div class="card"><h3>ค่าล่วงเวลารายเดือน <span class="h3sub">บาท</span></h3><div class="chart-wrap" style="height:220px"><canvas id="chB6"></canvas></div></div>
+      </div>
+    </details>
+    <details class="bmore" id="bMoreTable">
+      <summary>ตัวเลขทั้งหมดรายเดือน <span>ทุกช่องที่กรอก รวมบิลแยกหน้าร้านและเดลิเวอรี คะแนนบริการ</span></summary>
+      <div class="tbl-wrap" id="bTable"></div>
+    </details>
   </section>
 
   <!-- ================= COMPARE ================= -->
@@ -1268,7 +1305,7 @@ const FIELDS=[]; GROUPS.forEach(([k])=>{FIELDS.push(k+'25',k+'26')}); FIELDS.pus
 const KEY='jd_am_dashboard_v1', KEY_CFG='jd_am_dashboard_cfg_v1', KEY_SESS='jd_am_dashboard_sess';
 let role=null; // {type:'am'|'vp'|'admin', zone?:id}
 let store={data:{}};            // data[m][branchId] = {field:number|string}
-let sel={q:'',sk:null,sd:-1,branch:'all',am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy', cmpTopic:'money'};
+let sel={q:'',sk:null,sd:-1,branch:'all',am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy', cmpTopic:'money', bPickAll:false};
 let storageOK=true;
 /* ---- ที่จัดเก็บข้อมูล: Supabase (ข้อมูลกลาง) + localStorage (สำเนาออฟไลน์) ---- */
 let SB=null, CLOUD=false, syncState='local';
@@ -1716,70 +1753,137 @@ function renderYear(){
 
 /* ---------------- render: branch by month ---------------- */
 /* ตอนดูภาพรวม แสดงรายชื่อสาขาพร้อมตัวเลขสะสม กดแถวไหนก็เจาะเข้าสาขานั้น */
+/* หน้ารายสาขาแบบ "สมุดพกสาขา"
+   เดิม: การ์ด 6 ใบปนยอดสะสมกับรายเดือน กราฟ 6 อันเท่ากันหมด (2 อันแกนคู่) ตาราง 23 คอลัมน์หัวอังกฤษ
+   ตอนนี้: หัวสาขา -> 4 การ์ดของเดือนที่เลือก -> ตารางทั้งปี 7 เรื่อง (กดแถวเปลี่ยนเดือน)
+   -> กราฟหลัก 2 อัน -> กราฟและตัวเลขที่เหลือพับเก็บไว้ เปิดดูเมื่อต้องการ */
+const B_ISSUE={'ยอดขายลด':'ยอดขายลด','กำไรลด':'กำไรลด','ต้นทุนแรงงานสูงขึ้น':'ค่าแรงสูงขึ้น','ร้องเรียนสูง':'ร้องเรียนสูง'};
+const bTags=r=>r.score?r.issues.map(t=>`<span class="tag bad">${B_ISSUE[t]||t}</span>`).join(''):'<span class="tag good">ปกติ</span>';
+const bChip=(it,base,c)=>cmpChg(it,base,c).replace(/^<td[^>]*>/,'').replace(/<\/td>$/,'');
+const bSum=(a,b)=>a==null&&b==null?null:(a||0)+(b||0);
+const bPc=v=>v==null?'–':(v*100).toFixed(1)+'%';
 function renderBranchPick(all,bs){
   const box=document.getElementById('bPick');
   if(!all){ box.innerHTML=''; return; }
   const rows=bs.map(b=>{
     const M=MONTHS.map((_,i)=>metrics(i,b.id));
     const T={}; FIELDS.forEach(f=>T[f]=sum(M.map(r=>r[f])));
-    return {b,T,n:M.filter(r=>r.has).length,c26:colPct(T,'26'),yoy:pct(T.s25,T.s26),eyoy:pct(T.e25,T.e26)};
+    return {b,T,n:M.filter(r=>r.has).length,c26:colPct(T,'26'),now:M[sel.m]};
   }).sort((x,y)=>(y.T.s26||0)-(x.T.s26||0));
-  const tr=rows.map(x=>`<tr><td><a href="#" class="blink" data-b="${x.b.id}" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</a>`+
-    `${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${(AMS.find(a=>a.id===x.b.am)||{}).name}</span>`:''}</td>`+
-    `<td class="mute">${x.n} / 12</td><td>${fmt(x.T.s26)}</td><td class="${cls(x.yoy)}">${fmtPct(x.yoy)}</td>`+
-    `<td>${fmt(x.T.e26)}</td><td class="${cls(x.eyoy)}">${fmtPct(x.eyoy)}</td>`+
-    `<td>${x.c26==null?'–':(x.c26*100).toFixed(1)+'%'}</td><td class="${x.T.cp>=3?'neg':''}">${fmt(x.T.cp)}</td></tr>`).join('');
-  box.innerHTML=`<div class="card" style="margin-bottom:18px"><h3>เลือกสาขาเพื่อดูรายละเอียด `+
-    `<span class="h3sub">ตัวเลขสะสมทั้งปี ${YEAR} · เรียงตามยอดขาย · กดชื่อสาขาเพื่อเจาะดู</span></h3>`+
-    `<div class="tbl-wrap"><table class="list"><thead><tr><th style="text-align:left">สาขา</th><th>เดือนที่กรอก</th>`+
-    `<th>ยอดขายสะสม (฿)</th><th>เทียบปีก่อน</th><th>EBIT สะสม (฿)</th><th>เทียบปีก่อน</th>`+
-    `<th>ค่าแรง % ของยอดขาย</th><th>ข้อร้องเรียน</th></tr></thead><tbody>${tr}</tbody></table></div></div>`;
+  const LIM=12, list=sel.bPickAll?rows:rows.slice(0,LIM);
+  const tr=list.map(x=>{
+    const sev=x.now.score>=3?'sev3':x.now.score===2?'sev2':'';
+    return `<tr class="${sev}"><td><a href="#" class="blink" data-b="${x.b.id}" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</a>`+
+      `${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${esc((AMS.find(a=>a.id===x.b.am)||{}).name||'')}</span>`:''}</td>`+
+      `<td class="cv">${fmt(x.T.s26)}</td>${cmpChg({k:'s'},x.T.s25,x.T.s26)}`+
+      `<td class="cv">${fmt(x.T.e26)}</td>${cmpChg({k:'e',signed:true},x.T.e25,x.T.e26)}`+
+      `<td class="cv">${bPc(x.c26)}</td>`+
+      `<td class="issues"><div class="tags">${x.now.has?bTags(x.now):'<span class="mute">ยังไม่มีข้อมูล</span>'}</div></td>`+
+      `<td class="mute">${x.n} / 12</td></tr>`;
+  }).join('');
+  box.innerHTML=`<div class="sec"><h2>เลือกสาขาเพื่อดูรายละเอียด</h2>`+
+    `<span class="note">ยอดสะสมทั้งปี ${YEAR} เรียงตามยอดขาย · ประเด็นของเดือน${MONTHS[sel.m]} · กดชื่อสาขาเพื่อเจาะดู</span></div>`+
+    `<div class="tbl-wrap"><table class="perf2"><thead><tr><th></th><th class="grp" colspan="2">ยอดขายสะสม</th>`+
+    `<th class="grp alt" colspan="2">กำไรสะสม (EBIT)</th><th class="grp">ค่าแรง %</th><th class="grp alt">ประเด็นเดือน${MONTHS[sel.m]}</th><th></th></tr>`+
+    `<tr><th>สาขา</th><th>บาท</th><th>เทียบปีก่อน</th><th>บาท</th><th>เทียบปีก่อน</th><th>ของยอดขาย</th><th style="text-align:left">ที่พบ</th><th>เดือนที่กรอก</th></tr></thead>`+
+    `<tbody>${tr}</tbody></table>`+
+    (rows.length>LIM?`<div class="bpick-more"><button class="btn sm" type="button" id="bPickMore">${sel.bPickAll?`ย่อเหลือ ${LIM} สาขา`:`แสดงทั้งหมด ${rows.length} สาขา`}</button></div>`:'')+
+    `</div>`;
 }
 function renderBranch(){
   const bs=scopeBranches(), selB=document.getElementById('selBranch');
   if(sel.branch!=='all'&&!bs.find(b=>b.id===sel.branch)) sel.branch='all';
   selB.innerHTML=`<option value="all">ทุกสาขาในขอบเขตนี้ (ภาพรวม) · ${bs.length} สาขา</option>`+
-    bs.map(b=>`<option value="${b.id}">${b.name}${sel.am==='all'?' · '+(AMS.find(a=>a.id===b.am)||{}).name:''}</option>`).join('');
+    bs.map(b=>`<option value="${b.id}">${esc(b.name)}${sel.am==='all'?' · '+esc((AMS.find(a=>a.id===b.am)||{}).name||''):''}</option>`).join('');
   selB.value=sel.branch;
   const all=sel.branch==='all';
   const id=all?bs.map(x=>x.id):sel.branch;
   const b=all?null:BRANCHES.find(x=>x.id===sel.branch);
   const am=all?null:(AMS.find(a=>a.id===b.am)||{name:'-'});
   const M=MONTHS.map((_,i)=>metrics(i,id)); const filled=M.filter(r=>r.has);
-  document.getElementById('bSub').textContent=all
-    ?`รวมทุกสาขา · ${scopeLabel()} · มีข้อมูล ${filled.length} / 12 เดือน`
-    :`${b.name} · ผู้ดูแล ${am.name} · กรอกแล้ว ${filled.length} / 12 เดือน`;
-  renderBranchPick(all,bs);
-  const T={}; FIELDS.forEach(f=>T[f]=sum(M.map(r=>r[f]))); const tc25=colPct(T,'25'), tc26=colPct(T,'26');
-  const kpi=(l,v,d='')=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
-  const cur=M[sel.m];
+  const cur=M[sel.m], p=cur.prev||null, mon=MONTHS[sel.m];
+
+  // ── หัวสาขา ──
+  let right;
+  if(all){
+    const bad=bs.filter(x=>metrics(sel.m,x.id).score>=2).length;
+    right=`<div class="tags">${bad?`<span class="tag bad">${bad} สาขามีประเด็น 2 ข้อขึ้นไป</span>`:'<span class="tag good">ไม่มีสาขาที่มีประเด็นหลายข้อ</span>'}</div>`;
+  } else {
+    right=`<div class="tags">${cur.has?bTags(cur):'<span class="tag">ยังไม่มีข้อมูลเดือนนี้</span>'}</div>`+
+      (cur.note?`<div class="bh-n">${esc(cur.note)}</div>`:'');
+  }
+  document.getElementById('bHead').innerHTML=
+    `<div class="bh-l"><div class="bh-k">${all?'ภาพรวมทุกสาขา':'สาขา'}</div>`+
+    `<h2>${all?esc(scopeLabel()):esc(shortName(b.name))}</h2>`+
+    `<div class="bh-s">${all?`${bs.length} สาขา · มีข้อมูล ${filled.length} จาก 12 เดือน`:`ผู้ดูแล ${esc(am.name)} · กรอกแล้ว ${filled.length} จาก 12 เดือน`}</div></div>`+
+    `<div class="bh-r"><div class="bh-k">ประเด็นเดือน${mon} ${YEAR}</div>${right}</div>`;
+
+  // ── 4 การ์ดของเดือนที่เลือก ──
+  const card=(l,u,v,d)=>`<div class="kpi"><div class="l">${l}<span class="u">${u}</span></div><div class="v">${v}</div><div class="d">${d}</div></div>`;
+  const both=(it,v25,vp,v26)=>`<span class="cmp">ปีก่อน</span>${bChip(it,v25,v26)}<span class="cmp">เดือนก่อน</span>${bChip(it,vp,v26)}`;
   document.getElementById('bKpis').innerHTML=
-    kpi(`ยอดขายสะสม ${YEAR} (฿)`,fmt(T.s26),`ปีก่อน ${fmt(T.s25)} ${chip(pct(T.s25,T.s26))}`)+
-    kpi(`EBIT สะสม ${YEAR} (฿)`,fmt(T.e26),`ปีก่อน ${fmt(T.e25)} ${chip(pct(T.e25,T.e26))}`)+
-    kpi('COL % to Sales สะสม',tc26==null?'–':(tc26*100).toFixed(1)+'%',`ปีก่อน ${tc25==null?'–':(tc25*100).toFixed(1)+'%'}`)+
-    kpi('ข้อร้องเรียนสะสม',fmt(T.cp),`OT สะสม ${fmt(T.ot)} ฿`)+
-    kpi(`${MONTHS[sel.m]} — ยอดขาย`,fmt(cur.s26),`YoY ${chip(cur.yoy.s)} MoM ${chip(cur.mom.s)}`)+
-    kpi('เดือนที่ยอดขายลด YoY',`${M.filter(r=>r.yoy.s<0).length} <span style="font-size:15px;color:var(--ink-3);font-weight:400">/ ${M.filter(r=>r.yoy.s!=null).length} เดือน</span>`,`เดือนที่ EBIT ลด: ${M.filter(r=>r.yoy.e<0).length}`);
+    card('ยอดขาย',`${mon} · บาท`,fmt(cur.s26),both({k:'s'},cur.s25,p&&p.s26,cur.s26))+
+    card('กำไร (EBIT)',`${mon} · บาท`,fmt(cur.e26),both({k:'e',signed:true},cur.e25,p&&p.e26,cur.e26))+
+    card('ค่าแรง % ของยอดขาย',mon,bPc(cur.col26),both({k:'col',inv:true,kind:'pt'},cur.col25,p?colPct(p,'26'):null,cur.col26))+
+    card('ข้อร้องเรียน',`${mon} · ครั้ง`,fmt(cur.cp),`<span class="cmp">เดือนก่อน</span>${bChip({k:'cp',inv:true,kind:'n',flat:true},p?p.cp:null,cur.cp)}`);
+
+  renderBranchPick(all,bs);
+
+  // ── ตารางทั้งปี: เฉพาะเดือนที่มีข้อมูล กดแถวเพื่อเปลี่ยนเดือนของการ์ดด้านบน ──
+  const T={}; FIELDS.forEach(f=>T[f]=sum(M.map(r=>r[f]))); const tc25=colPct(T,'25'), tc26=colPct(T,'26');
+  document.getElementById('bSub').textContent=filled.length
+    ?`กดแถวเพื่อดูเดือนนั้นในการ์ดด้านบน`+(filled.length<12?` · ยังไม่มีข้อมูล ${12-filled.length} เดือน`:'')
+    :'ยังไม่มีข้อมูล';
+  const line=(first,r,cls2,tail)=>`<tr ${cls2}>${first}`+
+    `<td class="cv">${fmt(r.s26)}</td>${cmpChg({k:'s'},r.s25,r.s26)}`+
+    `<td class="cv">${fmt(r.e26)}</td>${cmpChg({k:'e',signed:true},r.e25,r.e26)}`+
+    `${cmpChg({k:'c',inv:true},r.c25,r.c26)}`+
+    `<td class="cv">${bPc(colPct(r,'26'))}</td>${cmpChg({k:'col',inv:true,kind:'pt'},colPct(r,'25'),colPct(r,'26'))}`+
+    `<td class="cv">${fmt(bSum(r.tdi26,r.td26))}</td>${cmpChg({k:'s'},bSum(r.tdi25,r.td25),bSum(r.tdi26,r.td26))}`+
+    tail+`</tr>`;
+  const mt=M.map((r,i)=>!r.has?'':line(`<td><b>${MONTHS[i]}</b></td>`,r,`class="${i===sel.m?'on':''}" data-m="${i}"`,
+    `<td class="cv${!all&&r.cp>=3?' neg':''}">${fmt(r.cp)}</td>`+
+    (all?'':`<td class="issues"><div class="tags">${bTags(r)}</div>${r.note?`<span class="nt">${esc(r.note)}</span>`:''}</td>`))).join('');
+  const mtot=!filled.length?'':line(`<td>รวม ${filled.length} เดือน</td>`,T,'class="total"',`<td class="cv">${fmt(T.cp)}</td>${all?'':'<td></td>'}`);
+  document.getElementById('bMonths').innerHTML=filled.length
+    ?`<table class="perf2 bm"><thead><tr><th></th><th class="grp" colspan="2">ยอดขาย</th><th class="grp alt" colspan="2">กำไร (EBIT)</th>`+
+      `<th class="grp">ต้นทุนวัตถุดิบ</th><th class="grp alt" colspan="2">ค่าแรง % ของยอดขาย</th><th class="grp" colspan="2">จำนวนบิล</th>`+
+      `<th class="grp alt">ร้องเรียน</th>${all?'':'<th></th>'}</tr>`+
+      `<tr><th>เดือน</th><th>บาท</th><th>เทียบปีก่อน</th><th>บาท</th><th>เทียบปีก่อน</th><th>เทียบปีก่อน</th><th>เดือนนี้</th>`+
+      `<th>ต่างจากปีก่อน</th><th>หน้าร้าน+เดลิเวอรี</th><th>เทียบปีก่อน</th><th>ครั้ง</th>${all?'':'<th style="text-align:left">ประเด็นที่พบ</th>'}</tr></thead>`+
+      `<tbody>${mt}${mtot}</tbody></table>`
+    :`<div class="empty">ยังไม่มีข้อมูลของ${all?'ขอบเขตนี้':'สาขานี้'} กรอกหรือนำเข้าไฟล์ได้ที่แท็บกรอกข้อมูล</div>`;
+
+  // ── กราฟหลัก 2 อัน ──
   const O=(extra={})=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':fmt(v)},grid:{color:'#EFEFF3'}}},...extra});
   mkChart('chB1',{type:'bar',data:{labels:MSHORT,datasets:[{label:PREV,data:M.map(r=>r.s25),backgroundColor:'#D1D1D6',borderRadius:3},{label:YEAR,data:M.map(r=>r.s26),backgroundColor:M.map(r=>r.yoy.s<0?'#C0605C':'#3D6475'),borderRadius:3}]},options:O()});
   mkChart('chB2',{type:'bar',data:{labels:MSHORT,datasets:[{label:PREV,data:M.map(r=>r.e25),backgroundColor:'#D1D1D6',borderRadius:3},{label:YEAR,data:M.map(r=>r.e26),backgroundColor:M.map(r=>r.e26<0?'#C0605C':'#3D6475'),borderRadius:3}]},options:O()});
-  mkChart('chB3',{type:'bar',data:{labels:MSHORT,datasets:[{label:'COGs (฿)',data:M.map(r=>r.c26),backgroundColor:'#D8D8DE',borderRadius:2,yAxisID:'y'},{type:'line',label:'COL % to Sales',data:M.map(r=>r.col26==null?null:+(r.col26*100).toFixed(1)),borderColor:'#3D6475',backgroundColor:'#3D6475',tension:.25,pointRadius:4,yAxisID:'y2',spanGaps:false},{type:'line',label:`COL % ${PREV}`,data:M.map(r=>r.col25==null?null:+(r.col25*100).toFixed(1)),borderColor:'#AEAEB2',backgroundColor:'#AEAEB2',borderDash:[5,4],tension:.25,pointRadius:3,yAxisID:'y2',spanGaps:false}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.dataset.yAxisID==='y2'?(c.raw==null?'–':c.raw+'%'):fmt(c.raw)}`}}},scales:{x:{grid:{display:false}},y:{position:'left',ticks:{callback:v=>fmt(v)},grid:{color:'#EFEFF3'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}});
-  mkChart('chB4',{type:'bar',data:{labels:MSHORT,datasets:[{label:'Trans Dine In',data:M.map(r=>r.tdi26),backgroundColor:'#3D6475',borderRadius:2,stack:'t',yAxisID:'y'},{label:'Trans Delivery',data:M.map(r=>r.td26),backgroundColor:'#A9BCC6',borderRadius:2,stack:'t',yAxisID:'y'},{type:'line',label:'Ticket Dine In (฿)',data:M.map(r=>r.kdi26),borderColor:'#1C1C1E',backgroundColor:'#1C1C1E',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false},{type:'line',label:'Ticket Delivery (฿)',data:M.map(r=>r.kd26),borderColor:'#D97757',backgroundColor:'#D97757',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{x:{grid:{display:false},stacked:true},y:{stacked:true,position:'left',ticks:{callback:v=>fmt(v)},grid:{color:'#EFEFF3'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>fmt(v)}}}}});
-  mkChart('chB5',{type:'bar',data:{labels:MSHORT,datasets:[{label:'Complaint (ครั้ง)',data:M.map(r=>r.cp),backgroundColor:M.map(r=>r.cp>=3?'#C0605C':'#C7C7CC'),borderRadius:3}]},options:O({plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{ticks:{stepSize:1},grid:{color:'#EFEFF3'}}}})});
-  mkChart('chB6',{type:'bar',data:{labels:MSHORT,datasets:[{label:'OT (฿)',data:M.map(r=>r.ot),backgroundColor:'#5B7C8D',borderRadius:3}]},options:O({plugins:{legend:{display:false}}})});
+
+  // ── กราฟเพิ่มเติม: วาดเมื่อเปิดดู (ตอนพับอยู่กราฟวัดขนาดไม่ได้) ──
+  if(document.getElementById('bMoreCharts').open){
+    mkChart('chB3',{type:'bar',data:{labels:MSHORT,datasets:[{label:'ต้นทุนวัตถุดิบ (บาท)',data:M.map(r=>r.c26),backgroundColor:'#D8D8DE',borderRadius:2,yAxisID:'y'},{type:'line',label:'ค่าแรง % ปีนี้',data:M.map(r=>r.col26==null?null:+(r.col26*100).toFixed(1)),borderColor:'#3D6475',backgroundColor:'#3D6475',tension:.25,pointRadius:4,yAxisID:'y2',spanGaps:false},{type:'line',label:'ค่าแรง % ปีก่อน',data:M.map(r=>r.col25==null?null:+(r.col25*100).toFixed(1)),borderColor:'#AEAEB2',backgroundColor:'#AEAEB2',borderDash:[5,4],tension:.25,pointRadius:3,yAxisID:'y2',spanGaps:false}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.dataset.yAxisID==='y2'?(c.raw==null?'–':c.raw+'%'):fmt(c.raw)}`}}},scales:{x:{grid:{display:false}},y:{position:'left',ticks:{callback:v=>fmt(v)},grid:{color:'#EFEFF3'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}});
+    mkChart('chB4',{type:'bar',data:{labels:MSHORT,datasets:[{label:'บิลหน้าร้าน',data:M.map(r=>r.tdi26),backgroundColor:'#3D6475',borderRadius:2,stack:'t',yAxisID:'y'},{label:'บิลเดลิเวอรี',data:M.map(r=>r.td26),backgroundColor:'#A9BCC6',borderRadius:2,stack:'t',yAxisID:'y'},{type:'line',label:'ยอดต่อบิลหน้าร้าน (บาท)',data:M.map(r=>r.kdi26),borderColor:'#1C1C1E',backgroundColor:'#1C1C1E',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false},{type:'line',label:'ยอดต่อบิลเดลิเวอรี (บาท)',data:M.map(r=>r.kd26),borderColor:'#D97757',backgroundColor:'#D97757',pointRadius:4,tension:.25,yAxisID:'y2',spanGaps:false}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)}`}}},scales:{x:{grid:{display:false},stacked:true},y:{stacked:true,position:'left',ticks:{callback:v=>fmt(v)},grid:{color:'#EFEFF3'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>fmt(v)}}}}});
+    mkChart('chB5',{type:'bar',data:{labels:MSHORT,datasets:[{label:'ข้อร้องเรียน (ครั้ง)',data:M.map(r=>r.cp),backgroundColor:M.map(r=>r.cp>=3?'#C0605C':'#C7C7CC'),borderRadius:3}]},options:O({plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{ticks:{stepSize:1},grid:{color:'#EFEFF3'}}}})});
+    mkChart('chB6',{type:'bar',data:{labels:MSHORT,datasets:[{label:'ค่าล่วงเวลา (บาท)',data:M.map(r=>r.ot),backgroundColor:'#5B7C8D',borderRadius:3}]},options:O({plugins:{legend:{display:false}}})});
+  }
+
+  // ── ตัวเลขทั้งหมด (พับเก็บไว้) ──
   const pc=(v,inv)=>`<td class="${cls(v,inv)}">${fmtPct(v)}</td>`;
-  const rows=M.map((r,i)=>`<tr style="${i===sel.m?'background:var(--red-lt)':''}"><td>${MONTHS[i]}</td><td>${fmt(r.s25)}</td><td>${fmt(r.s26)}</td>${pc(r.yoy.s)}${pc(r.mom.s)}<td>${fmt(r.e25)}</td><td>${fmt(r.e26)}</td>${pc(r.yoy.e)}<td>${fmt(r.c26)}</td>${pc(r.yoy.c,true)}<td>${fmt(r.l26)}</td><td>${r.col26==null?'–':(r.col26*100).toFixed(1)+'%'}</td><td class="${cls(r.colD,true)}">${r.colD==null?'–':(r.colD>0?'+':'')+(r.colD*100).toFixed(1)+' pt'}</td><td>${fmt(r.tdi26)}</td>${pc(r.yoy.tdi)}<td>${fmt(r.kdi26)}</td><td>${fmt(r.td26)}</td>${pc(r.yoy.td)}<td>${fmt(r.kd26)}</td><td>${fmt(r.ot)}</td><td>${r.osc==null?'–':(r.osc*100).toFixed(1)+'%'}</td><td class="${r.cp>=3?'neg':''}">${fmt(r.cp)}</td><td class="status ${r.score?'warn':'ok'}">${r.has?(r.score?'⚠ '+r.issues.join(', '):'✔ ปกติ'):''}${r.note?`<div class="mute" style="font-size:12px">${r.note}</div>`:''}</td></tr>`).join('');
-  const total=`<tr class="total"><td>รวมทั้งปี</td><td>${fmt(T.s25)}</td><td>${fmt(T.s26)}</td>${pc(pct(T.s25,T.s26))}<td></td><td>${fmt(T.e25)}</td><td>${fmt(T.e26)}</td>${pc(pct(T.e25,T.e26))}<td>${fmt(T.c26)}</td>${pc(pct(T.c25,T.c26),true)}<td>${fmt(T.l26)}</td><td>${tc26==null?'–':(tc26*100).toFixed(1)+'%'}</td><td class="${cls(tc25!=null&&tc26!=null?tc26-tc25:null,true)}">${tc25!=null&&tc26!=null?((tc26-tc25>0?'+':'')+((tc26-tc25)*100).toFixed(1)+' pt'):'–'}</td><td>${fmt(T.tdi26)}</td>${pc(pct(T.tdi25,T.tdi26))}<td></td><td>${fmt(T.td26)}</td>${pc(pct(T.td25,T.td26))}<td></td><td>${fmt(T.ot)}</td><td></td><td>${fmt(T.cp)}</td><td></td></tr>`;
-  document.getElementById('bTable').innerHTML=`<table><thead><tr><th></th><th class="grp" colspan="4">Sales (฿)</th><th class="grp alt" colspan="3">EBIT (฿)</th><th class="grp" colspan="2">COGs</th><th class="grp alt" colspan="3">COL</th><th class="grp" colspan="3">Dine In</th><th class="grp alt" colspan="3">Delivery</th><th class="grp">OT</th><th class="grp alt">OSC</th><th class="grp">Complaint</th><th></th></tr>
-    <tr><th>เดือน</th><th>${PREV}</th><th>${YEAR}</th><th>YoY</th><th>MoM</th><th>${PREV}</th><th>${YEAR}</th><th>YoY</th><th>${YEAR}</th><th>YoY</th><th>${YEAR} (฿)</th><th>%</th><th>Δ YoY</th><th>Trans</th><th>YoY</th><th>Ticket</th><th>Trans</th><th>YoY</th><th>Ticket</th><th>฿</th><th>%</th><th>ครั้ง</th><th style="text-align:left">สถานะ</th></tr></thead><tbody>${rows}${total}</tbody></table>`;
+  const rows=M.map((r,i)=>`<tr style="${i===sel.m?'background:#E6EEF2':''}"><td>${MONTHS[i]}</td><td>${fmt(r.s25)}</td><td>${fmt(r.s26)}</td>${pc(r.yoy.s)}${pc(r.mom.s)}<td>${fmt(r.e25)}</td><td>${fmt(r.e26)}</td>${pc(r.yoy.e)}<td>${fmt(r.c26)}</td>${pc(r.yoy.c,true)}<td>${fmt(r.l26)}</td><td>${bPc(r.col26)}</td><td class="${cls(r.colD,true)}">${r.colD==null?'–':(r.colD>0?'+':'')+(r.colD*100).toFixed(1)+' pt'}</td><td>${fmt(r.tdi26)}</td>${pc(r.yoy.tdi)}<td>${fmt(r.kdi26)}</td><td>${fmt(r.td26)}</td>${pc(r.yoy.td)}<td>${fmt(r.kd26)}</td><td>${fmt(r.ot)}</td><td>${bPc(r.osc)}</td><td class="${r.cp>=3?'neg':''}">${fmt(r.cp)}</td><td class="status ${r.score?'warn':'ok'}">${r.has?(r.score?r.issues.join(', '):'ปกติ'):''}${r.note?`<div class="mute" style="font-size:12px">${esc(r.note)}</div>`:''}</td></tr>`).join('');
+  const total=`<tr class="total"><td>รวมทั้งปี</td><td>${fmt(T.s25)}</td><td>${fmt(T.s26)}</td>${pc(pct(T.s25,T.s26))}<td></td><td>${fmt(T.e25)}</td><td>${fmt(T.e26)}</td>${pc(pct(T.e25,T.e26))}<td>${fmt(T.c26)}</td>${pc(pct(T.c25,T.c26),true)}<td>${fmt(T.l26)}</td><td>${bPc(tc26)}</td><td class="${cls(tc25!=null&&tc26!=null?tc26-tc25:null,true)}">${tc25!=null&&tc26!=null?((tc26-tc25>0?'+':'')+((tc26-tc25)*100).toFixed(1)+' pt'):'–'}</td><td>${fmt(T.tdi26)}</td>${pc(pct(T.tdi25,T.tdi26))}<td></td><td>${fmt(T.td26)}</td>${pc(pct(T.td25,T.td26))}<td></td><td>${fmt(T.ot)}</td><td></td><td>${fmt(T.cp)}</td><td></td></tr>`;
+  document.getElementById('bTable').innerHTML=`<table><thead><tr><th></th><th class="grp" colspan="4">ยอดขาย (บาท)</th><th class="grp alt" colspan="3">กำไร (บาท)</th><th class="grp" colspan="2">ต้นทุนวัตถุดิบ</th><th class="grp alt" colspan="3">ค่าแรง</th><th class="grp" colspan="3">หน้าร้าน</th><th class="grp alt" colspan="3">เดลิเวอรี</th><th class="grp">ค่าล่วงเวลา</th><th class="grp alt">คะแนนบริการ</th><th class="grp">ร้องเรียน</th><th></th></tr>`+
+    `<tr><th>เดือน</th><th>${PREV}</th><th>${YEAR}</th><th>เทียบปีก่อน</th><th>เทียบเดือนก่อน</th><th>${PREV}</th><th>${YEAR}</th><th>เทียบปีก่อน</th><th>${YEAR}</th><th>เทียบปีก่อน</th><th>${YEAR} (บาท)</th><th>% ยอดขาย</th><th>ต่างจากปีก่อน</th><th>บิล</th><th>เทียบปีก่อน</th><th>ต่อบิล</th><th>บิล</th><th>เทียบปีก่อน</th><th>ต่อบิล</th><th>บาท</th><th>%</th><th>ครั้ง</th><th style="text-align:left">สถานะ</th></tr></thead><tbody>${rows}${total}</tbody></table>`;
 }
 document.getElementById('selBranch').onchange=e=>{sel.branch=e.target.value;renderBranch();};
 const bRing=()=>['all',...scopeBranches().map(b=>b.id)];   // ให้ภาพรวมอยู่หัวแถวด้วย
 const bStep=d=>{const r=bRing(),i=Math.max(0,r.indexOf(sel.branch));sel.branch=r[(i+d+r.length)%r.length];renderBranch();};
 document.getElementById('prevB').onclick=()=>bStep(-1);
 document.getElementById('nextB').onclick=()=>bStep(1);
+document.getElementById('bMonths').addEventListener('click',e=>{ const tr=e.target.closest('tr[data-m]'); if(!tr)return; sel.m=+tr.dataset.m; render(); });
+document.getElementById('bMoreCharts').addEventListener('toggle',e=>{ if(e.target.open) renderBranch(); });
+document.getElementById('bPick').addEventListener('click',e=>{ if(e.target.closest('#bPickMore')){ sel.bPickAll=!sel.bPickAll; renderBranch(); } });
 
 /* ---------------- render: input grid ---------------- */
 function renderInput(){
