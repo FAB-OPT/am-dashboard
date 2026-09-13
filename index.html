@@ -464,6 +464,44 @@ th.sortable.on{color:var(--brand)}
 .zone-b .x:hover{color:var(--red)}
 .zone-add{padding:10px 17px;color:var(--ink-2);display:flex;gap:9px;align-items:center}
 .zone-add input{flex:1;padding:7px 10px;border:1px dashed var(--line);border-radius:8px}
+/* ผู้ดูแลและสาขา */
+.zone{margin-bottom:14px}
+.zone-h{flex-wrap:wrap}
+.zone-h .lbl{flex:1 1 150px}
+.zone-h .lbl input{min-width:0;width:100%}
+.zone-n{margin-left:auto;font-size:12.5px;color:var(--ink-3);font-weight:600;align-self:center;white-space:nowrap}
+.zone-b{flex-wrap:wrap}
+.zone-b input[data-bn]{flex:1 1 220px;min-width:0}
+.zone-mv{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-3);font-weight:600;white-space:nowrap}
+.zone-mv select{max-width:170px}
+.zone-add input{min-width:0}
+.zone-empty{padding:12px 17px;font-size:12.5px;color:var(--ink-3)}
+.zone-del{margin:12px 17px;padding:10px 12px;border-radius:var(--r-sm);background:var(--red-soft);color:var(--red);
+  display:grid;gap:6px;font-size:12.5px}
+.zone-del .lbl{display:grid;gap:4px;color:var(--ink-2);font-size:12px;font-weight:600}
+.zone-del select{height:38px;border:1px solid var(--line);border-radius:var(--r-sm);padding:0 8px;background:var(--panel);
+  max-width:380px;font:inherit;font-size:13px}
+.zone-del .hint{color:var(--ink-2)}
+.zone-del .act{display:flex;gap:8px;flex-wrap:wrap}
+.zone-new{box-shadow:0 0 0 2px var(--ink)}
+.zone-new-h{padding:14px 17px 2px;font-weight:700;font-size:15px}
+.zone-new-b{display:flex;flex-wrap:wrap;gap:12px;padding:10px 17px}
+.zone-new-b .lbl{flex:1 1 180px;display:grid;gap:4px;font-size:11.5px;font-weight:600;color:var(--ink-3)}
+.zone-new-b input{padding:9px 10px;border:1px solid var(--line);border-radius:8px;min-width:0;width:100%;font:inherit;font-size:14px;background:var(--panel)}
+.zone-code{display:flex;gap:6px}
+.zone-new-f{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;padding:6px 17px 14px}
+.zone-new-f .hint{margin-right:auto;flex:1 1 240px}
+.zone-err{margin:0 17px 4px;color:var(--red);font-size:12.5px;font-weight:600}
+.zone-msg{position:sticky;top:8px;z-index:5;margin:0 0 12px;padding:10px 14px;border-radius:var(--r-sm);
+  background:var(--green-soft);color:var(--green);font-weight:600;font-size:13px}
+.arch-t{flex:1 1 240px;min-width:0}
+.arch-t b{display:block;font-weight:600}
+.arch-t span{display:block;font-size:11.5px;color:var(--ink-3)}
+@media(max-width:760px){
+  .zone-mv{flex:1 1 55%}
+  .zone-mv select{max-width:none;flex:1;min-width:0}
+  .zone-n{margin-left:0}
+}
 .codes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
 .codes label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:var(--ink-3)}
 .codes input{padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);
@@ -866,7 +904,7 @@ th.sortable:hover{background:#EDEDF1;color:var(--ink)}
   .tabs button[data-tab=compare]::after{content:'เทียบ'}
   .tabs button[data-tab=year]::after{content:'ทั้งปี'}
   .tabs button[data-tab=input]::after{content:'กรอก'}
-  .tabs button[data-tab=zones]::after{content:'โซน'}
+  .tabs button[data-tab=zones]::after{content:'ผู้ดูแล'}
   .tabs button[aria-selected=true]{background:transparent;box-shadow:none;color:var(--ink)}
   .tabs button[aria-selected=true]::after{font-weight:700}
 
@@ -929,7 +967,7 @@ body.present .kpi .v{font-size:46px}
       </label>
       <button class="btn primary" type="submit" id="loginBtn">เข้าใช้งาน</button>
       <p class="err" id="loginErr"></p>
-      <p class="hint" id="loginHint">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · ถ้าลืมรหัส Admin เปลี่ยนได้ในแท็บจัดการโซน</p>
+      <p class="hint" id="loginHint">รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · ถ้าลืมรหัส Admin เปลี่ยนได้ในแท็บผู้ดูแลและสาขา</p>
     </form>
   </div>
 </div>
@@ -968,7 +1006,7 @@ body.present .kpi .v{font-size:46px}
     <button role="tab" data-tab="compare">ตารางเทียบข้อมูล</button>
     <button role="tab" data-tab="year">สรุปทั้งปี</button>
     <button role="tab" data-tab="input">กรอกข้อมูล</button>
-    <button role="tab" data-tab="zones" id="tabZones" style="display:none">จัดการโซน</button>
+    <button role="tab" data-tab="zones" id="tabZones" style="display:none">ผู้ดูแลและสาขา</button>
   </nav>
 </header>
 
@@ -1062,19 +1100,23 @@ body.present .kpi .v{font-size:46px}
     <div class="tbl-wrap" id="yearBranchTable"></div>
   </section>
 
-  <!-- ================= ZONES (admin) ================= -->
+  <!-- ================= ผู้ดูแลและสาขา (Admin, VP) ================= -->
   <section class="view" id="view-zones">
-    <div class="sec"><h2>รหัสเข้าใช้งาน</h2><span class="note">บอกรหัสเฉพาะคนที่เกี่ยว · เปลี่ยนแล้วบันทึกทันที</span></div>
-    <div class="card"><div class="codes">
-      <label>รหัส VP (เห็นทุกโซน) <input id="cVp"></label>
-      <label>รหัส Admin (เห็นทุกโซน + จัดการโซน) <input id="cAdmin"></label>
-    </div></div>
-    <div class="sec"><h2>โซนและสาขา</h2><span class="note">แก้ชื่อ/รหัสได้ทันที · ย้ายสาขาด้วยดรอปดาวน์ท้ายแถว · ข้อมูลตัวเลขติดไปกับสาขาเสมอ</span>
-      <div class="right"><button class="btn primary" id="btnAddZone">+ เพิ่มโซน</button></div></div>
+    <div id="codesBlock">
+      <div class="sec"><h2>รหัสเข้าใช้งาน</h2><span class="note">เฉพาะ Admin · บอกรหัสเฉพาะคนที่เกี่ยว เปลี่ยนแล้วบันทึกทันที</span></div>
+      <div class="card"><div class="codes">
+        <label>รหัส VP (เห็นทุกผู้ดูแล) <input id="cVp"></label>
+        <label>รหัส Admin (เห็นทุกผู้ดูแล และจัดการรหัส) <input id="cAdmin"></label>
+      </div></div>
+    </div>
+    <div class="sec"><h2>ผู้ดูแลและสาขา</h2><span class="note" id="zoneNote"></span>
+      <div class="right"><button class="btn primary" type="button" id="btnAddZone">+ เพิ่มผู้ดูแล</button></div></div>
+    <div class="zone-msg" id="zoneMsg" role="status" hidden></div>
+    <div id="zoneForm"></div>
     <div id="zoneList"></div>
-    <div class="toolbar" style="margin-top:14px">
-      <button class="btn ghost" id="btnResetCfg">คืนค่าโซนเริ่มต้น (5 โซนเดิม)</button>
-      <span class="hint">รหัสอยู่ในไฟล์/เบราว์เซอร์นี้ ใช้แยกหน้าใครหน้ามันและกันกดผิด ไม่ใช่ระบบความปลอดภัยจริง</span>
+    <div id="archList"></div>
+    <div class="toolbar" style="margin-top:14px" id="resetBlock">
+      <button class="btn ghost" type="button" id="btnResetCfg">คืนค่าผังเริ่มต้น (5 ผู้ดูแลเดิม)</button>
     </div>
   </section>
 
@@ -1227,7 +1269,13 @@ async function flush(){
   const keys=[...dirty]; dirty.clear();
   const doCfg=cfgDirty; cfgDirty=false;
   try{
-    if(doCfg){ const {error}=await SB.rpc('am_set_config',{p_code:CODE,p_value:cfg}); if(error) throw error; }
+    if(doCfg){
+      // Admin บันทึกทั้งผังรวมรหัส · VP ไม่มีรหัสในมือ (ฐานตัดออกให้) จึงส่งแค่ผังผู้ดูแลและสาขา
+      const {error}=(role&&role.type==='admin')
+        ?await SB.rpc('am_set_config',{p_code:CODE,p_value:cfg})
+        :await SB.rpc('am_set_structure',{p_code:CODE,p_value:{zones:cfg.zones,archived:cfg.archived||[],nextId:cfg.nextId}});
+      if(error) throw error;
+    }
     if(keys.length){
       const rows=keys.map(k=>{ const p=k.split('|'), m=+p[0], id=p[1];
         return {month:m,branch_id:id,fields:(store.data[m]||{})[id]||{}}; });
@@ -1248,6 +1296,9 @@ async function flush(){
 function sbErr(e){
   const msg=(e&&(e.message||e.error_description))||'';
   if(/รหัสไม่ถูกต้อง|28000/.test(msg)){ setSync('error','รหัสถูกเปลี่ยน ให้เข้าใช้งานใหม่'); return; }
+  const ecode=(e&&e.code)||'';
+  if(/am_set_structure|am_code_free|Could not find the function/i.test(msg)||ecode==='PGRST202'){ setSync('error','ต้องติดตั้ง supabase/manage.sql ก่อน'); return; }
+  if(ecode==='23505'||/รหัสเข้าใช้ซ้ำ/.test(msg)){ setSync('error','รหัสเข้าใช้ซ้ำกับคนอื่น'); return; }
   if(/ไม่มีสิทธิ์|42501/.test(msg)){ setSync('error','ไม่มีสิทธิ์แก้สาขานอกโซน'); return; }
   setSync('error', msg.slice(0,80));
   console.warn('[AM] supabase:', e);
@@ -2121,40 +2172,190 @@ document.getElementById('btnCsv').onclick=()=>{
   offerFile(`เทียบข้อมูล_${sel.am}_${MSHORT[m]}${YEAR}.csv`,'\ufeff'+out.join('\n'),'text/csv;charset=utf-8');
 };
 
-/* ---------------- zones (admin) ---------------- */
+/* ---------------- ผู้ดูแลและสาขา (Admin, VP) ----------------
+   ลบสาขา = ย้ายไปไว้ใน cfg.archived ตัวเลขทุกเดือนยังอยู่ในฐาน กดกู้คืนได้
+   VP ไม่เห็นรหัสเข้าใช้ของใคร ตั้งรหัสได้เฉพาะตอนเพิ่มผู้ดูแลใหม่ (ฐานตรวจซ้ำให้) */
+let zForm=false, zDelArm=null, zErr='';
+const zIsAdmin=()=>!!(role&&role.type==='admin');
+function zToday(){ const d=new Date(); return `${d.getDate()} ${MSHORT[d.getMonth()]} ${d.getFullYear()+543}`; }
+function zDataMonths(bid){ let n=0; Object.keys(store.data||{}).forEach(m=>{ const r=(store.data[m]||{})[bid]; if(r&&Object.keys(r).length) n++; }); return n; }
+function zMsg(t){ const m=document.getElementById('zoneMsg'); if(!m) return; m.textContent=t; m.hidden=false; clearTimeout(m._t); m._t=setTimeout(()=>{ m.hidden=true; },4000); }
 function renderZones(){
-  document.getElementById('cVp').value=cfg.vpCode; document.getElementById('cAdmin').value=cfg.adminCode;
-  const opts=(cur)=>cfg.zones.map(z=>`<option value="${z.id}" ${z.id===cur?'selected':''}>${z.name}</option>`).join('');
-  document.getElementById('zoneList').innerHTML=cfg.zones.map(z=>`<div class="zone" data-z="${z.id}">
-    <div class="zone-h">
-      <label class="lbl">แบรนด์<input data-k="brand" value="${z.brand||''}" style="width:140px"></label>
-      <label class="lbl">ชื่อโซน / ผู้ดูแล<input data-k="name" value="${z.name}" style="width:120px"></label>
-      <label class="lbl">ชื่อเต็ม<input data-k="full" value="${z.full||''}" style="width:220px"></label>
-      <label class="lbl">รหัสเข้าใช้<input data-k="code" value="${z.code}" style="width:110px"></label>
-      <span class="hint" style="margin-left:auto">${z.branches.length} สาขา</span>
-      <button class="btn ghost" data-del="${z.id}">ลบโซน</button>
-    </div>
-    ${z.branches.map(b=>`<div class="zone-b" data-b="${b.id}"><input data-bn value="${b.name.replace(/"/g,'&quot;')}"><select data-mv title="ย้ายไปโซน">${opts(z.id)}</select><button class="x" data-rm title="ลบสาขา">×</button></div>`).join('')}
-    <div class="zone-add"><input data-new placeholder="พิมพ์ชื่อสาขาใหม่แล้ว Enter"></div>
-  </div>`).join('');
+  const adm=zIsAdmin();
+  cfg.archived=cfg.archived||[];
+  document.getElementById('codesBlock').hidden=!adm;
+  document.getElementById('resetBlock').hidden=!adm;
+  if(adm){ document.getElementById('cVp').value=cfg.vpCode||''; document.getElementById('cAdmin').value=cfg.adminCode||''; }
+  const nb=cfg.zones.reduce((a,z)=>a+z.branches.length,0);
+  document.getElementById('zoneNote').textContent=`${cfg.zones.length} ผู้ดูแล · ${nb} สาขา · แก้ชื่อได้ทันที ตัวเลขที่กรอกไว้ติดไปกับสาขาเสมอ`;
+  document.getElementById('zoneForm').innerHTML=!zForm?'':
+    `<div class="zone zone-new"><div class="zone-new-h">เพิ่มผู้ดูแล</div>`+
+    `<div class="zone-new-b">`+
+      `<label class="lbl">ชื่อเรียก<input id="nzName" placeholder="เช่น พี่นก" autocomplete="off"></label>`+
+      `<label class="lbl">ชื่อเต็ม<input id="nzFull" placeholder="เช่น คุณนกน้อย ใจดี" autocomplete="off"></label>`+
+      `<label class="lbl">รหัสเข้าใช้<span class="zone-code"><input id="nzCode" autocomplete="off" placeholder="เช่น NOK01"><button class="btn ghost sm" type="button" id="nzGen">สุ่ม</button></span></label>`+
+    `</div>`+
+    (zErr?`<div class="zone-err">${esc(zErr)}</div>`:'')+
+    `<div class="zone-new-f"><span class="hint">ผู้ดูแลใช้รหัสนี้เข้าเว็บ เห็นเฉพาะสาขาของตัวเอง`+
+      (adm?'':' · VP ตั้งรหัสได้ครั้งเดียวตอนเพิ่ม ถ้าต้องเปลี่ยนภายหลังให้ Admin เปลี่ยน')+`</span>`+
+    `<button class="btn ghost" type="button" id="nzCancel">ยกเลิก</button><button class="btn primary" type="button" id="nzSave">เพิ่มผู้ดูแล</button></div></div>`;
+  const opts=cur=>cfg.zones.map(z=>`<option value="${z.id}" ${z.id===cur?'selected':''}>${esc(z.name)}</option>`).join('');
+  document.getElementById('zoneList').innerHTML=cfg.zones.map(z=>{
+    const others=cfg.zones.filter(o=>o.id!==z.id);
+    const del=zDelArm!==z.id?'':
+      `<div class="zone-del">`+
+        (z.branches.length
+          ?`<b>ลบ ${esc(z.name)} ที่ดูแลอยู่ ${z.branches.length} สาขา</b>`+
+           `<label class="lbl">สาขาของ ${esc(z.name)} ให้ย้ายไปอยู่กับ<select id="zdTo">`+
+             others.map(o=>`<option value="${o.id}">${esc(o.name)}</option>`).join('')+
+             `<option value="">ไม่ย้าย ลบสาขาไปไว้ที่สาขาที่ลบแล้ว</option></select></label>`
+          :`<b>ลบ ${esc(z.name)} ใช่ไหม</b>`)+
+        `<span class="hint">รหัสเข้าใช้ของ ${esc(z.name)} จะใช้ไม่ได้ทันที ตัวเลขที่กรอกไว้ไม่หาย</span>`+
+        `<div class="act"><button class="btn danger sm" type="button" data-zdyes="${z.id}">ยืนยันลบผู้ดูแล</button>`+
+        `<button class="btn ghost sm" type="button" data-zdno="1">ไม่ลบ</button></div>`+
+      `</div>`;
+    return `<div class="zone" data-z="${z.id}">`+
+      `<div class="zone-h">`+
+        `<label class="lbl">ชื่อเรียก<input data-k="name" value="${esc(z.name)}"></label>`+
+        `<label class="lbl">ชื่อเต็ม<input data-k="full" value="${esc(z.full||'')}"></label>`+
+        `<label class="lbl">แบรนด์<input data-k="brand" value="${esc(z.brand||'')}"></label>`+
+        (adm?`<label class="lbl">รหัสเข้าใช้<input data-k="code" value="${esc(z.code||'')}"></label>`:'')+
+        `<span class="zone-n">${z.branches.length} สาขา</span>`+
+        (cfg.zones.length>1&&zDelArm!==z.id?`<button class="btn danger-ghost sm" type="button" data-zdel="${z.id}">ลบผู้ดูแล</button>`:'')+
+      `</div>${del}`+
+      z.branches.map(b=>`<div class="zone-b" data-b="${b.id}">`+
+        `<input data-bn value="${esc(b.name)}" aria-label="ชื่อสาขา">`+
+        `<label class="zone-mv">ย้ายไป<select data-mv>${opts(z.id)}</select></label>`+
+        `<button class="btn ghost sm" type="button" data-rm title="ลบสาขา ข้อมูลยังเก็บไว้ กู้คืนได้">ลบ</button></div>`).join('')+
+      (z.branches.length?'':`<div class="zone-empty">ยังไม่มีสาขา เพิ่มได้ด้านล่าง</div>`)+
+      `<div class="zone-add"><input data-new placeholder="ชื่อสาขาใหม่ เช่น ร้านส้มตำเจ๊แดง (บางนา)" aria-label="ชื่อสาขาใหม่">`+
+        `<button class="btn sm" type="button" data-add>+ เพิ่มสาขา</button></div>`+
+    `</div>`; }).join('');
+  const ar=cfg.archived;
+  document.getElementById('archList').innerHTML=!ar.length?'':
+    `<div class="sec"><h2>สาขาที่ลบแล้ว</h2><span class="note">${ar.length} สาขา · ตัวเลขที่กรอกไว้ยังอยู่ กดกู้คืนแล้วกลับมาแสดงตามเดิม</span></div>`+
+    `<div class="zone">`+ar.map(a=>`<div class="zone-b" data-a="${a.id}">`+
+      `<div class="arch-t"><b>${esc(a.name)}</b><span>เดิมอยู่กับ ${esc(a.fromName||'-')} · ลบเมื่อ ${esc(a.at||'-')} · มีข้อมูล ${zDataMonths(a.id)} เดือน</span></div>`+
+      `<label class="zone-mv">กู้คืนไปที่<select data-ato>${opts(cfg.zones.some(z=>z.id===a.from)?a.from:cfg.zones[0].id)}</select></label>`+
+      `<button class="btn sm" type="button" data-restore>กู้คืน</button></div>`).join('')+`</div>`;
 }
-const zl=document.getElementById('zoneList');
-zl.addEventListener('change',e=>{const el=e.target; const zid=el.closest('.zone').dataset.z; const z=cfg.zones.find(x=>x.id===zid);
-  if(el.dataset.k){ const v=el.value.trim(); if(el.dataset.k==='code'){ if(!v)return alert('รหัสห้ามว่าง'); if(codeTaken(v,zid))return alert('รหัสนี้ซ้ำกับโซนอื่น/VP/Admin'); } z[el.dataset.k]=v; saveCfg(); renderZones(); return; }
-  if(el.hasAttribute('data-bn')){ const b=z.branches.find(x=>x.id===el.closest('.zone-b').dataset.b); b.name=el.value.trim()||b.name; saveCfg(); return; }
-  if(el.hasAttribute('data-mv')){ const bid=el.closest('.zone-b').dataset.b; const i=z.branches.findIndex(x=>x.id===bid); const [b]=z.branches.splice(i,1); cfg.zones.find(x=>x.id===el.value).branches.push(b); saveCfg(); renderZones(); }});
-zl.addEventListener('keydown',e=>{const el=e.target; if(el.hasAttribute('data-new')&&e.key==='Enter'){e.preventDefault(); const v=el.value.trim(); if(!v)return; const z=cfg.zones.find(x=>x.id===el.closest('.zone').dataset.z); z.branches.push({id:'b'+(cfg.nextId++),name:v}); saveCfg(); renderZones(); zl.querySelector(`.zone[data-z="${z.id}"] [data-new]`).focus();}});
-zl.addEventListener('click',e=>{const el=e.target;
-  if(el.hasAttribute('data-rm')){ const row=el.closest('.zone-b'); const z=cfg.zones.find(x=>x.id===el.closest('.zone').dataset.z); const b=z.branches.find(x=>x.id===row.dataset.b); if(!confirm(`ลบสาขา "${b.name}" ออกจากโซน?\n(ตัวเลขที่กรอกไว้จะไม่แสดง แต่ยังอยู่ในไฟล์สำรอง)`))return; z.branches=z.branches.filter(x=>x.id!==b.id); saveCfg(); renderZones(); }
-  if(el.dataset.del){ const z=cfg.zones.find(x=>x.id===el.dataset.del); if(cfg.zones.length===1)return alert('ต้องมีอย่างน้อย 1 โซน');
-    if(z.branches.length){ const others=cfg.zones.filter(x=>x.id!==z.id); const to=prompt(`โซน "${z.name}" มี ${z.branches.length} สาขา จะย้ายไปโซนไหน?\nพิมพ์ชื่อ: ${others.map(o=>o.name).join(' / ')}`); const t=others.find(o=>o.name===(to||'').trim()); if(!t)return; t.branches.push(...z.branches); }
-    else if(!confirm(`ลบโซน "${z.name}"?`))return;
-    cfg.zones=cfg.zones.filter(x=>x.id!==z.id); if(sel.am===z.id)sel.am='all'; saveCfg(); renderZones(); }});
-function codeTaken(v,exceptZone){ return (v===cfg.vpCode||v===cfg.adminCode||cfg.zones.some(z=>z.id!==exceptZone&&z.code===v)); }
+function renderZonesKeep(){
+  const v={}; ['nzName','nzFull','nzCode'].forEach(id=>{ const el=document.getElementById(id); v[id]=el?el.value:''; });
+  renderZones();
+  Object.keys(v).forEach(id=>{ const el=document.getElementById(id); if(el) el.value=v[id]; });
+}
+function zGenCode(){ let c; do{ c='AM'+Math.floor(1000+Math.random()*9000); }while(codeTaken(c)); return c; }
+function zNewBranchId(){
+  const nums=[...BRANCHES.map(b=>b.id),...(cfg.archived||[]).map(a=>a.id)].map(id=>+((String(id).match(/\d+/)||['0'])[0]));
+  const n=Math.max(+cfg.nextId||0,nums.length?Math.max(...nums)+1:1);
+  cfg.nextId=n+1; return 'b'+n;
+}
+function zAddBranch(input){
+  const v=(input.value||'').trim(); if(!v){ input.focus(); return; }
+  const z=cfg.zones.find(x=>x.id===input.closest('.zone').dataset.z); if(!z) return;
+  const same=n=>String(n).trim().toLowerCase()===v.toLowerCase();
+  if(BRANCHES.some(b=>same(b.name))){ zMsg('มีสาขาชื่อนี้อยู่แล้ว'); input.focus(); return; }
+  if((cfg.archived||[]).some(a=>same(a.name))){ zMsg('สาขาชื่อนี้อยู่ในสาขาที่ลบแล้ว กดกู้คืนด้านล่างแทนได้ ข้อมูลเดิมจะกลับมาด้วย'); return; }
+  z.branches.push({id:zNewBranchId(),name:v});
+  saveCfg(); renderZones(); zMsg(`เพิ่ม ${shortName(v)} ให้ ${z.name} แล้ว`);
+  const again=document.querySelector(`#zoneList .zone[data-z="${z.id}"] [data-new]`); if(again) again.focus();
+}
+async function zSaveNew(){
+  const name=document.getElementById('nzName').value.trim(), full=document.getElementById('nzFull').value.trim(), code=document.getElementById('nzCode').value.trim();
+  if(!name){ zErr='ใส่ชื่อเรียกผู้ดูแลก่อน'; return renderZonesKeep(); }
+  if(!code){ zErr='ตั้งรหัสเข้าใช้ หรือกดสุ่ม'; return renderZonesKeep(); }
+  if(cfg.zones.some(z=>z.name.trim()===name)){ zErr='มีผู้ดูแลชื่อนี้อยู่แล้ว'; return renderZonesKeep(); }
+  if(codeTaken(code)){ zErr='รหัสนี้ถูกใช้แล้ว ลองรหัสอื่นหรือกดสุ่ม'; return renderZonesKeep(); }
+  if(CLOUD&&SB&&!zIsAdmin()){
+    // VP ไม่เห็นรหัสของคนอื่น ต้องถามฐานว่ารหัสนี้ว่างไหม
+    const btn=document.getElementById('nzSave'); btn.disabled=true; btn.textContent='กำลังตรวจรหัส…';
+    let res={}; try{ res=await SB.rpc('am_code_free',{p_code:CODE,p_candidate:code}); }catch(e){ res={error:e}; }
+    if(res.error){
+      const m=((res.error.message||'')+' '+(res.error.code||''));
+      zErr=/PGRST202|Could not find|am_code_free/i.test(m)?'ฐานข้อมูลยังไม่ได้ติดตั้งส่วนนี้ ต้องรันไฟล์ supabase/manage.sql ใน Supabase ก่อน':'ตรวจรหัสไม่สำเร็จ ลองใหม่อีกครั้ง';
+      return renderZonesKeep();
+    }
+    if(!res.data){ zErr='รหัสนี้ถูกใช้แล้ว ลองรหัสอื่นหรือกดสุ่ม'; return renderZonesKeep(); }
+  }
+  cfg.zones.push({id:'z'+Date.now().toString(36),code,brand:(cfg.zones[0]||{}).brand||'',name,full,branches:[]});
+  zForm=false; zErr=''; saveCfg(); renderZones(); zMsg(`เพิ่ม ${name} แล้ว เพิ่มสาขาให้ได้เลย`);
+  const last=document.querySelector('#zoneList .zone:last-child [data-new]'); if(last){ last.scrollIntoView({block:'center'}); last.focus(); }
+}
+function zArchive(zid,bid){
+  const z=cfg.zones.find(x=>x.id===zid); if(!z) return;
+  const i=z.branches.findIndex(x=>x.id===bid); if(i<0) return;
+  const [b]=z.branches.splice(i,1);
+  cfg.archived=cfg.archived||[]; cfg.archived.unshift({id:b.id,name:b.name,from:z.id,fromName:z.name,at:zToday()});
+  if(sel.branch===b.id) sel.branch='all';
+  saveCfg(); renderZones(); zMsg(`ลบ ${shortName(b.name)} แล้ว ข้อมูลยังเก็บไว้ กู้คืนได้ที่ด้านล่าง`);
+}
+function zRestore(aid,toId){
+  const ar=cfg.archived||[]; const i=ar.findIndex(a=>a.id===aid); if(i<0) return;
+  const [a]=ar.splice(i,1); const to=cfg.zones.find(z=>z.id===toId)||cfg.zones[0];
+  to.branches.push({id:a.id,name:a.name});
+  saveCfg(); renderZones(); zMsg(`กู้คืน ${shortName(a.name)} ให้ ${to.name} แล้ว`);
+}
+function zDeleteZone(zid){
+  if(cfg.zones.length<=1) return;
+  const z=cfg.zones.find(x=>x.id===zid); if(!z) return;
+  const pick=document.getElementById('zdTo'), toId=pick?pick.value:'';
+  const to=toId?cfg.zones.find(x=>x.id===toId):null, n=z.branches.length;
+  if(n){
+    if(to) to.branches.push(...z.branches);
+    else { cfg.archived=cfg.archived||[]; z.branches.forEach(b=>cfg.archived.unshift({id:b.id,name:b.name,from:z.id,fromName:z.name,at:zToday()})); }
+  }
+  cfg.zones=cfg.zones.filter(x=>x.id!==zid); if(sel.am===zid) sel.am='all'; zDelArm=null;
+  saveCfg(); renderZones();
+  zMsg(`ลบ ${z.name} แล้ว`+(n?(to?` ย้าย ${n} สาขาไปให้ ${to.name}`:` ${n} สาขาไปอยู่ที่สาขาที่ลบแล้ว`):''));
+}
+const zv=document.getElementById('view-zones');
+zv.addEventListener('change',e=>{
+  const el=e.target, zEl=el.closest('.zone[data-z]'); if(!zEl) return;
+  const z=cfg.zones.find(x=>x.id===zEl.dataset.z); if(!z) return;
+  if(el.dataset.k){
+    const v=el.value.trim();
+    if(el.dataset.k==='code'){
+      if(!v){ alert('รหัสห้ามว่าง'); el.value=z.code||''; return; }
+      if(codeTaken(v,z.id)){ alert('รหัสนี้ซ้ำกับผู้ดูแลอื่น หรือรหัส VP/Admin'); el.value=z.code||''; return; }
+    }
+    if(el.dataset.k==='name'&&!v){ el.value=z.name; return; }
+    z[el.dataset.k]=v; saveCfg(); renderZones(); return;
+  }
+  if(el.hasAttribute('data-bn')){
+    const b=z.branches.find(x=>x.id===el.closest('.zone-b').dataset.b); if(!b) return;
+    const v=el.value.trim(); if(!v){ el.value=b.name; return; }
+    b.name=v; saveCfg(); zMsg('แก้ชื่อสาขาแล้ว'); return;
+  }
+  if(el.hasAttribute('data-mv')){
+    const bid=el.closest('.zone-b').dataset.b, i=z.branches.findIndex(x=>x.id===bid);
+    const to=cfg.zones.find(x=>x.id===el.value); if(i<0||!to||to.id===z.id) return;
+    const [b]=z.branches.splice(i,1); to.branches.push(b);
+    saveCfg(); renderZones(); zMsg(`ย้าย ${shortName(b.name)} ไปอยู่กับ ${to.name} แล้ว`);
+  }
+});
+zv.addEventListener('keydown',e=>{
+  const el=e.target; if(e.key!=='Enter') return;
+  if(el.hasAttribute('data-new')){ e.preventDefault(); zAddBranch(el); return; }
+  if(el.id==='nzName'||el.id==='nzFull'||el.id==='nzCode'){ e.preventDefault(); zSaveNew(); }
+});
+zv.addEventListener('click',e=>{
+  const el=e.target;
+  if(el.closest('#btnAddZone')){ zForm=true; zErr=''; renderZones(); const f=document.getElementById('nzName'); if(f){ f.scrollIntoView({block:'center'}); f.focus(); } return; }
+  if(el.closest('#nzCancel')){ zForm=false; zErr=''; renderZones(); return; }
+  if(el.closest('#nzGen')){ document.getElementById('nzCode').value=zGenCode(); return; }
+  if(el.closest('#nzSave')){ zSaveNew(); return; }
+  const add=el.closest('[data-add]'); if(add){ zAddBranch(add.parentElement.querySelector('[data-new]')); return; }
+  const rm=el.closest('[data-rm]'); if(rm){ zArchive(rm.closest('.zone').dataset.z, rm.closest('.zone-b').dataset.b); return; }
+  const zd=el.closest('[data-zdel]'); if(zd){ zDelArm=zd.dataset.zdel; renderZones(); return; }
+  if(el.closest('[data-zdno]')){ zDelArm=null; renderZones(); return; }
+  const zy=el.closest('[data-zdyes]'); if(zy){ zDeleteZone(zy.dataset.zdyes); return; }
+  const rs=el.closest('[data-restore]'); if(rs){ const row=rs.closest('[data-a]'); zRestore(row.dataset.a,row.querySelector('[data-ato]').value); return; }
+});
+function codeTaken(v,exceptZone){ v=String(v).trim().toLowerCase(); const eq=x=>String(x||'').trim().toLowerCase()===v;
+  return eq(cfg.vpCode)||eq(cfg.adminCode)||cfg.zones.some(z=>z.id!==exceptZone&&eq(z.code)); }
 document.getElementById('cVp').onchange=e=>{const v=e.target.value.trim(); if(!v||v===cfg.adminCode||cfg.zones.some(z=>z.code===v)){alert('รหัสว่างหรือซ้ำ');e.target.value=cfg.vpCode;return;} cfg.vpCode=v; saveCfg();};
 document.getElementById('cAdmin').onchange=e=>{const v=e.target.value.trim(); if(!v||v===cfg.vpCode||cfg.zones.some(z=>z.code===v)){alert('รหัสว่างหรือซ้ำ');e.target.value=cfg.adminCode;return;} cfg.adminCode=v; saveCfg();};
-document.getElementById('btnAddZone').onclick=()=>{const name=prompt('ชื่อโซน / ผู้ดูแล (เช่น พี่นก)'); if(!name)return; let code=prompt('รหัสเข้าใช้ของโซนนี้'); if(!code)return; code=code.trim(); if(codeTaken(code))return alert('รหัสซ้ำ'); const id='z'+Date.now().toString(36); cfg.zones.push({id,code,brand:cfg.zones[0]?.brand||'',name:name.trim(),full:'',branches:[]}); saveCfg(); renderZones(); };
-document.getElementById('btnResetCfg').onclick=()=>{ if(!confirm('คืนค่าโซนและรหัสทั้งหมดเป็นค่าเริ่มต้น? ตัวเลขที่กรอกไว้ไม่หาย'))return; cfg=JSON.parse(JSON.stringify(DEFAULT_CFG)); saveCfg(); renderZones(); };
+document.getElementById('btnResetCfg').onclick=()=>{ if(!confirm('คืนค่าผู้ดูแลและรหัสทั้งหมดเป็นค่าเริ่มต้น? ตัวเลขที่กรอกไว้ไม่หาย'))return; cfg=JSON.parse(JSON.stringify(DEFAULT_CFG)); saveCfg(); renderZones(); };
 
 /* ---------------- login / roles ---------------- */
 function applyRole(){
@@ -2164,8 +2365,9 @@ function applyRole(){
     if(!z){ role=null; CODE=null; try{sessionStorage.removeItem(KEY_SESS);}catch(e){} applyRole(); return; }
     sel.am=z.id; ctl.style.display='none'; who.textContent=z.name; }
   else { ctl.style.display=''; who.textContent=role.type==='vp'?'VP — เห็นทุกโซน':'Admin'; }
-  document.getElementById('tabZones').style.display=role.type==='admin'?'':'none';
-  if(sel.tab==='zones'&&role.type!=='admin')sel.tab='dash';
+  const canManage=role.type==='admin'||role.type==='vp';
+  document.getElementById('tabZones').style.display=canManage?'':'none';
+  if(sel.tab==='zones'&&!canManage)sel.tab='dash';
 }
 /* ═══════════ หน้าต่างนำเข้าข้อมูล: บอกว่าเดือนไหนยังขาดอะไร ═══════════
    นับจากช่องที่กรอกจริงเทียบกับจำนวนสาขาในขอบเขตที่ดูอยู่
@@ -2464,7 +2666,7 @@ function render(){ if(!role)return; fillMonths(); fillAM(); if(role.type==='am')
 document.addEventListener('click',e=>{const a=e.target.closest('.blink'); if(a){e.preventDefault(); sel.branch=a.dataset.b; setTab('branch');}});
 load();
 document.getElementById('loginHint').textContent = SB_ON
-  ? 'รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · แอดมินเปลี่ยนรหัสได้ในแท็บจัดการโซน'
+  ? 'รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่ · แอดมินเปลี่ยนรหัสได้ในแท็บผู้ดูแลและสาขา'
   : 'โหมดออฟไลน์ (ยังไม่ได้ตั้งค่า config.js) · รหัสไม่แยกตัวพิมพ์เล็ก-ใหญ่';
 applyRole(); render(); setSync('local');
 (async function boot(){
