@@ -282,6 +282,39 @@ tr.total td,tr.total td:first-child{background:var(--panel-2);font-weight:700;
 .bmore>.two,.bmore>.tbl-wrap{margin:0 14px 14px}
 .bmore .card{box-shadow:none;border:1px solid var(--line-2)}
 .bpick-more{display:flex;justify-content:center;padding:12px}
+/* ตารางเลือกสาขา: แถบตัวกรอง + ตัวเลขกับชิปอยู่ช่องเดียวกัน ความกว้างคอลัมน์คงที่ ไม่ยืดห่างบนจอกว้าง */
+.bp-bar{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center;margin:0 0 12px}
+.bp-q{height:40px;border:1px solid var(--line);border-radius:999px;padding:0 16px;min-width:220px;flex:0 1 260px;
+  font:inherit;font-size:14px;background:var(--panel);color:var(--ink)}
+.bp-chips{display:flex;flex-wrap:wrap;gap:6px}
+.bp-chip{height:36px;padding:0 13px;border-radius:999px;border:1px solid var(--line);background:var(--panel);
+  font:inherit;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;white-space:nowrap}
+.bp-chip:hover{border-color:#C7C7CC;color:var(--ink)}
+.bp-chip b{font-weight:700;margin-left:6px;color:var(--ink-3)}
+.bp-chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.bp-chip[aria-pressed=true] b{color:rgba(255,255,255,.7)}
+.bp-chip.bad:not([aria-pressed=true]){color:var(--red)}
+.bp-sort{display:flex;align-items:center;gap:8px;margin-left:auto;font-size:13px;color:var(--ink-3);font-weight:600;flex-wrap:wrap}
+.bp-sort select{height:38px;border:1px solid var(--line);border-radius:var(--r-sm);padding:0 10px;background:var(--panel);
+  font:inherit;font-size:13.5px;color:var(--ink)}
+.bp-count{font-size:12.5px;color:var(--ink-3);margin:-4px 0 10px}
+.tbl-wrap table.bp{table-layout:fixed;min-width:980px}
+.tbl-wrap table.bp th[data-bs]{cursor:pointer;user-select:none;white-space:nowrap}
+.tbl-wrap table.bp th[data-bs]:hover{color:var(--ink)}
+.tbl-wrap table.bp th.on{color:var(--ink);font-weight:700}
+.tbl-wrap table.bp th .ar{font-size:10px;margin-left:3px}
+.tbl-wrap table.bp td{vertical-align:middle}
+.tbl-wrap table.bp td:first-child{white-space:normal}
+.tbl-wrap table.bp td.vc{text-align:right;white-space:nowrap}
+.vc .num{display:inline-block;text-align:right;margin-right:10px;font-weight:600;color:var(--ink)}
+.bp-n{display:block;font-size:11.5px;color:var(--ink-3);margin-top:1px}
+.tbl-wrap table.bp td.empty-row{text-align:center;padding:28px;color:var(--ink-3)}
+@media(max-width:760px){
+  .bp-q{flex:1 1 100%}
+  .bp-sort{margin-left:0}
+  .bp-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:100%;padding-bottom:2px}
+  .bp-chips::-webkit-scrollbar{display:none}
+}
 @media(max-width:760px){
   .bhead{padding:14px 16px}
   .bhead h2{font-size:22px}
@@ -1305,7 +1338,7 @@ const FIELDS=[]; GROUPS.forEach(([k])=>{FIELDS.push(k+'25',k+'26')}); FIELDS.pus
 const KEY='jd_am_dashboard_v1', KEY_CFG='jd_am_dashboard_cfg_v1', KEY_SESS='jd_am_dashboard_sess';
 let role=null; // {type:'am'|'vp'|'admin', zone?:id}
 let store={data:{}};            // data[m][branchId] = {field:number|string}
-let sel={q:'',sk:null,sd:-1,branch:'all',am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy', cmpTopic:'money', bPickAll:false};
+let sel={q:'',sk:null,sd:-1,branch:'all',am:'all', m:new Date().getFullYear()===YEAR?new Date().getMonth():6, tab:'dash', cmp:'yoy', cmpTopic:'money', bPickAll:false, bpSort:'s', bpDir:-1, bpFilter:'all', bpQ:''};
 let storageOK=true;
 /* ---- ที่จัดเก็บข้อมูล: Supabase (ข้อมูลกลาง) + localStorage (สำเนาออฟไลน์) ---- */
 let SB=null, CLOUD=false, syncState='local';
@@ -1762,33 +1795,71 @@ const bTags=r=>r.score?r.issues.map(t=>`<span class="tag bad">${B_ISSUE[t]||t}</
 const bChip=(it,base,c)=>cmpChg(it,base,c).replace(/^<td[^>]*>/,'').replace(/<\/td>$/,'');
 const bSum=(a,b)=>a==null&&b==null?null:(a||0)+(b||0);
 const bPc=v=>v==null?'–':(v*100).toFixed(1)+'%';
+const BP_SORT=[['s','ยอดขายสะสม'],['sg','ยอดขายเทียบปีก่อน'],['e','กำไรสะสม'],['eg','กำไรเทียบปีก่อน'],
+  ['col','ค่าแรง % ของยอดขาย'],['iss','จำนวนประเด็นเดือนนี้'],['name','ชื่อสาขา']];
+const BP_FILTER=[['all','ทั้งหมด'],['multi','มีประเด็น 2 ข้อขึ้นไป'],['ยอดขายลด','ยอดขายลด'],['กำไรลด','กำไรลด'],
+  ['ต้นทุนแรงงานสูงขึ้น','ค่าแรงสูงขึ้น'],['ร้องเรียนสูง','ร้องเรียนสูง'],['none','ไม่มีประเด็น']];
 function renderBranchPick(all,bs){
   const box=document.getElementById('bPick');
   if(!all){ box.innerHTML=''; return; }
-  const rows=bs.map(b=>{
+  // พิมพ์ค้นหาอยู่: วาดใหม่แล้วคืนตำแหน่งเคอร์เซอร์ให้พิมพ์ต่อได้
+  const act=document.activeElement, hadQ=!!(act&&act.id==='bpQ'), caret=hadQ?act.selectionStart:0;
+  const base=bs.map(b=>{
     const M=MONTHS.map((_,i)=>metrics(i,b.id));
     const T={}; FIELDS.forEach(f=>T[f]=sum(M.map(r=>r[f])));
-    return {b,T,n:M.filter(r=>r.has).length,c26:colPct(T,'26'),now:M[sel.m]};
-  }).sort((x,y)=>(y.T.s26||0)-(x.T.s26||0));
-  const LIM=12, list=sel.bPickAll?rows:rows.slice(0,LIM);
+    return {b,T,now:M[sel.m],n:M.filter(r=>r.has).length,c26:colPct(T,'26'),sg:pct(T.s25,T.s26),eg:pct(T.e25,T.e26),name:shortName(b.name)};
+  });
+  const F={all:()=>true, multi:x=>x.now.score>=2, none:x=>x.now.has&&!x.now.score};
+  const pass=(x,f)=>F[f]?F[f](x):x.now.issues.includes(f);
+  const f=BP_FILTER.some(z=>z[0]===sel.bpFilter)?sel.bpFilter:'all';
+  const k=BP_SORT.some(z=>z[0]===sel.bpSort)||sel.bpSort==='n'?sel.bpSort:'s';
+  const dir=sel.bpDir===1?1:-1, qq=(sel.bpQ||'').trim().toLowerCase();
+  const G={s:x=>x.T.s26,sg:x=>x.sg,e:x=>x.T.e26,eg:x=>x.eg,col:x=>x.c26,iss:x=>x.now.has?x.now.score:null,name:x=>x.name,n:x=>x.n};
+  const g=G[k];
+  const rows=base.filter(x=>pass(x,f)&&(!qq||x.b.name.toLowerCase().includes(qq))).sort((a,b)=>{
+    const x=g(a),y=g(b);
+    if(k==='name') return (dir<0?1:-1)*String(x).localeCompare(String(y),'th');
+    if(x==null&&y==null) return 0; if(x==null) return 1; if(y==null) return -1;   // ช่องว่างไปท้ายเสมอ
+    return dir<0?y-x:x-y;
+  });
+  const LIM=12, limited=!sel.bPickAll&&!qq&&f==='all';
+  const list=limited?rows.slice(0,LIM):rows;
+  const th=(t,key,align)=>`<th data-bs="${key}" class="${k===key?'on':''}" style="text-align:${align||'right'}">${t}`+
+    `<span class="ar">${k===key?(dir<0?'▼':'▲'):''}</span></th>`;
   const tr=list.map(x=>{
     const sev=x.now.score>=3?'sev3':x.now.score===2?'sev2':'';
-    return `<tr class="${sev}"><td><a href="#" class="blink" data-b="${x.b.id}" title="${esc(x.b.name)}">${esc(shortName(x.b.name))}</a>`+
-      `${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${esc((AMS.find(a=>a.id===x.b.am)||{}).name||'')}</span>`:''}</td>`+
-      `<td class="cv">${fmt(x.T.s26)}</td>${cmpChg({k:'s'},x.T.s25,x.T.s26)}`+
-      `<td class="cv">${fmt(x.T.e26)}</td>${cmpChg({k:'e',signed:true},x.T.e25,x.T.e26)}`+
+    return `<tr class="${sev}"><td><a href="#" class="blink" data-b="${x.b.id}" title="${esc(x.b.name)}">${esc(x.name)}</a>`+
+      `${sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${esc((AMS.find(a=>a.id===x.b.am)||{}).name||'')}</span>`:''}`+
+      `<span class="bp-n">กรอกแล้ว ${x.n} จาก 12 เดือน</span></td>`+
+      `<td class="vc"><span class="num">${fmt(x.T.s26)}</span>${bChip({k:'s'},x.T.s25,x.T.s26)}</td>`+
+      `<td class="vc"><span class="num">${fmt(x.T.e26)}</span>${bChip({k:'e',signed:true},x.T.e25,x.T.e26)}</td>`+
       `<td class="cv">${bPc(x.c26)}</td>`+
-      `<td class="issues"><div class="tags">${x.now.has?bTags(x.now):'<span class="mute">ยังไม่มีข้อมูล</span>'}</div></td>`+
-      `<td class="mute">${x.n} / 12</td></tr>`;
-  }).join('');
+      `<td class="issues"><div class="tags">${x.now.has?bTags(x.now):'<span class="mute">ยังไม่มีข้อมูล</span>'}</div></td></tr>`;
+  }).join('')||`<tr><td class="empty-row" colspan="5">ไม่พบสาขาที่ตรงกับตัวกรอง</td></tr>`;
+  const chips=BP_FILTER.map(([id,lab])=>{ const c=base.filter(x=>pass(x,id)).length;
+    if(id!=='all'&&id!==f&&!c) return '';
+    return `<button class="bp-chip ${id!=='all'&&id!=='none'?'bad':''}" type="button" data-f="${id}" aria-pressed="${f===id}">${lab}<b>${c}</b></button>`; }).join('');
+  const dirLab=k==='name'?(dir<0?'ก ถึง ฮ':'ฮ ถึง ก'):(dir<0?'มากไปน้อย':'น้อยไปมาก');
   box.innerHTML=`<div class="sec"><h2>เลือกสาขาเพื่อดูรายละเอียด</h2>`+
-    `<span class="note">ยอดสะสมทั้งปี ${YEAR} เรียงตามยอดขาย · ประเด็นของเดือน${MONTHS[sel.m]} · กดชื่อสาขาเพื่อเจาะดู</span></div>`+
-    `<div class="tbl-wrap"><table class="perf2"><thead><tr><th></th><th class="grp" colspan="2">ยอดขายสะสม</th>`+
-    `<th class="grp alt" colspan="2">กำไรสะสม (EBIT)</th><th class="grp">ค่าแรง %</th><th class="grp alt">ประเด็นเดือน${MONTHS[sel.m]}</th><th></th></tr>`+
-    `<tr><th>สาขา</th><th>บาท</th><th>เทียบปีก่อน</th><th>บาท</th><th>เทียบปีก่อน</th><th>ของยอดขาย</th><th style="text-align:left">ที่พบ</th><th>เดือนที่กรอก</th></tr></thead>`+
-    `<tbody>${tr}</tbody></table>`+
-    (rows.length>LIM?`<div class="bpick-more"><button class="btn sm" type="button" id="bPickMore">${sel.bPickAll?`ย่อเหลือ ${LIM} สาขา`:`แสดงทั้งหมด ${rows.length} สาขา`}</button></div>`:'')+
+      `<span class="note">ยอดสะสมทั้งปี ${YEAR} · ประเด็นของเดือน${MONTHS[sel.m]} · กดชื่อสาขาเพื่อเจาะดู · กดหัวคอลัมน์เพื่อเรียง</span></div>`+
+    `<div class="bp-bar">`+
+      `<input id="bpQ" class="bp-q" type="search" placeholder="ค้นหาสาขา" value="${esc(sel.bpQ||'')}" autocomplete="off" aria-label="ค้นหาสาขา">`+
+      `<div class="bp-chips" role="group" aria-label="กรองตามประเด็น">${chips}</div>`+
+      `<div class="bp-sort">เรียงตาม<select id="bpSort" aria-label="เรียงตาม">`+
+        BP_SORT.map(([id,lab])=>`<option value="${id}" ${k===id?'selected':''}>${lab}</option>`).join('')+
+        (k==='n'?`<option value="n" selected>เดือนที่กรอก</option>`:'')+
+      `</select><button class="btn sm" type="button" id="bpDir" title="สลับทิศการเรียง">${dir<0?'↓':'↑'} ${dirLab}</button></div>`+
+    `</div>`+
+    `<div class="bp-count">แสดง ${list.length} จาก ${rows.length} สาขา${rows.length<base.length?` (ทั้งหมด ${base.length})`:''}</div>`+
+    `<div class="tbl-wrap"><table class="perf2 bp"><colgroup><col style="width:25%"><col style="width:18%"><col style="width:18%">`+
+      `<col style="width:9%"><col></colgroup>`+
+      `<thead><tr>${th('สาขา','name','left')}${th('ยอดขายสะสม · เทียบปีก่อน','s')}${th('กำไรสะสม · เทียบปีก่อน','e')}`+
+      `${th('ค่าแรง %','col')}${th('ประเด็นเดือน'+MONTHS[sel.m],'iss','left')}</tr></thead>`+
+      `<tbody>${tr}</tbody></table>`+
+      (limited&&rows.length>LIM?`<div class="bpick-more"><button class="btn sm" type="button" id="bPickMore">แสดงทั้งหมด ${rows.length} สาขา</button></div>`
+        :(sel.bPickAll&&!qq&&f==='all'&&rows.length>LIM?`<div class="bpick-more"><button class="btn sm" type="button" id="bPickMore">ย่อเหลือ ${LIM} สาขา</button></div>`:''))+
     `</div>`;
+  if(hadQ){ const q=document.getElementById('bpQ'); if(q){ q.focus(); try{ q.setSelectionRange(caret,caret); }catch(e){} } }
 }
 function renderBranch(){
   const bs=scopeBranches(), selB=document.getElementById('selBranch');
@@ -1883,7 +1954,20 @@ document.getElementById('prevB').onclick=()=>bStep(-1);
 document.getElementById('nextB').onclick=()=>bStep(1);
 document.getElementById('bMonths').addEventListener('click',e=>{ const tr=e.target.closest('tr[data-m]'); if(!tr)return; sel.m=+tr.dataset.m; render(); });
 document.getElementById('bMoreCharts').addEventListener('toggle',e=>{ if(e.target.open) renderBranch(); });
-document.getElementById('bPick').addEventListener('click',e=>{ if(e.target.closest('#bPickMore')){ sel.bPickAll=!sel.bPickAll; renderBranch(); } });
+(function(){
+  const bp=document.getElementById('bPick');
+  const re=()=>renderBranchPick(true,scopeBranches());
+  bp.addEventListener('click',e=>{
+    if(e.target.closest('#bPickMore')){ sel.bPickAll=!sel.bPickAll; re(); return; }
+    const c=e.target.closest('.bp-chip[data-f]'); if(c){ sel.bpFilter=c.dataset.f; re(); return; }
+    if(e.target.closest('#bpDir')){ sel.bpDir=sel.bpDir===1?-1:1; re(); return; }
+    const th=e.target.closest('th[data-bs]');
+    if(th){ const key=th.dataset.bs; if((sel.bpSort||'s')===key) sel.bpDir=sel.bpDir===1?-1:1; else { sel.bpSort=key; sel.bpDir=-1; } re(); }
+  });
+  bp.addEventListener('change',e=>{ if(e.target.id==='bpSort'){ sel.bpSort=e.target.value; sel.bpDir=-1; re(); } });
+  let t=null;
+  bp.addEventListener('input',e=>{ if(e.target.id!=='bpQ') return; const v=e.target.value; clearTimeout(t); t=setTimeout(()=>{ sel.bpQ=v; re(); },160); });
+})();
 
 /* ---------------- render: input grid ---------------- */
 function renderInput(){
