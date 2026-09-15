@@ -1932,7 +1932,7 @@ function plShow(wb,fname){
   const R=parsePL(wb);
   if(R.year&&R.year!==YEAR){ alert(`${fname}\n\nไฟล์นี้เป็นงบปี ${R.year} แต่เว็บนี้เก็บข้อมูลปี ${YEAR}`); xlNext(); return; }
   if(!R.months.length){ alert(fname+'\n\nอ่านงบรายสาขาไม่เจอ\n\nไฟล์ต้องมีชีตรายเดือน (JAN, FEB, …) ที่มีแถวรหัสสาขา เช่น BR002, 00018'); xlNext(); return; }
-  const pool=BRANCHES, byId={}, byKey={};
+  const closed=plClosedAll(), pool=[...BRANCHES,...closed], byId={}, byKey={};
   pool.forEach(b=>{ byId[b.id]=b; byKey[xlKey(b.name)]=b; });
   const alias=xlAliases();
   const items=R.rows.map(r=>{
@@ -1945,11 +1945,13 @@ function plShow(wb,fname){
   impPending={kind:'pl',R,items,file:fname};
   const auto=items.filter(x=>x.b), ask=items.filter(x=>!x.b);
   const claimed={}; auto.forEach(x=>claimed[x.b.id]=true);
-  const free=pool.filter(b=>!claimed[b.id]), rest=pool.filter(b=>claimed[b.id]);
+  const act=BRANCHES.filter(b=>!claimed[b.id]), rest=BRANCHES.filter(b=>claimed[b.id]);
   const opt=(b,s)=>`<option value="${b.id}" ${s?'selected':''}>${esc(shortName(b.name))}</option>`;
-  const picker=(x,ix)=>`<select class="map-sel" data-ix="${ix}"><option value="">ข้ามสาขานี้</option>`+
-    (free.length?`<optgroup label="ยังไม่มีงบในไฟล์นี้">${free.map(b=>opt(b,x.guess&&x.guess.id===b.id)).join('')}</optgroup>`:'')+
-    (rest.length?`<optgroup label="สาขาอื่น">${rest.map(b=>opt(b,x.guess&&x.guess.id===b.id)).join('')}</optgroup>`:'')+`</select>`;
+  /* ชื่อที่ไม่คล้ายสาขาไหนเลย ส่วนใหญ่เป็นสาขาที่ปิดไปแล้ว: ตั้งต้นให้เพิ่มเป็นสาขาปิด */
+  const picker=(x,ix)=>`<select class="map-sel" data-ix="${ix}"><option value="__closed" ${x.guess?'':'selected'}>+ เพิ่มเป็นสาขาปิด</option><option value="">ข้ามสาขานี้</option>`+
+    (act.length?`<optgroup label="ยังไม่มีงบในไฟล์นี้">${act.map(b=>opt(b,x.guess&&x.guess.id===b.id)).join('')}</optgroup>`:'')+
+    (rest.length?`<optgroup label="สาขาอื่น">${rest.map(b=>opt(b,x.guess&&x.guess.id===b.id)).join('')}</optgroup>`:'')+
+    (closed.length?`<optgroup label="สาขาปิด">${closed.map(b=>opt(b,x.guess&&x.guess.id===b.id)).join('')}</optgroup>`:'')+`</select>`;
   const f=R.months[0], l=R.months[R.months.length-1];
   const nAlias=auto.filter(x=>x.how==='alias').length;
   document.getElementById('impBody').innerHTML=
@@ -1962,7 +1964,7 @@ function plShow(wb,fname){
       `<table class="map-t"><tbody>`+
       ask.map(x=>{ const ix=items.indexOf(x);
         return `<tr><td class="map-n">${esc(x.r.th||x.r.name)}<div class="map-s">${esc(x.r.code)} · ${esc(x.r.name)}</div></td><td class="map-a">→</td><td>${picker(x,ix)}`+
-          `<div class="map-s ${x.guess?'':'none'}">${x.guess?`ชื่อคล้ายกัน ${Math.round(x.score*100)}%`:'ไม่พบชื่อที่คล้าย เลือกเองหรือข้าม'}</div></td></tr>`; }).join('')+
+          `<div class="map-s ${x.guess?'':'none'}">${x.guess?`ชื่อคล้ายกัน ${Math.round(x.score*100)}% · ถ้าไม่ใช่สาขานี้ เลือกเพิ่มเป็นสาขาปิด`:'ไม่มีในเว็บ · สาขาปิดดูได้เฉพาะแท็บงบ ไม่ขึ้นในหน้าอื่น'}</div></td></tr>`; }).join('')+
       `</tbody></table>`+
       `<label class="map-remember"><input type="checkbox" id="impRemember" checked> จำการจับคู่นี้ไว้ เดือนหน้าไม่ต้องเลือกซ้ำ</label></div>`:'')+
     `<div class="row" style="border:0"><b></b><span class="hint">ไม่ยุ่งกับตัวเลขที่กรอกในแท็บกรอกข้อมูล · สำนักงานใหญ่ ครัวกลาง และ BT-ALL ไม่นับเป็นสาขา</span></div>`;
@@ -1976,10 +1978,20 @@ function plShow(wb,fname){
 }
 function plApply(){
   const {R,items,file}=impPending;
-  const byId={}; BRANCHES.forEach(b=>byId[b.id]=b);
-  const map=new Map(), chosen=[];
+  const byId={}; [...BRANCHES,...plClosedAll()].forEach(b=>byId[b.id]=b);
+  const map=new Map(), chosen=[], adds=[];
   items.forEach(x=>{ if(x.b) map.set(x,x.b); });
-  document.querySelectorAll('#impBody .map-sel').forEach(sl=>{ const x=items[+sl.dataset.ix], b=byId[sl.value]; if(b){ map.set(x,b); chosen.push([x.key,b.id]); } });
+  document.querySelectorAll('#impBody .map-sel').forEach(sl=>{ const x=items[+sl.dataset.ix];
+    if(sl.value==='__closed'){ adds.push(x); return; }
+    const b=byId[sl.value]; if(b){ map.set(x,b); chosen.push([x.key,b.id]); } });
+  /* สาขาปิดเก็บไว้ในรายการสาขาที่ลบแล้ว (cfg.archived): ไม่ขึ้นในหน้าอื่นและไม่นับในโซน แต่ Admin/VP ยังเก็บงบให้ได้ */
+  if(adds.length){
+    cfg.archived=cfg.archived||[];
+    adds.forEach(x=>{ let a=cfg.archived.find(o=>xlKey(o.name)===x.key);
+      if(!a){ a={id:zNewBranchId(),name:x.name,from:'',fromName:'สาขาปิด',at:zToday(),closed:true}; cfg.archived.push(a); }
+      const b={id:a.id,name:a.name,closed:true}; byId[b.id]=b; map.set(x,b); });
+    saveCfg();
+  }
   const cnt={}; map.forEach(b=>cnt[b.id]=(cnt[b.id]||0)+1);
   const dup=Object.keys(cnt).filter(id=>cnt[id]>1);
   if(dup.length){
@@ -2002,7 +2014,7 @@ function plApply(){
   const f=R.months[0], l=R.months[R.months.length-1];
   const au=document.getElementById('impAuto'); if(au&&au.checked) xlAuto=true;
   document.getElementById('impModal').hidden=true; impPending=null;
-  xlLogAdd({file,month:l,rows:wrote,what:`งบกำไรขาดทุน ${MSHORT[f]}${f!==l?'–'+MSHORT[l]:''} ${YEAR} · ${nb} สาขา`+(cleared?` · ลบงบเก่าที่ไม่อยู่ในไฟล์ ${cleared} รายการ`:'')});
+  xlLogAdd({file,month:l,rows:wrote,what:`งบกำไรขาดทุน ${MSHORT[f]}${f!==l?'–'+MSHORT[l]:''} ${YEAR} · ${nb} สาขา`+(adds.length?` · เพิ่มสาขาปิด ${adds.length} สาขา`:'')+(cleared?` · ลบงบเก่าที่ไม่อยู่ในไฟล์ ${cleared} รายการ`:'')});
   xlDone.push({file,m:l,nb,cells:wrote.length,pcells:0,pl:true});
   if(xlQueue.length){ flash(`นำเข้า ${file} แล้ว เหลืออีก ${xlQueue.length} ไฟล์`); xlNext(); }
   else xlFinish();
@@ -2010,6 +2022,11 @@ function plApply(){
 
 /* ---- หน้า P&L ---- */
 sel.plp='m'; sel.plb='all'; sel.plOpen={};
+/* สาขาที่ลบ/ปิดแล้ว (cfg.archived) ในรูปเดียวกับ BRANCHES */
+function plClosedAll(){ return (cfg.archived||[]).map(a=>({id:a.id,name:a.name,am:a.from||'',closed:true})); }
+/* สาขาปิดที่มีงบ ในขอบเขตที่ดูอยู่ · AM ไม่เห็น (ฐานไม่ส่งข้อมูลสาขานอกผังให้อยู่แล้ว) */
+function plClosedScope(){ if(!role||role.type==='am') return [];
+  return plClosedAll().filter(b=>(sel.am==='all'||b.am===sel.am)&&MONTHS.some((_,i)=>plRec(i,b.id))); }
 function plRec(m,id){ const p=rec(m,id).pl; return Array.isArray(p)&&p.length===PL_FLAT.length?p:null; }
 function plAgg(ids,months){ let a=null; const hit=new Set();
   months.forEach(m=>ids.forEach(id=>{ const p=plRec(m,id); if(!p) return; if(!a) a=PL_FLAT.map(()=>0); hit.add(id); p.forEach((v,i)=>a[i]+=+v||0); }));
@@ -2020,7 +2037,7 @@ const plPc=p=>p==null?'–':(p*100).toFixed(1)+'%';
 const plAx=v=>Math.abs(v)>=1e6?(v/1e6).toFixed(1)+'M':Math.abs(v)>=1e3?Math.round(v/1e3)+'K':fmt(v);
 let plCtx=null;
 function renderPL(){
-  const bs=scopeBranches(), all=bs.map(b=>b.id);
+  const actB=scopeBranches(), clB=plClosedScope(), bs=[...actB,...clB], all=bs.map(b=>b.id);
   if(sel.plb!=='all'&&!all.includes(sel.plb)) sel.plb='all';
   const one=sel.plb==='all'?null:bs.find(b=>b.id===sel.plb), ids=one?[one.id]:all;
   const m=sel.m, ytd=sel.plp==='ytd';
@@ -2030,8 +2047,9 @@ function renderPL(){
   document.querySelectorAll('#plMode button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===sel.plp));
   const withPl=new Set(); MONTHS.forEach((_,i)=>all.forEach(id=>{ if(plRec(i,id)) withPl.add(id); }));
   const bsel=document.getElementById('plBranch');
-  bsel.innerHTML=`<option value="all">ทุกสาขาในขอบเขต (${all.length})</option>`+
-    bs.map(b=>`<option value="${b.id}"${withPl.has(b.id)?'':' disabled'}>${esc(shortName(b.name))}${withPl.has(b.id)?'':' · ไม่มีงบ'}</option>`).join('');
+  const bopt=b=>`<option value="${b.id}"${withPl.has(b.id)?'':' disabled'}>${esc(shortName(b.name))}${withPl.has(b.id)?'':' · ไม่มีงบ'}</option>`;
+  bsel.innerHTML=`<option value="all">ทุกสาขาในขอบเขต (${actB.length}${clB.length?` + ปิดแล้ว ${clB.length}`:''})</option>`+
+    (clB.length?`<optgroup label="สาขาที่เปิดอยู่">${actB.map(bopt).join('')}</optgroup><optgroup label="สาขาปิด">${clB.map(bopt).join('')}</optgroup>`:actB.map(bopt).join(''));
   bsel.value=sel.plb;
   document.getElementById('plTitle').textContent=`งบกำไรขาดทุน ${per} — ${one?shortName(one.name):scopeLabel()}`;
   const cur=plAgg(ids,mons);
@@ -2046,7 +2064,9 @@ function renderPL(){
     return;
   }
   empty.style.display='none'; body.style.display='block';
-  sub.textContent=one?(ytd?`รวม ${mons.filter(i=>plRec(i,one.id)).length} เดือนที่มีงบ`:''):`มีงบ ${cur.n} / ${all.length} สาขา`+(ytd?' · รวมทุกเดือนที่มีงบ':'');
+  const nAct=actB.filter(b=>mons.some(i=>plRec(i,b.id))).length, nCl=clB.filter(b=>mons.some(i=>plRec(i,b.id))).length;
+  sub.textContent=one?[one.closed?'สาขาปิด':'',ytd?`รวม ${mons.filter(i=>plRec(i,one.id)).length} เดือนที่มีงบ`:''].filter(Boolean).join(' · ')
+    :`มีงบ ${nAct} / ${actB.length} สาขา`+(nCl?` + สาขาปิด ${nCl}`:'')+(ytd?' · รวมทุกเดือนที่มีงบ':'');
   const prev=!ytd&&m>0?plAgg(ids,[m-1]):null;
   const A=cur.a, P=prev&&prev.a, rev=A[PLI.revenue], prv=P?P[PLI.revenue]:null;
   const lab=(th,en)=>`${th}<span class="u">${en}</span>`;
@@ -2078,9 +2098,9 @@ function renderPL(){
   plCtx={A,P,rev,prv,per,m};
   plDrawTable();
   const br=bs.map(b=>{ const x=plAgg([b.id],mons); return x?{b,a:x.a}:null; }).filter(Boolean).sort((p,q)=>q.a[PLI.net]-p.a[PLI.net]);
-  const miss=bs.filter(b=>!br.some(x=>x.b===b));
+  const miss=actB.filter(b=>!br.some(x=>x.b===b));
   const sh=(a,id)=>plPc(plShare(a[PLI[id]],a[PLI.revenue]));
-  const zn=b=>sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${esc((AMS.find(z=>z.id===b.am)||{}).name||'')}</span>`:'';
+  const zn=b=>b.closed?` <span class="tag">ปิดแล้ว</span>`:sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${esc((AMS.find(z=>z.id===b.am)||{}).name||'')}</span>`:'';
   const brow=(labl,a,c,id)=>`<tr class="${c}"${id?` data-plb="${id}"`:''}><td>${labl}</td><td>${fmt(a[PLI.revenue])}</td><td>${sh(a,'cogs')}</td><td>${sh(a,'labor')}</td><td>${sh(a,'sga')}</td><td>${sh(a,'jd-sga-rent')}</td>`+
     `<td class="${a[PLI.op]<0?'neg':''}">${fmt(a[PLI.op])}</td><td class="${a[PLI.net]<0?'neg':''}">${fmt(a[PLI.net])}</td><td class="${a[PLI.net]<0?'neg':''}">${sh(a,'net')}</td></tr>`;
   const tot=plAgg(all,mons);
@@ -2796,9 +2816,9 @@ function renderZones(){
     `</div>`; }).join('');
   const ar=cfg.archived;
   document.getElementById('archList').innerHTML=!ar.length?'':
-    `<div class="sec"><h2>สาขาที่ลบแล้ว</h2><span class="note">${ar.length} สาขา · ตัวเลขที่กรอกไว้ยังอยู่ กดกู้คืนแล้วกลับมาแสดงตามเดิม</span></div>`+
+    `<div class="sec"><h2>สาขาที่ลบแล้ว / สาขาปิด</h2><span class="note">${ar.length} สาขา · ตัวเลขที่กรอกไว้ยังอยู่ งบของสาขาปิดดูได้ในแท็บงบกำไรขาดทุน · กดกู้คืนแล้วกลับมาแสดงตามเดิม</span></div>`+
     `<div class="zone">`+ar.map(a=>`<div class="zone-b" data-a="${a.id}">`+
-      `<div class="arch-t"><b>${esc(a.name)}</b><span>เดิมอยู่กับ ${esc(a.fromName||'-')} · ลบเมื่อ ${esc(a.at||'-')} · มีข้อมูล ${zDataMonths(a.id)} เดือน</span></div>`+
+      `<div class="arch-t"><b>${esc(a.name)}</b><span>${a.closed?`สาขาปิด · เพิ่มจากไฟล์งบเมื่อ ${esc(a.at||'-')}`:`เดิมอยู่กับ ${esc(a.fromName||'-')} · ลบเมื่อ ${esc(a.at||'-')}`} · มีข้อมูล ${zDataMonths(a.id)} เดือน</span></div>`+
       `<label class="zone-mv">กู้คืนไปที่<select data-ato>${opts(cfg.zones.some(z=>z.id===a.from)?a.from:cfg.zones[0].id)}</select></label>`+
       `<button class="btn sm" type="button" data-restore>กู้คืน</button></div>`).join('')+`</div>`;
 }
