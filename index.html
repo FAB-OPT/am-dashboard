@@ -953,6 +953,8 @@ th.sortable:hover{background:#EDEDF1;color:var(--ink)}
 /* ---------- งบกำไรขาดทุน ---------- */
 .pl-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 16px}
 .pl-bar select{height:44px;border:1px solid var(--line);border-radius:var(--r-sm);padding:0 12px;background:var(--panel);font:inherit;font-size:14px;color:var(--ink);max-width:100%}
+.pl-chk{display:inline-flex;gap:7px;align-items:center;font-size:13.5px;color:var(--ink-2);cursor:pointer}
+.pl-chk input{width:17px;height:17px;accent-color:var(--brand)}
 .tbl-wrap table.plt td:first-child{white-space:normal;min-width:230px}
 .tbl-wrap table.plt tr[data-plg] td:first-child{cursor:pointer}
 .tbl-wrap table.plt tr[data-plg]:hover td{background:#F4F1F0}
@@ -1234,6 +1236,7 @@ body.present .kpi .v{font-size:46px}
     <div class="pl-bar">
       <div class="seg" id="plMode" role="group" aria-label="ช่วงเวลา"><button type="button" data-p="m" aria-pressed="true">เดือนที่เลือก</button><button type="button" data-p="ytd">สะสมตั้งแต่ ม.ค.</button></div>
       <select id="plBranch" aria-label="สาขา"></select>
+      <label class="pl-chk" title="สาขาในรายการสาขาที่ลบแล้ว / สาขาปิด"><input type="checkbox" id="plClosed"> รวมสาขาปิด (<span id="plClosedN">0</span>)</label>
     </div>
     <div id="plEmpty" class="empty" style="display:none"></div>
     <div id="plBody">
@@ -2021,12 +2024,14 @@ function plApply(){
 }
 
 /* ---- หน้า P&L ---- */
-sel.plp='m'; sel.plb='all'; sel.plOpen={};
+sel.plp='m'; sel.plb='all'; sel.plOpen={}; sel.plClosed=false;
 /* สาขาที่ลบ/ปิดแล้ว (cfg.archived) ในรูปเดียวกับ BRANCHES */
 function plClosedAll(){ return (cfg.archived||[]).map(a=>({id:a.id,name:a.name,am:a.from||'',closed:true})); }
 /* สาขาปิดที่มีงบ ในขอบเขตที่ดูอยู่ · AM ไม่เห็น (ฐานไม่ส่งข้อมูลสาขานอกผังให้อยู่แล้ว) */
-function plClosedScope(){ if(!role||role.type==='am') return [];
+function plClosedHave(){ if(!role||role.type==='am') return [];
   return plClosedAll().filter(b=>(sel.am==='all'||b.am===sel.am)&&MONTHS.some((_,i)=>plRec(i,b.id))); }
+/* สาขาปิดไม่นับในภาพรวม เว้นแต่ติ๊ก "รวมสาขาปิด" */
+function plClosedScope(){ return sel.plClosed?plClosedHave():[]; }
 function plRec(m,id){ const p=rec(m,id).pl; return Array.isArray(p)&&p.length===PL_FLAT.length?p:null; }
 function plAgg(ids,months){ let a=null; const hit=new Set();
   months.forEach(m=>ids.forEach(id=>{ const p=plRec(m,id); if(!p) return; if(!a) a=PL_FLAT.map(()=>0); hit.add(id); p.forEach((v,i)=>a[i]+=+v||0); }));
@@ -2045,6 +2050,9 @@ function renderPL(){
   const per=ytd?`ม.ค.–${MSHORT[m]} ${YEAR}`:`${MONTHS[m]} ${YEAR}`;
   document.getElementById('btnPlImport').style.display=(role.type==='admin'||role.type==='vp')?'':'none';
   document.querySelectorAll('#plMode button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===sel.plp));
+  const clHave=plClosedHave().length, clBox=document.getElementById('plClosed');
+  clBox.checked=!!sel.plClosed; clBox.parentElement.style.display=clHave?'':'none';
+  document.getElementById('plClosedN').textContent=clHave;
   const withPl=new Set(); MONTHS.forEach((_,i)=>all.forEach(id=>{ if(plRec(i,id)) withPl.add(id); }));
   const bsel=document.getElementById('plBranch');
   const bopt=b=>`<option value="${b.id}"${withPl.has(b.id)?'':' disabled'}>${esc(shortName(b.name))}${withPl.has(b.id)?'':' · ไม่มีงบ'}</option>`;
@@ -2122,6 +2130,7 @@ function plDrawTable(){
 }
 document.getElementById('plMode').onclick=e=>{ const b=e.target.closest('button[data-p]'); if(!b) return; sel.plp=b.dataset.p; renderPL(); };
 document.getElementById('plBranch').onchange=e=>{ sel.plb=e.target.value; renderPL(); };
+document.getElementById('plClosed').onchange=e=>{ sel.plClosed=e.target.checked; renderPL(); };
 document.getElementById('plExpand').onclick=()=>{ const open=PL_MAP.some(g=>g.kids&&!sel.plOpen[g.id]); PL_MAP.forEach(g=>{ if(g.kids) sel.plOpen[g.id]=open; }); plDrawTable(); };
 document.getElementById('btnPlImport').onclick=()=>document.getElementById('fileXlsx').click();
 document.getElementById('view-pl').addEventListener('click',e=>{
