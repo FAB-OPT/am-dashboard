@@ -948,6 +948,25 @@ th.sortable:hover{background:#EDEDF1;color:var(--ink)}
 .tabs button[data-tab=input]{--ic:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M4 20h4L19.5 8.5l-4-4L4 16z'/><path d='M13.5 6.5l4 4'/></svg>")}
 .tabs button[data-tab=zones]{--ic:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z'/><circle cx='12' cy='9.5' r='2.5'/></svg>")}
 
+.tabs button[data-tab=pl]{--ic:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M3 20.5h18'/><path d='M6 17V11M11 17V6M16 17v-4M20.5 17V8.5'/></svg>")}
+
+/* ---------- งบกำไรขาดทุน ---------- */
+.pl-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 16px}
+.pl-bar select{height:44px;border:1px solid var(--line);border-radius:var(--r-sm);padding:0 12px;background:var(--panel);font:inherit;font-size:14px;color:var(--ink);max-width:100%}
+.tbl-wrap table.plt td:first-child{white-space:normal;min-width:230px}
+.tbl-wrap table.plt tr[data-plg] td:first-child{cursor:pointer}
+.tbl-wrap table.plt tr[data-plg]:hover td{background:#F4F1F0}
+.tbl-wrap table.plt tr.g td{font-weight:600;color:var(--ink)}
+.tbl-wrap table.plt tr.k td{font-size:12.5px;color:var(--ink-2)}
+.tbl-wrap table.plt tr.k td:first-child{padding-left:36px}
+.tbl-wrap table.plt tr.hl td{background:var(--panel-2);font-weight:700;color:var(--ink);border-top:1px solid var(--line)}
+.tbl-wrap table.plt .tw{display:inline-block;width:18px;color:var(--ink-3);font-size:11px}
+.tbl-wrap table.plb tbody tr[data-plb]{cursor:pointer}
+.tbl-wrap table.plb tbody tr[data-plb]:hover td{background:#F4F1F0}
+.tbl-wrap table.plb tbody tr.on td{background:#E6EEF2}
+.tbl-wrap table.plb tbody tr.on td:first-child{box-shadow:inset 4px 0 0 var(--brand)}
+.kpi .v.neg{color:var(--red)}
+
 /* ---------- จอเล็ก: หน้าตาแอปมือถือ ---------- */
 @media(max-width:760px){
   /* ให้หัวเว็บแตกเป็นชิ้น: แถบแอปติดบน ตัวเลือกเลื่อนตามหน้า แท็บลงไปอยู่ล่าง */
@@ -1003,6 +1022,7 @@ th.sortable:hover{background:#EDEDF1;color:var(--ink)}
   .tabs button[data-tab=branch]::after{content:'สาขา'}
   .tabs button[data-tab=compare]::after{content:'เทียบ'}
   .tabs button[data-tab=year]::after{content:'ทั้งปี'}
+  .tabs button[data-tab=pl]::after{content:'P&L'}
   .tabs button[data-tab=input]::after{content:'กรอก'}
   .tabs button[data-tab=zones]::after{content:'ผู้ดูแล'}
   .tabs button[aria-selected=true]{background:transparent;box-shadow:none;color:var(--ink)}
@@ -1105,6 +1125,7 @@ body.present .kpi .v{font-size:46px}
     <button role="tab" data-tab="branch">รายสาขา</button>
     <button role="tab" data-tab="compare">ตารางเทียบข้อมูล</button>
     <button role="tab" data-tab="year">สรุปทั้งปี</button>
+    <button role="tab" data-tab="pl">งบกำไรขาดทุน</button>
     <button role="tab" data-tab="input">กรอกข้อมูล</button>
     <button role="tab" data-tab="zones" id="tabZones" style="display:none">ผู้ดูแลและสาขา</button>
   </nav>
@@ -1204,6 +1225,29 @@ body.present .kpi .v{font-size:46px}
     <div class="card" style="margin-top:18px"><h3>ยอดขาย 2026 รายสาขา แยกรายเดือน (฿) — คลิกชื่อในคำอธิบายเพื่อซ่อน/แสดง</h3><div class="chart-wrap tall"><canvas id="chYearBr"></canvas></div></div>
     <div class="sec"><h2>รายสาขาทั้งปี</h2><span class="note">รวมเฉพาะเดือนที่กรอกแล้ว</span></div>
     <div class="tbl-wrap" id="yearBranchTable"></div>
+  </section>
+
+  <!-- ================= งบกำไรขาดทุน ================= -->
+  <section class="view" id="view-pl">
+    <div class="sec"><h2 id="plTitle"></h2><span class="note" id="plSub"></span>
+      <div class="right"><button class="btn primary" type="button" id="btnPlImport">นำเข้างบ</button></div></div>
+    <div class="pl-bar">
+      <div class="seg" id="plMode" role="group" aria-label="ช่วงเวลา"><button type="button" data-p="m" aria-pressed="true">เดือนที่เลือก</button><button type="button" data-p="ytd">สะสมตั้งแต่ ม.ค.</button></div>
+      <select id="plBranch" aria-label="สาขา"></select>
+    </div>
+    <div id="plEmpty" class="empty" style="display:none"></div>
+    <div id="plBody">
+      <div class="kpis" id="plKpis"></div>
+      <div class="two" style="margin-top:18px">
+        <div class="card"><h3>รายได้และกำไรสุทธิรายเดือน <span class="h3sub">บาท · แท่งเข้ม = ช่วงที่เลือก</span></h3><div class="chart-wrap"><canvas id="chPlTrend"></canvas></div></div>
+        <div class="card"><h3>ต้นทุนและกำไรเป็น % ของรายได้ <span class="h3sub">รายเดือน</span></h3><div class="chart-wrap"><canvas id="chPlCost"></canvas></div></div>
+      </div>
+      <div class="sec"><h2>งบกำไรขาดทุน</h2><span class="note">กดหัวข้อเพื่อดูบัญชีย่อย · ต้นทุนเพิ่มขึ้น = แดง</span>
+        <div class="right"><button class="btn ghost" type="button" id="plExpand">กางบัญชีย่อยทั้งหมด</button></div></div>
+      <div class="tbl-wrap" id="plTable"></div>
+      <div class="sec"><h2>กำไรรายสาขา</h2><span class="note" id="plBrNote"></span></div>
+      <div class="tbl-wrap" id="plBrTable"></div>
+    </div>
   </section>
 
   <!-- ================= ผู้ดูแลและสาขา (Admin, VP) ================= -->
@@ -1784,6 +1828,287 @@ function renderYear(){
   document.getElementById('yearBranchTable').innerHTML=`<table><thead><tr><th>สาขา</th><th>เดือนที่กรอก</th><th>Sales ${PREV}</th><th>Sales ${YEAR}</th><th>YoY</th><th>EBIT ${PREV}</th><th>EBIT ${YEAR}</th><th>YoY</th><th>COL%</th><th>OT</th><th>Complaint</th><th>เดือนที่ยอดขายลด</th></tr></thead><tbody>${brows}</tbody></table>`;
 }
 
+/* ═══════════ งบกำไรขาดทุน (P&L) ═══════════
+   ที่มา: ไฟล์ PL Jaedang ของปี (ชีตปี เช่น 2026 + ชีตรายเดือน JAN…DEC รายสาขา แถวหัวเป็นรหัสสาขา แถวถัดไปชื่ออังกฤษ)
+   เก็บใน fields.pl ของแถวสาขา-เดือนเดิม เป็นอาร์เรย์ยอดบาทตามลำดับ PL_FLAT จึงไม่ต้องแก้ตารางในฐาน
+   และสิทธิ์ดูตามโซนใช้ของเดิมได้เลย · ผังบัญชีชุดเดียวกับหน้า Jaedang ใน Santa Fe KPI */
+const PL_MAP=[
+  {id:'revenue',label:'รายได้รวม',kids:[
+    ['jd-rev-fb','ขายอาหารและเครื่องดื่ม',['Sales - Food and Beverage']],
+    ['jd-rev-deli','ขาย Delivery',['Sales - Delivery']],
+    ['jd-rev-svc','Service charge',['Sales - Service charge']],
+    ['jd-rev-disc','ส่วนลด',['Sales - Discount']],
+    ['jd-rev-other','รายได้อื่น',['Other Income']]]},
+  {id:'cogs',label:'ต้นทุนขาย (COGS)',kids:[
+    ['jd-cogs-fb','ต้นทุนอาหารและเครื่องดื่ม',['Cost of sales - Food and Beverage']],
+    ['jd-cogs-pork','คอหมู (Neck Pork)',['Cost of sales - Neck Pork']],
+    ['jd-cogs-sup','วัสดุสิ้นเปลือง',['Cost of sales - Supplies']],
+    ['jd-cogs-oth','ต้นทุนอื่น',['Cost of sales - Other']],
+    ['jd-cogs-fuel','เชื้อเพลิงครัว',['Kitchen fuel']]]},
+  {id:'gp1',label:'กำไรขั้นต้น (หลังต้นทุนขาย)',hl:1},
+  {id:'labor',label:'ค่าแรง (COL)',kids:[
+    ['jd-lab-sal','เงินเดือนและค่าจ้าง',['Salaries and wages']],
+    ['jd-lab-inc','Incentive',['Incentive']],
+    ['jd-lab-ben','สวัสดิการอื่น',['Other benefits']],
+    ['jd-lab-sso','ประกันสังคม',['Social Security Fund']],
+    ['jd-lab-bonus','โบนัส',['Employee bonus']],
+    ['jd-lab-wcf','กองทุนเงินทดแทน',["Workmen's compensation fund"]]]},
+  {id:'gp2',label:'กำไรหลังค่าแรง',hl:1},
+  {id:'sga',label:'ค่าขายและบริหาร (SG&A)',kids:[
+    ['jd-sga-adv','โฆษณา',['Advertising expense']],
+    ['jd-sga-promo','โปรโมชั่น',['Promotion expense']],
+    ['jd-sga-comm','ค่าคอมมิชชั่น (Delivery ฯลฯ)',['Other commission']],
+    ['jd-sga-card','ค่าธรรมเนียมบัตรเครดิต',['Commission on credit card']],
+    ['jd-sga-travel','ขนส่งและเดินทาง',['Transport and travelling expense']],
+    ['jd-sga-uniform','ยูนิฟอร์ม',['Uniform']],
+    ['jd-sga-elec','ค่าไฟฟ้า',['Electricity']],
+    ['jd-sga-water','ค่าน้ำ',['Water']],
+    ['jd-sga-tel','โทรศัพท์และอินเทอร์เน็ต',['Telephone and Internet']],
+    ['jd-sga-rent','ค่าเช่า',['Rental expense','Rental (TFRS 16)']],
+    ['jd-sga-ptax','ภาษีโรงเรือน',['Property taxes']],
+    ['jd-sga-equip','ค่าเช่าอุปกรณ์และอื่น',['Equipment rental expense','Other rental expense']]]},
+  {id:'gp3',label:'กำไรหลังค่าขายและบริหาร',hl:1},
+  {id:'opex',label:'ค่าใช้จ่ายดำเนินงาน (OPEX)',kids:[
+    ['jd-ox-utensil','ภาชนะและอุปกรณ์ร้าน',['Chinaware glass and utensil','Restaurant supplies','Decoration expense']],
+    ['jd-ox-repair','ซ่อมแซม',['Repair and maintenance - general','Repair and maintenance - vehicle']],
+    ['jd-ox-service','ค่าบริการ',['Service fee','Service contract']],
+    ['jd-ox-office','สำนักงานและเครื่องเขียน',['Computer supplies','Office supplies','Printing & Stationery','Postage fee','Magazine&Newpaper']],
+    ['jd-ox-audit','สอบบัญชีและที่ปรึกษา',['Audit fee','Advice and consultation fee']],
+    ['jd-ox-insure','ประกันภัย',['Insurance']],
+    ['jd-ox-fee','ภาษีและค่าธรรมเนียม',['Taxes & Duties','Certificate of selling food fee','Certificate of DBD and other','Signboard tax','Bank Charges','Music Copyright','Work permit and VISA','Fine and penalty']],
+    ['jd-ox-gainloss','กำไร/ขาดทุนอื่น',['Gain or Loss on Exchange Rate','Gain or Loss - Other','Cash Over/Short']],
+    ['jd-ox-interest','ดอกเบี้ยจ่าย',['Interest paid']],
+    ['jd-ox-citax','ภาษีเงินได้นิติบุคคล',['Corporate income tax']],
+    ['jd-ox-other','ค่าใช้จ่ายอื่น',['Franchise','R&D expense','Concenience expenses','Accommodation fee','Air ticket','Miscellaneous expense','Donation','Entertainment','Medical expense','Unclaimable expreses','Other expense','Other fee','Staff training']]]},
+  {id:'op',label:'กำไรจากการดำเนินงาน (OP)',hl:1},
+  {id:'central',label:'ค่าบริหาร (Management fee · Royalty)',src:['Management fee','Royalty Fee']},
+  {id:'net-bd',label:'กำไรก่อนค่าเสื่อม',hl:1},
+  {id:'dep',label:'ค่าเสื่อมราคา',src:['Depreciation expense']},
+  {id:'net',label:'กำไรสุทธิ (บรรทัดสุดท้าย)',hl:1}];
+const PL_FLAT=[]; PL_MAP.forEach(g=>{ PL_FLAT.push({id:g.id,label:g.label,hl:!!g.hl,grp:!!g.kids}); (g.kids||[]).forEach(k=>PL_FLAT.push({id:k[0],label:k[1],parent:g.id})); });
+const PLI={}; PL_FLAT.forEach((r,i)=>PLI[r.id]=i);
+const PL_SKIP=['00000','BR099','BR001'];   // สำนักงานใหญ่ · BT-ALL · ครัวกลาง (ไม่ใช่สาขา)
+/* รหัสสาขาในงบ → ชื่อไทย (จากชีต Summary Salse) ใช้จับคู่กับชื่อสาขาในเว็บ รหัสที่ไม่มีในนี้จะให้เลือกเอง */
+const PL_TH={"1":"ประชาชื่น","2":"ทากะทาวน์","3":"ต้นซุง","4":"เมืองทองธานี","6":"ไอคอนสยาม","7":"Paseo กาญจนาภิเษก","8":"บางจาก ราชพฤกษ์","9":"ฟิวเจอร์ปาร์ค รังสิต","10":"พรานนก","11":"The Circle ราชพฤกษ์","12":"For you park บางนา","14":"เซ็นทรัลพระราม 2","15":"The Street รัชดาภิเษก","17":"คู้บอน","18":"สยาม","20":"เสนานิคม","21":"กรุงเทพกรีฑา","22":"ปั๊มปตท.เวสต์วิลเลจ","26":"ธนิยะ","27":"เทพารักษ์-สายไหม","28":"ปั๊มบางจาก-ศาลายา","29":"PTT ราชพฤกษ์","30":"True Digital Park","31":"The Bright พระราม 2","BR002":"สามเสน","DM001":"สยามพารากอน","DM003":"Emporium","BR004":"ศาลายา ปั้ม PT","BR015":"บางจากสุขุมวิท 62","BR013":"ปั๊มบางจาก รามคำแหง","BR014":"เซ็นทรัลเวิลด์","BR017":"เซ็นทรัลอีสต์วิลล์","BR018":"ปตท.บรมราชชนนี","BR019":"ปตท. สายไหม 56","BR011":"บางจากรังสิต คลอง 2","BR020":"ท็อปส์ เซ็นทรัล ลาดพร้าว","BR021":"PTT นวลจันทร์","BR012":"Charn at the Avenue แจ้งวัฒนะ","BR022":"มอเตอร์เวย์-ชลบุรี","BR023":"Little Walk Rattanathibet","BR024":"เดอะมอลล์ งามวงศ์วาน","BR025":"ฟอร์จูนทาวน์","BR026":"S-Oasis","BR027":"ดุสิต เซ็นทรัล พาร์ค","BR028":"อเกณฑ์ พัทยา","BR029":"ปตท.พระราม4"};
+const plCode=v=>{ const t=String(v==null?'':v).trim(); return /^\d+$/.test(t)?String(+t):t; };
+const plKey=v=>String(v==null?'':v).replace(/\s+/g,' ').trim().toLowerCase();
+const PL_CODE_RE=/^(BR\d+|DM\d+|\d{5})$/;
+function plYearSheet(wb){ return wb.SheetNames.find(n=>{ if(!/^20\d{2}$/.test(n.trim())) return false;
+  const a=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:null,range:'A1:A2'}); return /jaedang/i.test(String((a[0]||[])[0]||'')); }); }
+function isPLWb(wb){ return !!plYearSheet(wb); }
+/* บรรทัดบัญชี → อาร์เรย์ยอดบาทตามลำดับ PL_FLAT · บรรทัดกำไรคำนวณจากกลุ่มข้างบน */
+function plArr(get){ const t={}, kid={};
+  PL_MAP.forEach(g=>{ if(g.hl) return;
+    if(g.kids){ let s=0; g.kids.forEach(k=>{ const v=k[2].reduce((a,l)=>a+get(l),0); kid[k[0]]=v; s+=v; }); t[g.id]=s; }
+    else t[g.id]=g.src.reduce((a,l)=>a+get(l),0); });
+  t.gp1=t.revenue-t.cogs; t.gp2=t.gp1-t.labor; t.gp3=t.gp2-t.sga; t.op=t.gp3-t.opex; t['net-bd']=t.op-t.central; t.net=t['net-bd']-t.dep;
+  return PL_FLAT.map(r=>Math.round(r.parent?kid[r.id]:t[r.id])); }
+function parsePL(wb){
+  const ys=plYearSheet(wb);
+  const top=XLSX.utils.sheet_to_json(wb.Sheets[ys],{header:1,defval:null,range:'A1:A6'});
+  const year=+((String((top[2]||[])[0]||'').match(/(20\d{2})/)||[])[1])||+ys.trim();
+  const MN=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const by={}, months=new Set(), warn=[];
+  wb.SheetNames.forEach(sn=>{ const t=sn.trim().toUpperCase(); const mi=MN.indexOf(t.slice(0,3)); if(mi<0||!/^[A-Z]{3,9}$/.test(t)) return;
+    const sr=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:null});
+    const ci=sr.findIndex(r=>r&&r.filter(v=>typeof v==='string'&&PL_CODE_RE.test(v.trim())).length>=5); if(ci<0) return;
+    const cr=sr[ci], nr=sr[ci+1]||[], rb={};
+    /* ใช้บรรทัดแรกของชื่อบัญชี (ท้ายชีตมีตารางสรุปชื่อซ้ำ เช่น Rental Expense) */
+    sr.forEach(r=>{ if(r&&typeof r[0]==='string'){ const k=plKey(r[0]); if(!(k in rb)) rb[k]=r; } });
+    cr.forEach((v,c)=>{ if(c===0||typeof v!=='string') return; const raw=v.trim(); if(!PL_CODE_RE.test(raw)||PL_SKIP.includes(raw)) return;
+      const get=l=>{ const r=rb[plKey(l)]; const x=r&&r[c]; return typeof x==='number'&&isFinite(x)?x:0; };
+      const a=plArr(get); if(!(a[PLI.revenue]>0)) return;
+      const code=plCode(raw);
+      const o=by[code]||(by[code]={code,name:String(nr[c]||raw).replace(/\s+/g,' ').trim(),th:PL_TH[code]||'',m:{}});
+      o.m[mi]=a; months.add(mi);
+      const fr=rb[plKey('Net Profit (EBIT)')], fn=fr&&typeof fr[c]==='number'?fr[c]:null;
+      if(fn!=null&&Math.abs(fn-a[PLI.net])>5000) warn.push(MN[mi]+' '+raw); }); });
+  return {year,months:[...months].sort((a,b)=>a-b),rows:Object.values(by),warn};
+}
+
+/* ---- นำเข้า: เรียกจาก xlRead เมื่อไฟล์เป็นงบ PL Jaedang ---- */
+function plShow(wb,fname){
+  if(!role||(role.type!=='admin'&&role.type!=='vp')){ alert(fname+'\n\nไฟล์งบกำไรขาดทุนนำเข้าได้เฉพาะ Admin และ VP'); xlNext(); return; }
+  const R=parsePL(wb);
+  if(R.year&&R.year!==YEAR){ alert(`${fname}\n\nไฟล์นี้เป็นงบปี ${R.year} แต่เว็บนี้เก็บข้อมูลปี ${YEAR}`); xlNext(); return; }
+  if(!R.months.length){ alert(fname+'\n\nอ่านงบรายสาขาไม่เจอ\n\nไฟล์ต้องมีชีตรายเดือน (JAN, FEB, …) ที่มีแถวรหัสสาขา เช่น BR002, 00018'); xlNext(); return; }
+  const pool=BRANCHES, byId={}, byKey={};
+  pool.forEach(b=>{ byId[b.id]=b; byKey[xlKey(b.name)]=b; });
+  const alias=xlAliases();
+  const items=R.rows.map(r=>{
+    const name=r.th?`ร้านส้มตำเจ๊แดง (${r.th})`:r.name, k=xlKey(name);
+    let b=byKey[k], how=b?'exact':'';
+    if(!b&&alias[k]&&byId[alias[k]]){ b=byId[alias[k]]; how='alias'; }
+    let guess=null, score=0;
+    if(!b){ pool.forEach(x=>{ const sc=xlSim(k,xlKey(x.name)); if(sc>score){ score=sc; guess=x; } }); if(score<XL_SIM_MIN) guess=null; }
+    return {key:k,name,r,b,how,guess,score}; });
+  impPending={kind:'pl',R,items,file:fname};
+  const auto=items.filter(x=>x.b), ask=items.filter(x=>!x.b);
+  const claimed={}; auto.forEach(x=>claimed[x.b.id]=true);
+  const free=pool.filter(b=>!claimed[b.id]), rest=pool.filter(b=>claimed[b.id]);
+  const opt=(b,s)=>`<option value="${b.id}" ${s?'selected':''}>${esc(shortName(b.name))}</option>`;
+  const picker=(x,ix)=>`<select class="map-sel" data-ix="${ix}"><option value="">ข้ามสาขานี้</option>`+
+    (free.length?`<optgroup label="ยังไม่มีงบในไฟล์นี้">${free.map(b=>opt(b,x.guess&&x.guess.id===b.id)).join('')}</optgroup>`:'')+
+    (rest.length?`<optgroup label="สาขาอื่น">${rest.map(b=>opt(b,x.guess&&x.guess.id===b.id)).join('')}</optgroup>`:'')+`</select>`;
+  const f=R.months[0], l=R.months[R.months.length-1];
+  const nAlias=auto.filter(x=>x.how==='alias').length;
+  document.getElementById('impBody').innerHTML=
+    `<div class="row"><b>ไฟล์</b><span>${esc(fname)} · งบกำไรขาดทุน Jaedang ปี ${R.year||YEAR}</span></div>`+
+    `<div class="row"><b>เดือนในไฟล์</b><span>${MSHORT[f]}${f!==l?'–'+MSHORT[l]:''} ${YEAR} (${R.months.length} เดือน) · ${R.rows.length} สาขา <span class="hint">แทนที่งบเดิมของเดือนเหล่านี้ทั้งหมด</span></span></div>`+
+    (R.warn.length?`<div class="row"><b>ตรวจตัวเลข</b><span class="miss">กำไรสุทธิที่คำนวณไม่ตรงกับบรรทัด Net Profit ในไฟล์ ${R.warn.length} จุด (${esc(R.warn.slice(0,4).join(', '))}${R.warn.length>4?' …':''})</span></div>`:'')+
+    `<div class="row"><b>ตรงกันแน่นอน</b><span class="ok">${auto.length} สาขา`+(nAlias?` <span class="hint">(${nAlias} สาขาจากที่เคยจับคู่ไว้)</span>`:'')+`</span></div>`+
+    (ask.length?
+      `<div class="map"><div class="map-h"><b>ต้องยืนยัน ${ask.length} สาขา</b><span>ชื่อในงบไม่ตรงกับในระบบเป๊ะ เลือกสาขาที่ถูก หรือข้ามถ้าไม่ได้อยู่ในความดูแลของ AM</span></div>`+
+      `<table class="map-t"><tbody>`+
+      ask.map(x=>{ const ix=items.indexOf(x);
+        return `<tr><td class="map-n">${esc(x.r.th||x.r.name)}<div class="map-s">${esc(x.r.code)} · ${esc(x.r.name)}</div></td><td class="map-a">→</td><td>${picker(x,ix)}`+
+          `<div class="map-s ${x.guess?'':'none'}">${x.guess?`ชื่อคล้ายกัน ${Math.round(x.score*100)}%`:'ไม่พบชื่อที่คล้าย เลือกเองหรือข้าม'}</div></td></tr>`; }).join('')+
+      `</tbody></table>`+
+      `<label class="map-remember"><input type="checkbox" id="impRemember" checked> จำการจับคู่นี้ไว้ เดือนหน้าไม่ต้องเลือกซ้ำ</label></div>`:'')+
+    `<div class="row" style="border:0"><b></b><span class="hint">ไม่ยุ่งกับตัวเลขที่กรอกในแท็บกรอกข้อมูล · สำนักงานใหญ่ ครัวกลาง และ BT-ALL ไม่นับเป็นสาขา</span></div>`;
+  document.getElementById('impOk').disabled=!items.length;
+  const idx=xlTotal-xlQueue.length;
+  document.getElementById('impTitle').textContent=(xlTotal>1?`ตรวจก่อนนำเข้า · ไฟล์ ${idx} จาก ${xlTotal}`:'ตรวจก่อนนำเข้า')+' · งบกำไรขาดทุน';
+  document.getElementById('impCancel').textContent=xlQueue.length?'ข้ามไฟล์นี้':'ยกเลิก';
+  document.getElementById('impOk').textContent=xlQueue.length?'นำเข้า แล้วไปไฟล์ถัดไป':'นำเข้างบ';
+  if(xlAuto&&!ask.length&&items.length){ plApply(); return; }
+  document.getElementById('impModal').hidden=false;
+}
+function plApply(){
+  const {R,items,file}=impPending;
+  const byId={}; BRANCHES.forEach(b=>byId[b.id]=b);
+  const map=new Map(), chosen=[];
+  items.forEach(x=>{ if(x.b) map.set(x,x.b); });
+  document.querySelectorAll('#impBody .map-sel').forEach(sl=>{ const x=items[+sl.dataset.ix], b=byId[sl.value]; if(b){ map.set(x,b); chosen.push([x.key,b.id]); } });
+  const cnt={}; map.forEach(b=>cnt[b.id]=(cnt[b.id]||0)+1);
+  const dup=Object.keys(cnt).filter(id=>cnt[id]>1);
+  if(dup.length){
+    alert('มีหลายรหัสในงบจับคู่กับสาขาเดียวกัน:\n\n'+dup.map(id=>'• '+shortName(byId[id].name)+' ← '+
+      [...map].filter(p=>p[1].id===id).map(p=>p[0].r.code+' '+(p[0].r.th||p[0].r.name)).join(', ')).join('\n')+'\n\nแก้ให้เหลือรหัสละสาขาก่อนนำเข้า');
+    return;
+  }
+  if(!map.size){ alert('ยังไม่ได้จับคู่สาขาเลย'); return; }
+  xlRemember(chosen);
+  const wrote=[], touched=new Set(); let nb=0;
+  map.forEach((b,x)=>{ let any=false;
+    R.months.forEach(mi=>{ const a=x.r.m[mi]; if(!a) return;
+      rec(mi,b.id,true).pl=a; markDirty(mi,b.id); wrote.push([mi,b.id,['pl']]); touched.add(mi+'|'+b.id); any=true; });
+    if(any) nb++; });
+  /* งบในไฟล์เป็นชุดเต็มของเดือนนั้น: สาขาที่ไม่ได้อยู่ในรอบนี้ (เช่น เคยจับคู่ผิด หรือเลือกข้าม) ลบงบเก่าของเดือนนั้นออก */
+  let cleared=0;
+  R.months.forEach(mi=>Object.keys(store.data[mi]||{}).forEach(id=>{ const r=store.data[mi][id];
+    if(r&&r.pl&&!touched.has(mi+'|'+id)){ delete r.pl; if(!Object.keys(r).length) delete store.data[mi][id]; markDirty(mi,id); cleared++; } }));
+  save();
+  const f=R.months[0], l=R.months[R.months.length-1];
+  const au=document.getElementById('impAuto'); if(au&&au.checked) xlAuto=true;
+  document.getElementById('impModal').hidden=true; impPending=null;
+  xlLogAdd({file,month:l,rows:wrote,what:`งบกำไรขาดทุน ${MSHORT[f]}${f!==l?'–'+MSHORT[l]:''} ${YEAR} · ${nb} สาขา`+(cleared?` · ลบงบเก่าที่ไม่อยู่ในไฟล์ ${cleared} รายการ`:'')});
+  xlDone.push({file,m:l,nb,cells:wrote.length,pcells:0,pl:true});
+  if(xlQueue.length){ flash(`นำเข้า ${file} แล้ว เหลืออีก ${xlQueue.length} ไฟล์`); xlNext(); }
+  else xlFinish();
+}
+
+/* ---- หน้า P&L ---- */
+sel.plp='m'; sel.plb='all'; sel.plOpen={};
+function plRec(m,id){ const p=rec(m,id).pl; return Array.isArray(p)&&p.length===PL_FLAT.length?p:null; }
+function plAgg(ids,months){ let a=null; const hit=new Set();
+  months.forEach(m=>ids.forEach(id=>{ const p=plRec(m,id); if(!p) return; if(!a) a=PL_FLAT.map(()=>0); hit.add(id); p.forEach((v,i)=>a[i]+=+v||0); }));
+  return a?{a,n:hit.size}:null; }
+const PL_COST=new Set(['cogs','labor','sga','opex','central','dep']);
+const plShare=(v,rev)=>(v==null||!rev)?null:v/rev;
+const plPc=p=>p==null?'–':(p*100).toFixed(1)+'%';
+const plAx=v=>Math.abs(v)>=1e6?(v/1e6).toFixed(1)+'M':Math.abs(v)>=1e3?Math.round(v/1e3)+'K':fmt(v);
+let plCtx=null;
+function renderPL(){
+  const bs=scopeBranches(), all=bs.map(b=>b.id);
+  if(sel.plb!=='all'&&!all.includes(sel.plb)) sel.plb='all';
+  const one=sel.plb==='all'?null:bs.find(b=>b.id===sel.plb), ids=one?[one.id]:all;
+  const m=sel.m, ytd=sel.plp==='ytd';
+  const mons=ytd?MONTHS.map((_,i)=>i).filter(i=>i<=m):[m];
+  const per=ytd?`ม.ค.–${MSHORT[m]} ${YEAR}`:`${MONTHS[m]} ${YEAR}`;
+  document.getElementById('btnPlImport').style.display=(role.type==='admin'||role.type==='vp')?'':'none';
+  document.querySelectorAll('#plMode button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===sel.plp));
+  const withPl=new Set(); MONTHS.forEach((_,i)=>all.forEach(id=>{ if(plRec(i,id)) withPl.add(id); }));
+  const bsel=document.getElementById('plBranch');
+  bsel.innerHTML=`<option value="all">ทุกสาขาในขอบเขต (${all.length})</option>`+
+    bs.map(b=>`<option value="${b.id}"${withPl.has(b.id)?'':' disabled'}>${esc(shortName(b.name))}${withPl.has(b.id)?'':' · ไม่มีงบ'}</option>`).join('');
+  bsel.value=sel.plb;
+  document.getElementById('plTitle').textContent=`งบกำไรขาดทุน ${per} — ${one?shortName(one.name):scopeLabel()}`;
+  const cur=plAgg(ids,mons);
+  const empty=document.getElementById('plEmpty'), body=document.getElementById('plBody'), sub=document.getElementById('plSub');
+  if(!cur){
+    const have=MONTHS.map((_,i)=>i).filter(i=>all.some(id=>plRec(i,id)));
+    const go=have.filter(i=>i<=m).pop()??have[have.length-1];
+    empty.style.display='block'; body.style.display='none'; sub.textContent='';
+    empty.innerHTML=`<b>ยังไม่มีงบกำไรขาดทุน ${per}</b>`+(go!=null
+      ?`ในขอบเขตนี้มีงบถึง${MONTHS[have[have.length-1]]}<br><button class="btn primary" type="button" data-plgo="${go}">ดู${MONTHS[go]}</button>`
+      :(role.type==='am'?'รอ Admin หรือ VP นำเข้าไฟล์งบ PL Jaedang':'กดปุ่ม "นำเข้างบ" แล้วเลือกไฟล์ PL Jaedang ของปีนี้ (ชีตปี + ชีตรายเดือน JAN…DEC)'));
+    return;
+  }
+  empty.style.display='none'; body.style.display='block';
+  sub.textContent=one?(ytd?`รวม ${mons.filter(i=>plRec(i,one.id)).length} เดือนที่มีงบ`:''):`มีงบ ${cur.n} / ${all.length} สาขา`+(ytd?' · รวมทุกเดือนที่มีงบ':'');
+  const prev=!ytd&&m>0?plAgg(ids,[m-1]):null;
+  const A=cur.a, P=prev&&prev.a, rev=A[PLI.revenue], prv=P?P[PLI.revenue]:null;
+  const lab=(th,en)=>`${th}<span class="u">${en}</span>`;
+  const money=(l,id)=>{ const v=A[PLI[id]], pv=P?P[PLI[id]]:null;
+    return `<div class="kpi"><div class="l">${l}</div><div class="v${v<0?' neg':''}">${fmt(v)}</div><div class="d">`+
+      (P?`<span class="cmp">เดือนก่อน</span>${chip(pct(pv,v))}`:'')+(id!=='revenue'?`<span class="cmp">${plPc(plShare(v,rev))} ของรายได้</span>`:'')+`</div></div>`; };
+  const ratio=(l,id)=>{ const s=plShare(A[PLI[id]],rev), ps=P?plShare(P[PLI[id]],prv):null, d=s!=null&&ps!=null?s-ps:null;
+    return `<div class="kpi"><div class="l">${l}</div><div class="v">${plPc(s)}</div><div class="d">`+
+      (P?`<span class="cmp">เดือนก่อน ${plPc(ps)}</span>`+(d!=null?`<span class="chip ${d>.0005?'dn':d<-.0005?'up':'flat'}">${d>0?'+':''}${(d*100).toFixed(1)} pt</span>`:''):'')+
+      `<span class="cmp">${fmt(A[PLI[id]])} บาท</span></div></div>`; };
+  document.getElementById('plKpis').innerHTML=
+    money(lab('รายได้รวม','Revenue · บาท'),'revenue')+money(lab('กำไรขั้นต้น','หลังต้นทุนขาย · บาท'),'gp1')+
+    money(lab('กำไรจากการดำเนินงาน','OP · ก่อนค่าบริหารและค่าเสื่อม'),'op')+money(lab('กำไรสุทธิ','Net profit · บาท'),'net')+
+    ratio(lab('ต้นทุนขาย','COGS % ของรายได้'),'cogs')+ratio(lab('ค่าแรง','COL % ของรายได้'),'labor')+
+    ratio(lab('ค่าขายและบริหาร','SG&A % ของรายได้'),'sga')+ratio(lab('ค่าเช่า','Rent % ของรายได้'),'jd-sga-rent');
+  const MA=MONTHS.map((_,i)=>plAgg(ids,[i]));
+  const g=(x,id)=>x?x.a[PLI[id]]:null, gs=(x,id)=>x&&x.a[PLI.revenue]?+(x.a[PLI[id]]/x.a[PLI.revenue]*100).toFixed(1):null;
+  const tip={callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} ฿`}};
+  mkChart('chPlTrend',{type:'bar',data:{labels:MSHORT,datasets:[
+      {type:'bar',label:'รายได้รวม',data:MA.map(x=>g(x,'revenue')),backgroundColor:MSHORT.map((_,i)=>mons.includes(i)?'#3D6475':'#C9D6DC'),yAxisID:'y'},
+      {type:'line',label:'กำไรสุทธิ',data:MA.map(x=>g(x,'net')),borderColor:'#1E7A46',backgroundColor:'#1E7A46',pointRadius:3,spanGaps:false,yAxisID:'y2'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:tip},
+      scales:{x:{grid:{display:false}},y:{position:'left',ticks:{callback:plAx}},y2:{position:'right',grid:{display:false},ticks:{callback:plAx}}}}});
+  const line=(label,id,color,dash)=>({type:'line',label,data:MA.map(x=>gs(x,id)),borderColor:color,backgroundColor:color,borderDash:dash||[],pointRadius:3,spanGaps:false});
+  mkChart('chPlCost',{type:'line',data:{labels:MSHORT,datasets:[line('ต้นทุนขาย','cogs','#D97757'),line('ค่าแรง','labor','#3D6475'),
+      line('ค่าขายและบริหาร','sga','#B7791F'),line('ค่าดำเนินงาน','opex','#6B4C9A'),line('กำไรสุทธิ','net','#1E7A46',[5,4])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw==null?'–':c.raw+'%'}`}}},
+      scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>v+'%'}}}}});
+  plCtx={A,P,rev,prv,per,m};
+  plDrawTable();
+  const br=bs.map(b=>{ const x=plAgg([b.id],mons); return x?{b,a:x.a}:null; }).filter(Boolean).sort((p,q)=>q.a[PLI.net]-p.a[PLI.net]);
+  const miss=bs.filter(b=>!br.some(x=>x.b===b));
+  const sh=(a,id)=>plPc(plShare(a[PLI[id]],a[PLI.revenue]));
+  const zn=b=>sel.am==='all'?`<span class="mute" style="font-size:12px"> · ${esc((AMS.find(z=>z.id===b.am)||{}).name||'')}</span>`:'';
+  const brow=(labl,a,c,id)=>`<tr class="${c}"${id?` data-plb="${id}"`:''}><td>${labl}</td><td>${fmt(a[PLI.revenue])}</td><td>${sh(a,'cogs')}</td><td>${sh(a,'labor')}</td><td>${sh(a,'sga')}</td><td>${sh(a,'jd-sga-rent')}</td>`+
+    `<td class="${a[PLI.op]<0?'neg':''}">${fmt(a[PLI.op])}</td><td class="${a[PLI.net]<0?'neg':''}">${fmt(a[PLI.net])}</td><td class="${a[PLI.net]<0?'neg':''}">${sh(a,'net')}</td></tr>`;
+  const tot=plAgg(all,mons);
+  document.getElementById('plBrTable').innerHTML=`<table class="plb"><thead><tr><th>สาขา</th><th>รายได้รวม</th><th>ต้นทุนขาย %</th><th>ค่าแรง %</th><th>ค่าขายและบริหาร %</th><th>ค่าเช่า %</th><th>กำไรจากการดำเนินงาน</th><th>กำไรสุทธิ</th><th>กำไรสุทธิ %</th></tr></thead><tbody>`+
+    br.map(x=>brow(esc(shortName(x.b.name))+zn(x.b),x.a,x.b.id===sel.plb?'on':'',x.b.id)).join('')+(tot?brow(`รวม ${br.length} สาขา`,tot.a,'total'):'')+`</tbody></table>`;
+  document.getElementById('plBrNote').textContent=`${per} · เรียงตามกำไรสุทธิ · กดแถวเพื่อดูงบของสาขานั้น`+(miss.length?` · ยังไม่มีงบ ${miss.length} สาขา: ${miss.map(b=>shortName(b.name)).join(', ')}`:'');
+}
+function plDrawTable(){
+  if(!plCtx) return;
+  const {A,P,rev,prv,per,m}=plCtx;
+  const rows=PL_FLAT.map((r,i)=>{ if(r.parent&&!sel.plOpen[r.parent]) return '';
+    const v=A[i], pv=P?P[i]:null, inv=PL_COST.has(r.parent||r.id);
+    const tw=r.grp?`<span class="tw">${sel.plOpen[r.id]?'▾':'▸'}</span>`:r.parent?'':'<span class="tw"></span>';
+    return `<tr class="${r.hl?'hl':r.parent?'k':'g'}"${r.grp?` data-plg="${r.id}"`:''}><td>${tw}${esc(r.label)}</td><td class="${v<0?'neg':''}">${fmt(v)}</td><td class="mute">${plPc(plShare(v,rev))}</td>`+
+      (P?`<td>${fmt(pv)}</td><td class="mute">${plPc(plShare(pv,prv))}</td><td>${!v&&!pv?'<span class="mute">–</span>':chip(pct(pv,v),inv)}</td>`:'')+`</tr>`; }).join('');
+  document.getElementById('plTable').innerHTML=`<table class="plt"><thead><tr><th>รายการ</th><th>${per}</th><th>% ของรายได้</th>`+
+    (P?`<th>${MONTHS[m-1]}</th><th>% ของรายได้</th><th>เทียบเดือนก่อน</th>`:'')+`</tr></thead><tbody>${rows}</tbody></table>`;
+  document.getElementById('plExpand').textContent=PL_MAP.some(g=>g.kids&&!sel.plOpen[g.id])?'กางบัญชีย่อยทั้งหมด':'พับบัญชีย่อย';
+}
+document.getElementById('plMode').onclick=e=>{ const b=e.target.closest('button[data-p]'); if(!b) return; sel.plp=b.dataset.p; renderPL(); };
+document.getElementById('plBranch').onchange=e=>{ sel.plb=e.target.value; renderPL(); };
+document.getElementById('plExpand').onclick=()=>{ const open=PL_MAP.some(g=>g.kids&&!sel.plOpen[g.id]); PL_MAP.forEach(g=>{ if(g.kids) sel.plOpen[g.id]=open; }); plDrawTable(); };
+document.getElementById('btnPlImport').onclick=()=>document.getElementById('fileXlsx').click();
+document.getElementById('view-pl').addEventListener('click',e=>{
+  const g=e.target.closest('tr[data-plg]'); if(g){ sel.plOpen[g.dataset.plg]=!sel.plOpen[g.dataset.plg]; plDrawTable(); return; }
+  const r=e.target.closest('tr[data-plb]'); if(r){ sel.plb=sel.plb===r.dataset.plb?'all':r.dataset.plb; renderPL(); document.getElementById('plTitle').scrollIntoView({behavior:'smooth',block:'start'}); return; }
+  const go=e.target.closest('[data-plgo]'); if(go){ sel.m=+go.dataset.plgo; render(); } });
+
 /* ---------------- render: branch by month ---------------- */
 /* ตอนดูภาพรวม แสดงรายชื่อสาขาพร้อมตัวเลขสะสม กดแถวไหนก็เจาะเข้าสาขานั้น */
 /* หน้ารายสาขาแบบ "สมุดพกสาขา"
@@ -2191,8 +2516,9 @@ function xlFinish(){
   const done=xlDone; xlDone=[]; xlTotal=0; xlAuto=false;
   if(!done.length) return;
   const last=done[done.length-1];
-  sel.m=last.m; setTab('input');
+  sel.m=last.m; setTab(last.pl?'pl':'input');
   const c=done.reduce((a,x)=>a+x.cells+x.pcells,0);
+  if(last.pl&&done.length===1){ flash(`นำเข้างบกำไรขาดทุนแล้ว ${last.nb} สาขา`); return; }
   flash(done.length>1?`นำเข้าแล้ว ${done.length} ไฟล์ (${c} ช่อง)`
     :`นำเข้าแล้ว ${last.nb} สาขา (${last.cells} ช่อง)`+(last.pcells?` · เดือนก่อนหน้าอีก ${last.pcells} ช่อง`:''));
   setTimeout(()=>dmOpenFresh(),120);          // เปิดสถานะข้อมูลให้ดูว่ายังขาดอะไรอีก
@@ -2249,8 +2575,26 @@ function xlShow(blocks,fname){
   if(xlAuto&&!ask.length&&blk.month!=null&&items.length){ xlApply(); return; }
   document.getElementById('impModal').hidden=false;
 }
+function xlRemember(chosen){
+  // จำการจับคู่ไว้: เก็บในเครื่องเสมอ แล้วส่งขึ้นฐานกลางให้ทุกคนทุกเครื่องใช้ด้วย
+  const rem=document.getElementById('impRemember');
+  if(chosen.length&&rem&&rem.checked){
+    const add={}; chosen.forEach(([k,id])=>add[k]=id);
+    let local={}; try{ local=JSON.parse(localStorage.getItem(KEY_ALIAS)||'{}')||{}; }catch(e){}
+    try{ localStorage.setItem(KEY_ALIAS,JSON.stringify(Object.assign(local,add))); }catch(e){}
+    if(CLOUD&&SB){
+      SB.rpc('am_save_aliases',{p_code:CODE,p_aliases:add}).then(({data,error})=>{
+        if(!error){ ALIAS_SRV=true; SRV_ALIAS=data||Object.assign({},SRV_ALIAS,add); return; }
+        ALIAS_SRV=false;
+        // ฐานยังไม่ได้ติดตั้งฟังก์ชันใหม่ แอดมินยังเก็บในผังโซนแบบเดิมได้
+        if(role&&role.type==='admin'){ cfg.aliases=Object.assign({},cfg.aliases||{},add); saveCfg(); }
+      }).catch(()=>{});
+    }
+  }
+}
 function xlApply(){
   if(!impPending) return;
+  if(impPending.kind==='pl') return plApply();
   const m=+document.getElementById('impMonth').value;
   const {blk,prev,items}=impPending;
   const byId={}; scopeBranches().forEach(b=>byId[b.id]=b);
@@ -2272,21 +2616,7 @@ function xlApply(){
     return;
   }
   if(!Object.keys(map).length){ alert('ยังไม่ได้จับคู่สาขาเลย'); return; }
-  // จำการจับคู่ไว้: เก็บในเครื่องเสมอ แล้วส่งขึ้นฐานกลางให้ทุกคนทุกเครื่องใช้ด้วย
-  const rem=document.getElementById('impRemember');
-  if(chosen.length&&rem&&rem.checked){
-    const add={}; chosen.forEach(([k,id])=>add[k]=id);
-    let local={}; try{ local=JSON.parse(localStorage.getItem(KEY_ALIAS)||'{}')||{}; }catch(e){}
-    try{ localStorage.setItem(KEY_ALIAS,JSON.stringify(Object.assign(local,add))); }catch(e){}
-    if(CLOUD&&SB){
-      SB.rpc('am_save_aliases',{p_code:CODE,p_aliases:add}).then(({data,error})=>{
-        if(!error){ ALIAS_SRV=true; SRV_ALIAS=data||Object.assign({},SRV_ALIAS,add); return; }
-        ALIAS_SRV=false;
-        // ฐานยังไม่ได้ติดตั้งฟังก์ชันใหม่ แอดมินยังเก็บในผังโซนแบบเดิมได้
-        if(role&&role.type==='admin'){ cfg.aliases=Object.assign({},cfg.aliases||{},add); saveCfg(); }
-      }).catch(()=>{});
-    }
-  }
+  xlRemember(chosen);
   let cells=0, nb=0; const wrote=[];          // จดไว้ว่าเขียนช่องไหนบ้าง ใช้ตอนลบข้อมูลของไฟล์นี้
   blk.rows.forEach(r=>{ const b=map[xlKey(r.name)]; if(!b) return;
     const fs=Object.keys(r.fields);
@@ -2320,7 +2650,7 @@ function xlRead(file){
   if(!window.XLSX){ alert('ตัวอ่านไฟล์ Excel ยังโหลดไม่เสร็จ ลองใหม่อีกครั้ง'); xlQueue=[]; return xlFinish(); }
   flash(`กำลังอ่าน ${file.name}…`);
   const rd=new FileReader();
-  rd.onload=async ()=>{ try{ if(CLOUD) await pullAliases(); xlShow(xlParse(XLSX.read(rd.result,{type:'array'})),file.name); }
+  rd.onload=async ()=>{ try{ if(CLOUD) await pullAliases(); const wb=XLSX.read(rd.result,{type:'array'}); if(isPLWb(wb)) plShow(wb,file.name); else xlShow(xlParse(wb),file.name); }
     catch(e){ console.error(e); alert(file.name+'\n\nอ่านไฟล์ไม่สำเร็จ: '+((e&&e.message)||'ไฟล์อาจเสียหรือไม่ใช่ไฟล์ Excel')); xlNext(); } };
   rd.onerror=()=>{ alert(file.name+'\n\nอ่านไฟล์ไม่สำเร็จ'); xlNext(); };
   rd.readAsArrayBuffer(file);
@@ -2881,7 +3211,7 @@ function fillMonths(){
 monthBar.onclick=e=>{ const b=e.target.closest('button[data-m]'); if(!b)return; sel.m=+b.dataset.m; render(); };
 selAM.onchange=()=>{sel.am=selAM.value;render();};
 document.getElementById('prevM').onclick=()=>{if(sel.m>0){sel.m--;render();}}; document.getElementById('nextM').onclick=()=>{if(sel.m<11){sel.m++;render();}};
-function render(){ if(!role)return; fillMonths(); fillAM(); if(role.type==='am')sel.am=role.zone; selAM.value=sel.am; if(!selAM.value)sel.am='all', selAM.value='all'; ({dash:renderDash,branch:renderBranch,compare:renderCompare,year:renderYear,input:renderInput,zones:renderZones})[sel.tab](); }
+function render(){ if(!role)return; fillMonths(); fillAM(); if(role.type==='am')sel.am=role.zone; selAM.value=sel.am; if(!selAM.value)sel.am='all', selAM.value='all'; ({dash:renderDash,branch:renderBranch,compare:renderCompare,year:renderYear,pl:renderPL,input:renderInput,zones:renderZones})[sel.tab](); }
 /* ค้นหาและเรียงลำดับตารางสาขา */
 (function(){
   const q=document.getElementById('brSearch');
